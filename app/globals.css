@@ -1,0 +1,138 @@
+@import 'tailwindcss';
+
+@theme inline {
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-bevan), Georgia, 'Times New Roman', serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+  --color-accent: var(--accent);
+  --color-ink: var(--ink);
+}
+
+/* Tokens de marca: única fuente de verdad (mismos valores que la carta digital). */
+:root {
+  color-scheme: light;
+  --background: oklch(0.975 0.012 78);
+  --foreground: oklch(0.21 0.025 35);
+  --card: oklch(0.995 0.006 78);
+  --card-foreground: oklch(0.21 0.025 35);
+  --primary: #43281c;
+  --primary-foreground: #fffaf4;
+  --muted: oklch(0.93 0.018 78);
+  --muted-foreground: oklch(0.48 0.025 42);
+  --border: oklch(0.87 0.025 65);
+  --ring: oklch(0.48 0.14 32);
+  --accent: #c9915f;
+  /* Marrón más profundo para fondos de foto y footer. */
+  --ink: #24150e;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    background: var(--background);
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+    border-radius: 9999px;
+  }
+}
+
+/* Títulos: Bevan en mayúsculas con tracking suave. */
+@utility font-display {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  line-height: 0.95;
+}
+
+/* Sobretítulos de sección. */
+@utility eyebrow {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+}
+
+@utility text-balance {
+  text-wrap: balance;
+}
+@utility text-pretty {
+  text-wrap: pretty;
+}
+
+.dot-pattern {
+  background-image: radial-gradient(circle at 1px 1px, rgb(67 40 28 / 0.1) 1px, transparent 0);
+  background-size: 22px 22px;
+}
+
+/* Brillo cobre que recorre los botones píldora al pasar el mouse. */
+.pill-sheen {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.pill-sheen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(100deg, transparent 30%, color-mix(in srgb, var(--accent) 55%, transparent) 50%, transparent 70%);
+  background-size: 250% 100%;
+  background-position: 120% 0;
+  transition: background-position 700ms ease-out;
+}
+.pill-sheen:hover::after {
+  background-position: -20% 0;
+}
+
+.scrollbar-hide {
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+::selection {
+  background: oklch(0.48 0.14 32 / 0.2);
+}
+
+/* Lenis */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* Elementos que GSAP revela: visibles por defecto si no hay JS o hay movimiento reducido. */
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-reveal] {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pill-sheen::after {
+    transition: none;
+  }
+}
