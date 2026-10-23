@@ -63,7 +63,7 @@ export function Hero() {
             <p data-hero-side className="eyebrow hidden w-36 text-right text-primary-foreground/80 md:block">
               Cocina para compartir
             </p>
-            <h1 id="hero-title" className="font-display text-center text-[clamp(3rem,13vw,9.5rem)] leading-[0.9]">
+            <h1 id="hero-title" className="font-display whitespace-nowrap text-center text-[clamp(2.2rem,6.5vw,5rem)] leading-[0.9]">
               <span className="-mt-[0.18em] block overflow-hidden pb-[0.06em] pt-[0.18em]">
                 <span data-hero-line className="block">
                   Lo bueno
