@@ -79,33 +79,7 @@ export function SiteHeader() {
           </ul>
         </nav>
 
-        {/* Selector central Salón / Delivery */}
-        <div
-          className={cn(
-            'mx-auto hidden items-center rounded-full p-1 text-xs font-semibold md:flex',
-            light ? 'bg-primary-foreground/15 backdrop-blur-sm' : 'bg-muted',
-          )}
-        >
-          <a
-            href="#reservas"
-            className={cn(
-              'rounded-full px-5 py-2 transition-colors',
-              light ? 'bg-primary-foreground text-primary' : 'bg-primary text-primary-foreground',
-            )}
-          >
-            Salón
-          </a>
-          <a
-            href={whatsappLink(orderText)}
-            target="_blank"
-            rel="noreferrer"
-            className="rounded-full px-5 py-2 opacity-80 transition-opacity hover:opacity-100"
-          >
-            Delivery
-          </a>
-        </div>
-
-        <div className="ml-auto flex items-center gap-2 md:ml-0">
+        <div className="ml-auto flex items-center gap-2">
           <a
             href={site.cartaUrl}
             target="_blank"

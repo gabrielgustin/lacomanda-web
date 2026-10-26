@@ -1,41 +1,37 @@
 import Image from 'next/image'
-import { ArrowRight } from 'lucide-react'
-import { PillLink, SplitTitle } from '@/components/ui'
+import { SplitTitle } from '@/components/ui'
 
 // Primer panel que se apila sobre el hero.
 export function About() {
   return (
-    <section id="nosotros" aria-labelledby="nosotros-title" className="relative z-10 -mt-6 rounded-t-3xl bg-background pt-5 md:pt-8">
-      <div className="mx-auto max-w-[90rem] px-5 md:px-8">
-        <div data-clip className="relative h-[78svh] min-h-[520px] overflow-hidden rounded-3xl bg-ink text-primary-foreground">
+    <section id="nosotros" aria-labelledby="nosotros-title" className="relative z-10 bg-background">
+      <div className="mx-auto grid max-w-[90rem] items-stretch lg:grid-cols-[minmax(0,6fr)_minmax(0,5fr)]">
+        <div data-clip className="relative min-h-[420px] overflow-hidden bg-ink lg:min-h-[640px]">
           <Image
             data-parallax="8"
             src="/fotos/burgers.webp"
             alt="Burger con papas fritas sobre una mesa de madera de La Comanda"
             fill
-            sizes="(min-width: 1440px) 1376px, 100vw"
+            sizes="(min-width: 1440px) 720px, (min-width: 1024px) 55vw, 100vw"
             className="scale-110 object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-ink/85 via-ink/40 to-transparent" />
-          <div className="relative flex h-full flex-col justify-between p-6 md:p-12">
-            <div className="max-w-xl">
-              <p className="eyebrow mb-4 text-accent">Nosotros</p>
-              <SplitTitle
-                id="nosotros-title"
-                lines={['Hecho para', 'compartir']}
-                className="text-[clamp(2.4rem,6vw,4.75rem)]"
-              />
-              <p data-reveal className="mt-5 max-w-md text-sm leading-relaxed text-primary-foreground/85 md:text-base">
-                Cocinamos lo que nos gusta comer: porciones generosas, salsas caseras, carnes a la plancha y
-                masa que leva sin apuro. Acá no hay protocolo, hay sobremesa.
-              </p>
-            </div>
-            <div data-reveal>
-              <PillLink href="#historia" variant="cream">
-                Conocé nuestra historia <ArrowRight className="size-4" aria-hidden="true" />
-              </PillLink>
-            </div>
-          </div>
+        </div>
+        <div className="flex flex-col justify-center gap-8 px-5 py-16 md:px-12 lg:py-24">
+          <SplitTitle
+            id="nosotros-title"
+            lines={['Acá no hay', 'protocolo,', 'hay sobremesa']}
+            className="text-[clamp(2.2rem,5.2vw,4.75rem)] text-primary"
+          />
+          <p className="max-w-md text-base leading-relaxed text-muted-foreground text-pretty">
+            Cocinamos lo que nos gusta comer: porciones generosas, salsas caseras, carnes a la plancha y masa que
+            leva sin apuro. La comida llega al centro y cada uno se sirve lo que quiere.
+          </p>
+          <a
+            href="#historia"
+            className="w-fit rounded-full font-semibold text-primary underline decoration-accent decoration-2 underline-offset-8 hover:decoration-primary"
+          >
+            Conocé nuestra historia
+          </a>
         </div>
       </div>
     </section>

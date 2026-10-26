@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { ArrowUpRight } from 'lucide-react'
-import { Eyebrow, PillLink, SplitTitle } from '@/components/ui'
+import { PillLink, SplitTitle } from '@/components/ui'
 import { itemsById } from '@/lib/menu-data'
 import { formatPrice } from '@/lib/format'
 import { site } from '@/lib/site'
@@ -23,42 +23,41 @@ const photos = [
 // Columna izquierda fija con la lista; a la derecha las fotos pasan mientras scrolleás.
 export function Bar() {
   return (
-    <section id="barra" aria-labelledby="barra-title" className="relative z-10 bg-background py-20 md:py-28">
-      <div className="mx-auto grid max-w-[90rem] gap-10 px-5 md:px-8 lg:grid-cols-2 lg:gap-16">
-        <div className="lg:sticky lg:top-28 lg:self-start">
-          <Eyebrow className="mb-4">La barra</Eyebrow>
+    <section id="barra" aria-labelledby="barra-title" className="relative z-10 bg-background">
+      <div className="grid lg:grid-cols-2">
+        <div className="px-5 py-20 md:px-8 md:py-28 lg:sticky lg:top-16 lg:self-start lg:pl-[max(2rem,calc((100vw-90rem)/2+2rem))] lg:pr-12">
           <SplitTitle
             id="barra-title"
             lines={['Bien fría,', 'como tiene', 'que ser']}
-            className="text-[clamp(2.4rem,5.5vw,4.5rem)] text-primary"
+            className="text-[clamp(2.8rem,6.4vw,5.5rem)] text-primary"
           />
-          <p data-reveal className="mt-5 max-w-md text-sm leading-relaxed text-muted-foreground md:text-base">
+          <p data-reveal className="mt-6 max-w-md text-base leading-relaxed text-muted-foreground text-pretty">
             Chopp tirado, litros para la mesa y tragos de siempre bien hechos. Para brindar por algo o por nada.
           </p>
-          <div data-reveal className="mt-6">
-            <PillLink href={site.cartaUrl} target="_blank" rel="noreferrer">
-              Ver bebidas <ArrowUpRight className="size-4" aria-hidden="true" />
-            </PillLink>
-          </div>
-          <ul className="mt-10 border-t border-border">
+          {/* Pizarra: nombre, puntos guía y precio, como en la barra. */}
+          <ul className="mt-10">
             {drinkIds.map((id) => {
               const item = itemsById[id]
               return (
-                <li key={id} data-reveal className="flex items-baseline gap-4 border-b border-border py-4">
-                  <div className="flex-1">
-                    <p className="font-display text-base text-foreground">{item.name.es}</p>
-                    <p className="mt-1 text-[13px] text-muted-foreground">{item.description.es}</p>
+                <li key={id} data-reveal className="py-3">
+                  <div className="flex items-baseline gap-3">
+                    <p className="font-display text-xl text-primary">{item.name.es}</p>
+                    <span className="mb-1 flex-1 border-b-2 border-dotted border-primary/35" aria-hidden="true" />
+                    <p className="font-display text-lg text-primary">{formatPrice(item.price)}</p>
                   </div>
-                  <p className="font-display text-sm text-primary">{formatPrice(item.price)}</p>
+                  <p className="mt-0.5 text-sm text-muted-foreground">{item.description.es}</p>
                 </li>
               )
             })}
           </ul>
+          <PillLink data-reveal href={site.cartaUrl} target="_blank" rel="noreferrer" className="mt-8">
+            Ver todas las bebidas <ArrowUpRight className="size-4" aria-hidden="true" />
+          </PillLink>
         </div>
 
-        <div className="grid gap-5">
+        <div>
           {photos.map((photo) => (
-            <div key={photo.src} data-clip className="relative aspect-[4/5] overflow-hidden rounded-3xl bg-ink lg:aspect-[5/6]">
+            <div key={photo.src} data-clip className="relative h-[75svh] overflow-hidden bg-ink lg:h-svh">
               <Image
                 data-parallax="10"
                 src={photo.src}

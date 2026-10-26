@@ -2,9 +2,22 @@
 
 import { useRef } from 'react'
 import Image from 'next/image'
-import { ArrowDown, Star } from 'lucide-react'
 import { gsap, useGSAP, prefersReducedMotion } from '@/lib/gsap'
+import { PillLink } from '@/components/ui'
+import { itemsById } from '@/lib/menu-data'
+import { formatPrice } from '@/lib/format'
 import { site } from '@/lib/site'
+
+// Pedido de ejemplo que se imprime en el ticket del hero (precios de la carta).
+const order = [
+  { id: 'entradas-papas-jodidas', qty: 1 },
+  { id: 'pizzas-la-comanda', qty: 1 },
+  { id: 'burgers-de-costillas', qty: 2 },
+  { id: 'cervezas-chopp-pinta', qty: 4 },
+]
+  .filter((line) => itemsById[line.id])
+  .map((line) => ({ ...line, item: itemsById[line.id] }))
+const orderTotal = order.reduce((sum, line) => sum + line.item.price * line.qty, 0)
 
 export function Hero() {
   const root = useRef<HTMLElement>(null)
@@ -12,23 +25,27 @@ export function Hero() {
   useGSAP(
     () => {
       if (prefersReducedMotion()) return
-      // Entrada: la foto se acerca y el título sube línea por línea.
+      // Único momento orquestado: el título sube y el ticket se imprime de arriba hacia abajo.
       const intro = gsap.timeline({ defaults: { ease: 'power4.out' } })
       intro
-        .from('[data-hero-img]', { scale: 1.25, duration: 2.2, ease: 'power3.out' })
+        .from('[data-hero-img]', { scale: 1.2, duration: 2.2, ease: 'power3.out' })
         .from('[data-hero-line]', { yPercent: 110, duration: 1.2, stagger: 0.12 }, 0.2)
-        .from('[data-hero-side]', { opacity: 0, y: 12, duration: 0.9, stagger: 0.1 }, 0.7)
-        .from('[data-hero-foot]', { opacity: 0, y: 24, duration: 1, stagger: 0.1 }, 0.9)
+        .from('[data-hero-foot]', { opacity: 0, y: 20, duration: 0.9, stagger: 0.1 }, 0.7)
+        .from(
+          '[data-ticket]',
+          { clipPath: 'inset(0 0 100% 0)', y: -24, duration: 2, ease: 'steps(22)' },
+          0.9,
+        )
+        .from('[data-stamp]', { scale: 2.4, opacity: 0, rotate: -24, duration: 0.35, ease: 'power4.in' }, '>-0.1')
 
-      // Al bajar, el hero queda fijo, se oscurece y el panel siguiente se apila encima.
       gsap.to('[data-hero-content]', {
-        yPercent: -18,
+        yPercent: -14,
         opacity: 0,
         ease: 'none',
         scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom top', scrub: true },
       })
       gsap.to('[data-hero-img]', {
-        scale: 1.12,
+        scale: 1.1,
         ease: 'none',
         scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom top', scrub: true },
       })
@@ -41,7 +58,7 @@ export function Hero() {
       id="inicio"
       ref={root}
       aria-labelledby="hero-title"
-      className="sticky top-0 z-0 flex h-svh min-h-[600px] flex-col overflow-hidden bg-ink text-primary-foreground"
+      className="relative z-0 flex min-h-svh flex-col overflow-hidden bg-ink text-primary-foreground lg:sticky lg:top-0 lg:h-svh lg:min-h-[640px]"
     >
       <div className="absolute inset-0" aria-hidden="true">
         <Image
@@ -53,71 +70,74 @@ export function Hero() {
           sizes="100vw"
           className="object-cover object-center"
         />
-        <div className="absolute inset-0 bg-ink/55" />
-        <div className="absolute inset-0 bg-gradient-to-b from-ink/70 via-transparent to-ink/85" />
+        <div className="absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/55 to-ink/20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-transparent to-ink/50" />
       </div>
 
-      <div data-hero-content className="relative flex flex-1 flex-col">
-        <div className="flex flex-1 items-center justify-center px-5">
-          <div className="flex w-full max-w-6xl items-center justify-center gap-6 md:gap-10">
-            <p data-hero-side className="eyebrow hidden w-36 text-right text-primary-foreground/80 md:block">
-              Cocina para compartir
-            </p>
-            <h1 id="hero-title" className="font-display whitespace-nowrap text-center text-[clamp(2.2rem,6.5vw,5rem)] leading-[0.9]">
-              <span className="-mt-[0.18em] block overflow-hidden pb-[0.06em] pt-[0.18em]">
-                <span data-hero-line className="block">
-                  Lo bueno
-                </span>
+      <div
+        data-hero-content
+        className="relative mx-auto flex w-full max-w-[90rem] flex-1 flex-col justify-end gap-10 px-5 pb-10 pt-28 md:px-8 md:pb-14 lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end lg:gap-12"
+      >
+        <div>
+          <h1
+            id="hero-title"
+            className="font-display text-[clamp(3.4rem,10.5vw,9.5rem)] leading-[0.88]"
+            aria-label="Lo bueno se comparte"
+          >
+            <span className="-mb-[0.1em] -mt-[0.18em] block overflow-hidden pb-[0.2em] pt-[0.18em]" aria-hidden="true">
+              <span data-hero-line className="block">
+                Lo bueno
               </span>
-              <span className="-mt-[0.18em] block overflow-hidden pb-[0.06em] pt-[0.18em]">
-                <span data-hero-line className="block">
-                  se comparte
-                </span>
+            </span>
+            <span className="-mb-[0.1em] -mt-[0.18em] block overflow-hidden pb-[0.2em] pt-[0.18em]" aria-hidden="true">
+              <span data-hero-line className="block text-accent">
+                se comparte
               </span>
-            </h1>
-            <p data-hero-side className="eyebrow hidden w-36 text-primary-foreground/80 md:block">
-              Desde {site.since}
-            </p>
+            </span>
+          </h1>
+          <p data-hero-foot className="mt-8 max-w-md text-base leading-relaxed text-primary-foreground/90 text-pretty">
+            Mesas largas, burgers que chorrean, pizzas al horno y cerveza bien fría. Desde {site.since} se pide al
+            centro y nadie mira el reloj.
+          </p>
+          <div data-hero-foot className="mt-7 flex flex-wrap gap-3">
+            <PillLink href="#reservas" variant="cream" className="h-12 px-7">
+              Reservá tu mesa
+            </PillLink>
+            <PillLink href="#platos" variant="outline-light" className="h-12 px-7">
+              Mirá los platos
+            </PillLink>
           </div>
         </div>
 
-        <div className="mx-auto flex w-full max-w-[90rem] flex-col gap-6 px-5 pb-8 md:flex-row md:items-end md:justify-between md:px-8 md:pb-10">
-          <p data-hero-foot className="max-w-sm text-sm leading-relaxed text-primary-foreground/85 text-pretty">
-            En La Comanda la mesa siempre es larga: burgers que chorrean, pizzas al horno, bifes como en casa y
-            cerveza bien fría. Vení con hambre y con amigos.
-          </p>
-
-          <div data-hero-foot className="flex items-center gap-4">
-            {site.rating ? (
-              <a
-                href={site.mapsUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-4 rounded-2xl bg-card px-5 py-4 text-foreground shadow-md"
-              >
-                <span className="font-display text-4xl text-primary">{site.rating.score}</span>
-                <span className="text-xs leading-tight">
-                  <span className="mb-1 flex gap-0.5 text-accent" aria-hidden="true">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} className="size-3.5 fill-current" />
-                    ))}
-                  </span>
-                  <span className="font-semibold">Excelente en Google</span>
-                  <br />
-                  <span className="text-muted-foreground">{site.rating.reviews} reseñas</span>
-                </span>
-              </a>
-            ) : (
-              <a
-                href="#platos"
-                className="inline-flex items-center gap-3 rounded-full border border-primary-foreground/40 py-2 pl-5 pr-2 text-xs font-semibold transition-colors hover:bg-primary-foreground hover:text-primary"
-              >
-                ¿Qué tenés ganas de comer?
-                <span className="inline-flex size-8 items-center justify-center rounded-full bg-primary-foreground text-primary">
-                  <ArrowDown className="size-4" aria-hidden="true" />
-                </span>
-              </a>
-            )}
+        {/* El ticket es decorativo: lo que importa ya está dicho en el título y el texto. */}
+        <div aria-hidden="true" className="ticket-shadow w-full max-w-[19rem] self-end md:max-w-[20rem] lg:rotate-[2.5deg]">
+          <div data-ticket className="ticket px-5 pt-6 text-[13px] leading-snug">
+            <p className="font-display text-center text-2xl">La Comanda</p>
+            <p className="mt-1 flex justify-between font-bold">
+              <span>Mesa 12</span>
+              <span>6 personas</span>
+            </p>
+            <div className="ticket-rule my-3" />
+            <ul className="space-y-1.5">
+              {order.map((line) => (
+                <li key={line.id} className="flex gap-2">
+                  <span className="w-4 shrink-0">{line.qty}</span>
+                  <span className="flex-1 uppercase">{line.item.name.es}</span>
+                  <span className="tabular-nums">{formatPrice(line.item.price * line.qty)}</span>
+                </li>
+              ))}
+            </ul>
+            <div className="ticket-rule my-3" />
+            <p className="flex justify-between text-base font-bold">
+              <span>Total</span>
+              <span className="tabular-nums">{formatPrice(orderTotal)}</span>
+            </p>
+            <p className="mt-3 text-center text-xs">Para compartir entre todos</p>
+            <div className="mt-3 flex justify-center">
+              <span data-stamp className="stamp inline-block -rotate-6 text-lg">
+                Se comparte
+              </span>
+            </div>
           </div>
         </div>
       </div>

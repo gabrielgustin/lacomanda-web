@@ -18,30 +18,29 @@ export function Story() {
 
         <div className="relative mx-auto flex min-h-svh max-w-[90rem] flex-col justify-between gap-10 px-5 py-20 md:px-8 md:py-28">
           <div>
-            <p className="eyebrow mb-4 text-accent">Nuestra historia</p>
             <SplitTitle
               id="historia-title"
               lines={['Una mesa', 'que nunca', 'se levanta']}
-              className="text-[clamp(2.6rem,8vw,6.5rem)]"
+              className="text-[clamp(3rem,9vw,8rem)]"
             />
           </div>
           <div className="grid gap-6 md:grid-cols-2 md:items-end">
-            <p data-reveal className="max-w-md text-sm leading-relaxed text-primary-foreground/85 md:text-base">
+            <p className="max-w-md text-base leading-relaxed text-primary-foreground/85 text-pretty">
               La Comanda nació en {site.since} con una idea simple: un lugar donde la comida se pida al centro, las
               charlas se estiren y nadie mire el reloj. Desde entonces seguimos igual: cocina casera, ingredientes
               que conocemos y una barra que siempre tiene algo frío para vos.
             </p>
-            <dl data-reveal className="grid grid-cols-3 gap-4 border-t border-primary-foreground/20 pt-6 md:justify-self-end">
+            <dl className="grid grid-cols-3 gap-4 border-t border-primary-foreground/20 pt-6 md:justify-self-end">
               <div>
-                <dt className="eyebrow text-primary-foreground/70">Desde</dt>
+                <dt className="text-sm text-primary-foreground/70">Desde</dt>
                 <dd className="font-display mt-2 text-lg sm:text-2xl md:text-3xl">{site.since}</dd>
               </div>
               <div>
-                <dt className="eyebrow text-primary-foreground/70">Platos</dt>
+                <dt className="text-sm text-primary-foreground/70">Platos</dt>
                 <dd className="font-display mt-2 text-lg sm:text-2xl md:text-3xl">+50</dd>
               </div>
               <div>
-                <dt className="eyebrow text-primary-foreground/70">Salsas</dt>
+                <dt className="text-sm text-primary-foreground/70">Salsas</dt>
                 <dd className="font-display mt-2 text-lg sm:text-2xl md:text-3xl">Caseras</dd>
               </div>
             </dl>

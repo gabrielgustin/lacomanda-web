@@ -1,9 +1,8 @@
 'use client'
 
 import { useRef } from 'react'
-import { Star } from 'lucide-react'
 import { gsap, useGSAP, prefersReducedMotion } from '@/lib/gsap'
-import { Eyebrow, SplitTitle } from '@/components/ui'
+import { SplitTitle } from '@/components/ui'
 import { site } from '@/lib/site'
 
 // TODO: textos de ejemplo. Reemplazar por reseñas reales de clientes (con su permiso) antes de publicar.
@@ -45,42 +44,39 @@ export function Reviews() {
   )
 
   return (
-    <section ref={root} aria-labelledby="resenas-title" className="relative z-10 flex flex-col justify-center bg-muted py-20 lg:min-h-svh">
+    <section ref={root} aria-labelledby="resenas-title" className="relative z-10 flex flex-col justify-center overflow-x-clip bg-background py-20 lg:min-h-svh">
       <div className="mx-auto w-full max-w-[90rem] px-5 md:px-8">
-        <Eyebrow className="mb-4">Reseñas</Eyebrow>
         <SplitTitle
           id="resenas-title"
           lines={['Lo que dicen', 'en la mesa']}
-          className="text-[clamp(2.2rem,5vw,4rem)] text-primary"
+          className="text-[clamp(2.6rem,6vw,5rem)] text-primary"
         />
       </div>
 
       <ul
         ref={track}
-        className="scrollbar-hide mt-10 flex snap-x snap-mandatory gap-5 overflow-x-auto px-5 md:px-8 lg:snap-none lg:overflow-visible"
+        className="scrollbar-hide mt-10 flex snap-x snap-mandatory gap-6 overflow-x-auto px-5 pb-10 pt-4 md:px-8 lg:snap-none lg:overflow-visible"
       >
         {reviews.map((review, index) => (
-          <li
-            key={index}
-            className="flex min-h-[300px] w-[82vw] shrink-0 snap-start flex-col justify-between rounded-3xl bg-card p-6 ring-1 ring-border sm:w-[380px] md:p-8 lg:w-[420px]"
-          >
-            <div>
-              <div className="mb-5 flex gap-0.5 text-accent" aria-label="5 de 5 estrellas">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star key={i} className="size-4 fill-current" aria-hidden="true" />
-                ))}
+          <li key={index} className="w-[82vw] shrink-0 snap-start sm:w-[360px] lg:w-[400px]" style={{ rotate: `${[-1.5, 1, -0.5, 1.5, -1][index % 5]}deg` }}>
+            <div className="ticket-shadow">
+              <div className="ticket flex min-h-[320px] flex-col justify-between px-6 pt-6 md:px-7">
+                <div>
+                  <p className="flex justify-between text-xs font-bold">
+                    <span>Mesa {String(index * 3 + 4).padStart(2, '0')}</span>
+                    <span>5 de 5</span>
+                  </p>
+                  <div className="ticket-rule my-3" />
+                  <blockquote className="font-display text-xl leading-snug text-primary md:text-2xl">
+                    &ldquo;{review.quote}&rdquo;
+                  </blockquote>
+                </div>
+                <p className="mt-6 text-xs">{review.author}</p>
               </div>
-              <blockquote className="font-display text-xl leading-snug text-primary md:text-2xl">
-                &ldquo;{review.quote}&rdquo;
-              </blockquote>
             </div>
-            <p className="mt-6 border-t border-border pt-4 text-xs text-muted-foreground">
-              <span className="eyebrow block text-[9px] text-muted-foreground">Autor</span>
-              {review.author}
-            </p>
           </li>
         ))}
-        <li className="flex w-[82vw] shrink-0 snap-start flex-col items-center justify-center rounded-3xl border border-dashed border-primary/30 p-8 text-center sm:w-[380px]">
+        <li className="flex w-[82vw] shrink-0 snap-start flex-col items-center justify-center border-2 border-dashed border-primary/30 p-8 text-center sm:w-[380px]">
           <p className="max-w-[16rem] text-sm text-muted-foreground">¿Ya viniste? Contanos cómo te fue.</p>
           <a
             href={site.reviewUrl}

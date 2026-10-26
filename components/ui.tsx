@@ -1,4 +1,4 @@
-import type { ComponentProps, ReactNode } from 'react'
+import type { ComponentProps } from 'react'
 import { cn } from '@/lib/utils'
 
 type Variant = 'primary' | 'cream' | 'outline' | 'outline-light'
@@ -32,10 +32,6 @@ export function PillLink({
   )
 }
 
-export function Eyebrow({ children, className }: { children: ReactNode; className?: string }) {
-  return <p className={cn('eyebrow text-primary', className)}>{children}</p>
-}
-
 // Título que entra línea por línea (cada línea sube desde abajo de una máscara).
 export function SplitTitle({
   lines,
@@ -51,7 +47,8 @@ export function SplitTitle({
   return (
     <Tag id={id} className={cn('font-display', className)} data-split aria-label={lines.join(' ')}>
       {lines.map((line) => (
-        <span key={line} className="-mt-[0.18em] block overflow-hidden pb-[0.08em] pt-[0.18em]" aria-hidden="true">
+        // El relleno inferior deja pasar las colas de g, p, y de la minúscula.
+        <span key={line} className="-mb-[0.1em] -mt-[0.18em] block overflow-hidden pb-[0.2em] pt-[0.18em]" aria-hidden="true">
           <span className="block" data-split-line>
             {line}
           </span>
@@ -59,8 +56,4 @@ export function SplitTitle({
       ))}
     </Tag>
   )
-}
-
-export function Container({ className, ...props }: ComponentProps<'div'>) {
-  return <div className={cn('mx-auto w-full max-w-6xl px-5', className)} {...props} />
 }

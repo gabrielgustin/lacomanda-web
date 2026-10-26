@@ -1,10 +1,11 @@
-import { Bevan, DM_Sans } from 'next/font/google'
+import { Bevan, Courier_Prime, DM_Sans } from 'next/font/google'
 import type { Metadata, Viewport } from 'next'
 import { SmoothScroll } from '@/components/smooth-scroll'
 import './globals.css'
 
 const bevan = Bevan({ subsets: ['latin'], weight: '400', variable: '--font-bevan' })
 const dmSans = DM_Sans({ subsets: ['latin'], variable: '--font-dm-sans' })
+const courier = Courier_Prime({ subsets: ['latin'], weight: ['400', '700'], variable: '--font-courier' })
 
 const title = 'La Comanda | Bodegón, burgers, pizzas y cerveza bien fría'
 const description =
@@ -34,7 +35,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="es" className={`${bevan.variable} ${dmSans.variable}`} suppressHydrationWarning>
+    <html lang="es" className={`${bevan.variable} ${dmSans.variable} ${courier.variable}`} suppressHydrationWarning>
       <head>
         {/* Marca que hay JS antes de pintar, así los elementos animados arrancan ocultos sin parpadeo. */}
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
