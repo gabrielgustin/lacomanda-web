@@ -3,23 +3,38 @@
 import { useState, type FormEvent } from 'react'
 import { Clock, MapPin, Send } from 'lucide-react'
 import { SplitTitle } from '@/components/ui'
+import { DateField, ListField, type FieldOption } from '@/components/fields'
 import { site, whatsappLink } from '@/lib/site'
 
 const labelClass = 'block text-xs font-bold'
-const fieldClass =
-  'mt-1 h-11 w-full border-0 border-b-2 border-dashed border-ink/50 bg-transparent px-0 text-base text-ink outline-none transition-colors placeholder:text-ink/45 focus:border-solid focus:border-primary focus-visible:ring-0'
+const nameClass =
+  'mt-1 h-11 w-full border-0 border-b-2 border-dashed border-ink/50 bg-transparent px-0 text-base text-ink outline-none transition-colors placeholder:text-ink/45 hover:bg-ink/5 focus:bg-ink/5 focus-visible:rounded-none'
+
+// Turnos cada media hora: mediodía (domingos) y noche. Se confirma por WhatsApp.
+const slots = (from: number, to: number, group: string): FieldOption[] =>
+  Array.from({ length: Math.floor((to - from) * 2) + 1 }, (_, i) => {
+    const t = (from + i / 2) % 24
+    const label = `${pad(Math.floor(t))}:${t % 1 ? '30' : '00'}`
+    return { value: label, label, group }
+  })
+const pad = (n: number) => String(n).padStart(2, '0')
+const timeOptions = [...slots(12, 15.5, 'Mediodía'), ...slots(19.5, 25.5, 'Noche')]
+const peopleOptions: FieldOption[] = [...Array.from({ length: 10 }, (_, i) => String(i + 1)), 'Más de 10'].map((n) => ({
+  value: n,
+  label: n,
+}))
 
 // La reserva se arma como mensaje de WhatsApp: sin backend y el local confirma por chat.
 export function Reservations() {
   const [error, setError] = useState('')
+  const [date, setDate] = useState('')
+  const [time, setTime] = useState('')
+  const [people, setPeople] = useState('2')
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const data = new FormData(event.currentTarget)
     const name = String(data.get('nombre') || '').trim()
-    const date = String(data.get('fecha') || '')
-    const time = String(data.get('hora') || '')
-    const people = String(data.get('personas') || '')
     if (!name || !date || !time) {
       setError('Completá tu nombre, la fecha y la hora.')
       return
@@ -29,8 +44,6 @@ export function Reservations() {
     const text = `¡Hola La Comanda! Quiero reservar una mesa.\n\nNombre: ${name}\nDía: ${d}/${m}/${y}\nHora: ${time}\nPersonas: ${people}`
     window.open(whatsappLink(text), '_blank', 'noopener')
   }
-
-  const today = new Date().toISOString().slice(0, 10)
 
   return (
     <section id="reservas" aria-labelledby="reservas-title" className="relative z-10 bg-muted py-20 md:py-28">
@@ -62,7 +75,13 @@ export function Reservations() {
                 {site.hours.map((row) => (
                   <div key={row.days} className="contents">
                     <dt className="font-semibold">{row.days}</dt>
-                    <dd className="text-muted-foreground">{row.time}</dd>
+                    <dd className="text-muted-foreground">
+                      {row.time.split(' · ').map((slot) => (
+                        <span key={slot} className="block">
+                          {slot}
+                        </span>
+                      ))}
+                    </dd>
                   </div>
                 ))}
               </dl>
@@ -83,28 +102,13 @@ export function Reservations() {
             <div className="space-y-5">
               <label className="block">
                 <span className={labelClass}>Nombre</span>
-                <input name="nombre" autoComplete="name" required placeholder="¿A nombre de quién?" className={fieldClass} />
+                <input name="nombre" autoComplete="name" required placeholder="¿A nombre de quién?" className={nameClass} />
               </label>
               <div className="grid gap-5 sm:grid-cols-2">
-                <label className="block">
-                  <span className={labelClass}>Día</span>
-                  <input name="fecha" type="date" min={today} required className={fieldClass} />
-                </label>
-                <label className="block">
-                  <span className={labelClass}>Hora</span>
-                  <input name="hora" type="time" required className={fieldClass} />
-                </label>
+                <DateField label="Día" value={date} onChange={setDate} />
+                <ListField label="Hora" value={time} onChange={setTime} options={timeOptions} placeholder="Elegí una hora" icon="clock" />
               </div>
-              <label className="block">
-                <span className={labelClass}>Personas</span>
-                <select name="personas" defaultValue="2" className={fieldClass}>
-                  {['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Más de 10'].map((n) => (
-                    <option key={n} value={n}>
-                      {n}
-                    </option>
-                  ))}
-                </select>
-              </label>
+              <ListField label="Personas" value={people} onChange={setPeople} options={peopleOptions} placeholder="¿Cuántos son?" />
             </div>
             <div className="ticket-rule my-5" />
             {error && (

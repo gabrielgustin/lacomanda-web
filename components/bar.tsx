@@ -1,31 +1,23 @@
 import Image from 'next/image'
 import { ArrowUpRight } from 'lucide-react'
 import { PillLink, SplitTitle } from '@/components/ui'
-import { itemsById } from '@/lib/menu-data'
-import { formatPrice } from '@/lib/format'
 import { site } from '@/lib/site'
+import { cn } from '@/lib/utils'
 
-const drinkIds = [
-  'bebidas-gin-tonic',
-  'bebidas-fernet-branca-con-coca',
-  'bebidas-negroni',
-  'bebidas-mojito',
-  'cervezas-chopp-pinta',
-  'cervezas-imperial-ipa-1-lt',
-].filter((id) => itemsById[id])
-
+// `focus` encuadra la foto cuando el recorte es más ancho que alto.
 const photos = [
-  { src: '/fotos/cervezas.webp', alt: 'Chopp de cerveza rubia junto a una botella' },
-  { src: '/fotos/bebidas.webp', alt: 'Mojito y gin tonic con frutos rojos' },
-  { src: '/fotos/infantil.webp', alt: 'Mesa junto a la ventana con burger y papas' },
+  { src: '/fotos/cervezas.webp', alt: 'Chopp de cerveza rubia junto a una botella', focus: 'object-center' },
+  { src: '/fotos/bebidas.webp', alt: 'Mojito y gin tonic con frutos rojos', focus: 'object-center' },
+  // Foto de Gian Tripodoro en Pexels (licencia libre de Pexels). El vaso está en la parte alta de la foto.
+  { src: '/fotos/barra-fernet.webp', alt: 'Vaso de fernet con coca y hielo sobre la barra', focus: 'object-[50%_30%]' },
 ]
 
-// Columna izquierda fija con la lista; a la derecha las fotos pasan mientras scrolleás.
+// Columna izquierda fija con el título; a la derecha las fotos pasan mientras scrolleás.
 export function Bar() {
   return (
     <section id="barra" aria-labelledby="barra-title" className="relative z-10 bg-background">
       <div className="grid lg:grid-cols-2">
-        <div className="px-5 py-20 md:px-8 md:py-28 lg:sticky lg:top-16 lg:self-start lg:pl-[max(2rem,calc((100vw-90rem)/2+2rem))] lg:pr-12">
+        <div className="px-5 py-20 md:px-8 md:py-28 lg:sticky lg:top-0 lg:flex lg:h-svh lg:flex-col lg:justify-center lg:self-start lg:py-0 lg:pl-[max(2rem,calc((100vw-90rem)/2+2rem))] lg:pr-12">
           <SplitTitle
             id="barra-title"
             lines={['Bien fría,', 'como tiene', 'que ser']}
@@ -34,23 +26,7 @@ export function Bar() {
           <p data-reveal className="mt-6 max-w-md text-base leading-relaxed text-muted-foreground text-pretty">
             Chopp tirado, litros para la mesa y tragos de siempre bien hechos. Para brindar por algo o por nada.
           </p>
-          {/* Pizarra: nombre, puntos guía y precio, como en la barra. */}
-          <ul className="mt-10">
-            {drinkIds.map((id) => {
-              const item = itemsById[id]
-              return (
-                <li key={id} data-reveal className="py-3">
-                  <div className="flex items-baseline gap-3">
-                    <p className="font-display text-xl text-primary">{item.name.es}</p>
-                    <span className="mb-1 flex-1 border-b-2 border-dotted border-primary/35" aria-hidden="true" />
-                    <p className="font-display text-lg text-primary">{formatPrice(item.price)}</p>
-                  </div>
-                  <p className="mt-0.5 text-sm text-muted-foreground">{item.description.es}</p>
-                </li>
-              )
-            })}
-          </ul>
-          <PillLink data-reveal href={site.cartaUrl} target="_blank" rel="noreferrer" className="mt-8">
+          <PillLink data-reveal href={site.cartaUrl} target="_blank" rel="noreferrer" className="mt-8 w-fit">
             Ver todas las bebidas <ArrowUpRight className="size-4" aria-hidden="true" />
           </PillLink>
         </div>
@@ -64,7 +40,7 @@ export function Bar() {
                 alt={photo.alt}
                 fill
                 sizes="(min-width: 1024px) 45vw, 100vw"
-                className="scale-115 object-cover"
+                className={cn('scale-115 object-cover', photo.focus)}
               />
             </div>
           ))}

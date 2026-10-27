@@ -4,15 +4,18 @@ import { About } from '@/components/about'
 import { Signature } from '@/components/signature'
 import { Events } from '@/components/events'
 import { Bar } from '@/components/bar'
-import { GiftCard } from '@/components/gift-card'
+import { Promos } from '@/components/promos'
 import { Reviews } from '@/components/reviews'
+import { getGooglePlace } from '@/lib/google-reviews'
 import { Story } from '@/components/story'
 import { Reservations } from '@/components/reservations'
 import { SiteFooter } from '@/components/site-footer'
 import { MobileCta } from '@/components/mobile-cta'
 import { ScrollEffects } from '@/components/scroll-effects'
 
-export default function Home() {
+export default async function Home() {
+  const place = await getGooglePlace()
+
   return (
     <>
       <a
@@ -28,8 +31,8 @@ export default function Home() {
         <Signature />
         <Events />
         <Bar />
-        <GiftCard />
-        <Reviews />
+        <Promos />
+        <Reviews place={place} />
         <Story />
         <Reservations />
       </main>

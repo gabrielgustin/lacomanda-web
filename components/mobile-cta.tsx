@@ -13,7 +13,12 @@ export function MobileCta() {
       const reservas = document.getElementById('reservas')
       const pastHero = window.scrollY > window.innerHeight * 0.9
       const atReservas = reservas ? reservas.getBoundingClientRect().top < window.innerHeight : false
-      setVisible(pastHero && !atReservas)
+      // Mientras una escena fija ocupa la pantalla, la píldora taparía su regla de avance.
+      const onStage = ['nosotros', 'eventos', 'promos'].some((id) => {
+        const scene = document.getElementById(id)?.getBoundingClientRect()
+        return scene ? scene.top < window.innerHeight * 0.5 && scene.bottom > window.innerHeight * 0.5 : false
+      })
+      setVisible(pastHero && !atReservas && !onStage)
     }
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })

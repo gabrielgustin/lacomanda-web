@@ -163,6 +163,21 @@ html.lenis body {
   .js [data-reveal] {
     opacity: 0;
   }
+  /* Mesas largas: antes de que arranque la escena, solo se ve la apertura sobre la primera foto. */
+  .js [data-plan-copy] {
+    opacity: 0;
+  }
+  .js [data-plan] ~ [data-plan] {
+    clip-path: inset(100% 0% 0% 0%);
+  }
+  /* Promos: antes de que arranque la escena, solo el primer ticket está en la pila. */
+  .js [data-promo] ~ [data-promo] {
+    transform: translateY(120vh);
+  }
+  /* El ticket del hero arranca sin papel a la vista; la animación lo imprime. */
+  .js [data-ticket] {
+    clip-path: inset(0% 0% 100% 0%);
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .pill-sheen::after {

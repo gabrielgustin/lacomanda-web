@@ -6,14 +6,13 @@ import { gsap, useGSAP, prefersReducedMotion } from '@/lib/gsap'
 import { PillLink } from '@/components/ui'
 import { itemsById } from '@/lib/menu-data'
 import { formatPrice } from '@/lib/format'
-import { site } from '@/lib/site'
 
 // Pedido de ejemplo que se imprime en el ticket del hero (precios de la carta).
 const order = [
   { id: 'entradas-papas-jodidas', qty: 1 },
   { id: 'pizzas-la-comanda', qty: 1 },
   { id: 'burgers-de-costillas', qty: 2 },
-  { id: 'cervezas-chopp-pinta', qty: 4 },
+  { id: 'cervezas-chopp-stella', qty: 4 },
 ]
   .filter((line) => itemsById[line.id])
   .map((line) => ({ ...line, item: itemsById[line.id] }))
@@ -31,12 +30,20 @@ export function Hero() {
         .from('[data-hero-img]', { scale: 1.2, duration: 2.2, ease: 'power3.out' })
         .from('[data-hero-line]', { yPercent: 110, duration: 1.2, stagger: 0.12 }, 0.2)
         .from('[data-hero-foot]', { opacity: 0, y: 20, duration: 0.9, stagger: 0.1 }, 0.7)
-        .from(
+        // El papel sale de la impresora: se descubre de arriba hacia abajo mientras baja.
+        .fromTo(
           '[data-ticket]',
-          { clipPath: 'inset(0 0 100% 0)', y: -24, duration: 2, ease: 'steps(22)' },
+          { clipPath: 'inset(0% 0% 100% 0%)', y: -32 },
+          { clipPath: 'inset(0% 0% 0% 0%)', y: 0, duration: 1.6, ease: 'power2.inOut' },
           0.9,
         )
-        .from('[data-stamp]', { scale: 2.4, opacity: 0, rotate: -24, duration: 0.35, ease: 'power4.in' }, '>-0.1')
+        // El sello cae y se estampa; la rotación final la pone GSAP (no la clase) para no pisarse.
+        .fromTo(
+          '[data-stamp]',
+          { scale: 2.2, opacity: 0, rotate: -24 },
+          { scale: 1, opacity: 1, rotate: -6, duration: 0.4, ease: 'back.out(2.2)' },
+          '>-0.05',
+        )
 
       gsap.to('[data-hero-content]', {
         yPercent: -14,
@@ -76,12 +83,12 @@ export function Hero() {
 
       <div
         data-hero-content
-        className="relative mx-auto flex w-full max-w-[90rem] flex-1 flex-col justify-end gap-10 px-5 pb-10 pt-28 md:px-8 md:pb-14 lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end lg:gap-12"
+        className="relative mx-auto flex w-full max-w-[90rem] flex-1 flex-col justify-center gap-10 px-5 pb-10 pt-28 md:px-8 md:pb-14 lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:content-center lg:items-start lg:gap-16 lg:pt-24"
       >
         <div>
           <h1
             id="hero-title"
-            className="font-display text-[clamp(3.4rem,10.5vw,9.5rem)] leading-[0.88]"
+            className="font-display text-[clamp(2.8rem,7vw,6.5rem)] leading-[0.9]"
             aria-label="Lo bueno se comparte"
           >
             <span className="-mb-[0.1em] -mt-[0.18em] block overflow-hidden pb-[0.2em] pt-[0.18em]" aria-hidden="true">
@@ -95,11 +102,7 @@ export function Hero() {
               </span>
             </span>
           </h1>
-          <p data-hero-foot className="mt-8 max-w-md text-base leading-relaxed text-primary-foreground/90 text-pretty">
-            Mesas largas, burgers que chorrean, pizzas al horno y cerveza bien fría. Desde {site.since} se pide al
-            centro y nadie mira el reloj.
-          </p>
-          <div data-hero-foot className="mt-7 flex flex-wrap gap-3">
+          <div data-hero-foot className="mt-8 flex flex-wrap gap-3">
             <PillLink href="#reservas" variant="cream" className="h-12 px-7">
               Reservá tu mesa
             </PillLink>
@@ -109,8 +112,8 @@ export function Hero() {
           </div>
         </div>
 
-        {/* El ticket es decorativo: lo que importa ya está dicho en el título y el texto. */}
-        <div aria-hidden="true" className="ticket-shadow w-full max-w-[19rem] self-end md:max-w-[20rem] lg:rotate-[2.5deg]">
+        {/* El ticket es decorativo. En escritorio va al lado del título, alineado arriba; si no entra, abajo y centrado. */}
+        <div aria-hidden="true" className="ticket-shadow w-full max-w-[19rem] self-center md:max-w-[20rem] lg:mt-3 lg:rotate-[2.5deg] lg:self-start">
           <div data-ticket className="ticket px-5 pt-6 text-[13px] leading-snug">
             <p className="font-display text-center text-2xl">La Comanda</p>
             <p className="mt-1 flex justify-between font-bold">
@@ -122,7 +125,7 @@ export function Hero() {
               {order.map((line) => (
                 <li key={line.id} className="flex gap-2">
                   <span className="w-4 shrink-0">{line.qty}</span>
-                  <span className="flex-1 uppercase">{line.item.name.es}</span>
+                  <span className="flex-1 uppercase">{line.item.name}</span>
                   <span className="tabular-nums">{formatPrice(line.item.price * line.qty)}</span>
                 </li>
               ))}
