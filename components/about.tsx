@@ -7,10 +7,13 @@ import { SplitTitle } from '@/components/ui'
 
 // Recorte con fondo transparente: la burger flota sobre la escena.
 const photo = '/fotos/burger-nosotros.png'
+// Proporción de la imagen y alto que ocupa la burger dentro de ella (medido sobre el PNG: 88%).
+const PHOTO_ASPECT = 2560 / 1934
+const BURGER_SHARE = 0.884
 
 // Texto a la izquierda y, a la derecha, la burger con un Ken Burns guiado por el scroll:
-// zoom y paneo lentos, un parallax 2.5D (la burger y el resplandor de atrás se mueven a distinta velocidad)
-// y un golpe tipo impacto. La sección queda fija mientras dura el recorrido.
+// zoom y paneo lentos y un parallax 2.5D (la burger y el resplandor de atrás se mueven a distinta velocidad).
+// La sección queda fija mientras dura el recorrido.
 export function About() {
   const root = useRef<HTMLElement>(null)
 
@@ -19,6 +22,16 @@ export function About() {
       if (prefersReducedMotion()) return
       const q = gsap.utils.selector(root)
       const marker = q('[data-hud-marker]')[0]
+      const stage = q('[data-kb-stage]')[0]
+      const front = q('[data-kb-front]')[0]
+
+      // Zoom máximo que deja la burger entera dentro de la caja: en una caja baja (celular, tablet) la foto
+      // ya llena el alto y el zoom es corto; en una alta puede acercarse más.
+      const maxScale = () => {
+        const pad = parseFloat(getComputedStyle(front).paddingLeft) || 0
+        const photoHeight = Math.min(stage.clientHeight, (stage.clientWidth - pad * 2) / PHOTO_ASPECT)
+        return Math.min(1.18, Math.max(0.95, (0.88 * stage.clientHeight) / (BURGER_SHARE * photoHeight)))
+      }
 
       gsap
         .timeline({
@@ -30,24 +43,21 @@ export function About() {
             scrub: 1,
             pin: true,
             anticipatePin: 1,
+            invalidateOnRefresh: true,
             onUpdate: (self) => {
               marker.style.left = `${self.progress * 100}%`
             },
           },
         })
-        // Burger: se acerca, sube y gira apenas, como una cámara que la rodea.
+        // Burger: se acerca, sube un poco y gira apenas, como una cámara que la rodea.
         .fromTo(
-          '[data-kb-front]',
-          { scale: 0.86, yPercent: 6, rotate: -3 },
-          { scale: 1.18, yPercent: -6, rotate: 2, duration: 4 },
+          front,
+          { scale: () => maxScale() * 0.78, yPercent: 3, rotate: -2 },
+          { scale: () => maxScale(), yPercent: -2, rotate: 1.5, duration: 4 },
           0,
         )
         // Resplandor y sombra: más lentos y hacia el otro lado, así la burger se despega del fondo.
-        .fromTo('[data-kb-back]', { scale: 0.9, yPercent: -4 }, { scale: 1.1, yPercent: 6, duration: 4 }, 0)
-        // Impacto: sacudida corta y un destello.
-        .to('[data-kb-stage]', { keyframes: { x: [0, -12, 10, -6, 3, 0], y: [0, 7, -6, 3, -1, 0] }, duration: 0.5, ease: 'power2.out' }, 2.6)
-        .fromTo('[data-kb-flash]', { opacity: 0 }, { opacity: 0.18, duration: 0.08, yoyo: true, repeat: 1 }, 2.6)
-        .to({}, { duration: 0.6 })
+        .fromTo('[data-kb-back]', { scale: 0.9, yPercent: -3 }, { scale: 1.1, yPercent: 4, duration: 4 }, 0)
     },
     { scope: root },
   )
@@ -77,7 +87,8 @@ export function About() {
         </a>
       </div>
 
-      <div className="relative min-h-0 flex-1 overflow-hidden">
+      {/* El borde de arriba y de abajo se difumina: si algo llegara a tocar el límite, no se corta en recto. */}
+      <div className="relative min-h-0 flex-1 overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,#000_12%,#000_88%,transparent)]">
         <div data-kb-stage className="absolute inset-0">
           <div data-kb-back className="absolute inset-0" aria-hidden="true">
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_55%_50%_at_50%_48%,#7a4220_0%,#3a1f12_45%,transparent_75%)]" />
@@ -90,11 +101,9 @@ export function About() {
             fill
             priority
             sizes="(min-width: 768px) 55vw, 100vw"
-            className="object-contain px-4 drop-shadow-[0_30px_40px_rgb(0_0_0/0.55)] md:px-8"
+            className="object-contain px-4 drop-shadow-[0_30px_40px_rgb(0_0_0/0.55)] will-change-transform md:px-8"
           />
         </div>
-        <div data-kb-flash className="pointer-events-none absolute inset-0 bg-paper opacity-0" />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink via-transparent to-transparent" />
       </div>
 
       {/* Barra de progreso: una regla a todo lo ancho que se va midiendo con el scroll. */}
