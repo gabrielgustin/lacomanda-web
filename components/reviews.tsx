@@ -7,12 +7,51 @@ import { site } from '@/lib/site'
 import { cn } from '@/lib/utils'
 import type { GooglePlace, GoogleReview } from '@/lib/google-reviews'
 
-// Solo para desarrollo, mientras no estén las credenciales de Google: en producción nunca se muestran.
-const examples: GoogleReview[] = [
-  'Las papas jodidas son un peligro: pedimos una para compartir y terminamos pidiendo tres.',
-  'Fuimos al cumple de una amiga, éramos quince y nos atendieron re bien. La pizza La Comanda, top.',
-  'El bife de chorizo vino justo como lo pedí. Chopp bien frío y buena música. Volvemos seguro.',
-].map((text) => ({ author: 'Cliente de ejemplo', rating: 5, text, when: 'Ejemplo' }))
+// Reseñas reales de Google elegidas a mano (texto tal como lo escribió cada persona). Si más adelante se conecta la API
+// de Google Places (GOOGLE_PLACES_API_KEY y GOOGLE_PLACE_ID), las que traiga la API reemplazan a estas.
+// No llevan fecha ni estrellas: Google las muestra como "hace X años" y eso quedaría desactualizado.
+const curated: GoogleReview[] = [
+  {
+    author: 'Florencia Elena Gomez',
+    detail: 'Local Guide · 104 reseñas',
+    text: 'Muy rico el lomo, buena atención. Lugar limpio, tranquilo. Me gusto',
+  },
+  {
+    author: 'Eugenia',
+    detail: 'Local Guide · 390 reseñas',
+    text: 'Excelente atención!! Muy buena la promo de la pizza los domingos.\nMuy ricos los postres.',
+  },
+  {
+    author: 'Eleonora Valvasori',
+    detail: 'Local Guide · 11 reseñas',
+    text: 'Excelentes todos los platos, abundantes, ricos, y precios acordes. Atención muy amable. El baño limpio tiene cambiador cómodo (si hay niños o bebés). Súper!',
+  },
+  {
+    author: 'ceci ceci',
+    detail: 'Local Guide · 21 reseñas',
+    text: 'Muy rico los menúes\nPedimos matambre muy rico, ravioles súper caseros, milanesa.... El Flan también súper casero y ensalada de frutas...\nEl lugar es muy agradable\nSirven rápido\nLa atención es excelente todos muy atentos!',
+  },
+  {
+    author: 'Rosario Concioni',
+    detail: '16 reseñas',
+    text: 'Excelente lugar para ir a almorzar, los menu ejecutivos son abundantes y muy ricos, y el precio es muy razonable! La atención excelente',
+  },
+  {
+    author: 'Juan Manuel Arroyo',
+    detail: 'Local Guide · 9 reseñas',
+    text: 'Hermoso lugar para compartir un lindo momento y desayunar, merendar o cenar algo muy rico.\nTotalmente recomendable!!',
+  },
+  {
+    author: 'Fede Morales Rampulla',
+    detail: 'Local Guide · 180 reseñas',
+    text: 'Muy buena atención y mucho mejor sus sandwiches que está de más decir son abundantes, ricos, tiernos!',
+  },
+  {
+    author: 'Gabriela Valcelli',
+    detail: 'Local Guide · 69 reseñas',
+    text: 'Nos sorprendió este lugar lo rico que se come, encontramos que en el cerro hacen cosas con mollejas de lo que somos fans. Pedimos pizza de molleja, sándwich de mollejas y los sándwiches de entraña terribleeee',
+  },
+].map((review) => ({ ...review, when: 'Reseña de Google' }))
 
 const formatRating = (n: number) => n.toLocaleString('es-AR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
 
@@ -22,7 +61,7 @@ const arrow =
 // Tira horizontal con scroll propio (dedo, trackpad o flechas): no depende del scroll vertical de la página.
 export function Reviews({ place }: { place: GooglePlace | null }) {
   const real = place?.reviews ?? []
-  const reviews = real.length ? real : process.env.NODE_ENV === 'production' ? [] : examples
+  const reviews = real.length ? real : curated
   const mapsUrl = place?.mapsUrl ?? site.mapsUrl
 
   const track = useRef<HTMLUListElement>(null)
@@ -98,10 +137,16 @@ export function Reviews({ place }: { place: GooglePlace | null }) {
                 <div>
                   <p className="flex justify-between gap-4 text-xs font-bold">
                     <span>{review.when}</span>
-                    <span>{review.rating} de 5</span>
+                    {review.rating ? <span>{review.rating} de 5</span> : null}
                   </p>
                   <div className="ticket-rule my-3" />
-                  <blockquote className="font-display line-clamp-[8] text-lg leading-snug text-primary md:text-xl">
+                  <blockquote
+                    className={cn(
+                      'font-display whitespace-pre-line leading-snug text-primary',
+                      real.length > 0 && 'line-clamp-[8]',
+                      review.text.length > 180 ? 'text-base md:text-lg' : 'text-lg md:text-xl',
+                    )}
+                  >
                     &ldquo;{review.text}&rdquo;
                   </blockquote>
                 </div>
@@ -113,7 +158,7 @@ export function Reviews({ place }: { place: GooglePlace | null }) {
                   ) : (
                     <span>{review.author}</span>
                   )}
-                  {real.length > 0 && <span className="shrink-0 opacity-60">Reseña de Google</span>}
+                  {review.detail && <span className="shrink-0 text-right opacity-60">{review.detail}</span>}
                 </p>
               </article>
             </div>
