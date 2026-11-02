@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Star } from 'lucide-react'
 import { SplitTitle } from '@/components/ui'
 import { site } from '@/lib/site'
 import { cn } from '@/lib/utils'
@@ -9,46 +9,39 @@ import type { GooglePlace, GoogleReview } from '@/lib/google-reviews'
 
 // Reseñas reales de Google elegidas a mano (texto tal como lo escribió cada persona). Si más adelante se conecta la API
 // de Google Places (GOOGLE_PLACES_API_KEY y GOOGLE_PLACE_ID), las que traiga la API reemplazan a estas.
-// No llevan fecha ni estrellas: Google las muestra como "hace X años" y eso quedaría desactualizado.
+// Sin fecha ("hace X años" quedaría desactualizado) y sin estrellas hasta cargar la nota real de cada una:
+// agregar `rating: 5` (entero de 1 a 5, tal como figura en Google) a una reseña y se muestran sus estrellas.
 const curated: GoogleReview[] = [
   {
     author: 'Florencia Elena Gomez',
-    detail: 'Local Guide · 104 reseñas',
     text: 'Muy rico el lomo, buena atención. Lugar limpio, tranquilo. Me gusto',
   },
   {
     author: 'Eugenia',
-    detail: 'Local Guide · 390 reseñas',
     text: 'Excelente atención!! Muy buena la promo de la pizza los domingos.\nMuy ricos los postres.',
   },
   {
     author: 'Eleonora Valvasori',
-    detail: 'Local Guide · 11 reseñas',
     text: 'Excelentes todos los platos, abundantes, ricos, y precios acordes. Atención muy amable. El baño limpio tiene cambiador cómodo (si hay niños o bebés). Súper!',
   },
   {
     author: 'ceci ceci',
-    detail: 'Local Guide · 21 reseñas',
-    text: 'Muy rico los menúes\nPedimos matambre muy rico, ravioles súper caseros, milanesa.... El Flan también súper casero y ensalada de frutas...\nEl lugar es muy agradable\nSirven rápido\nLa atención es excelente todos muy atentos!',
+    text: 'Muy rico los menúes\nPedimos matambre muy rico, ravioles súper caseros, milanesa....\nEl lugar es muy agradable\nSirven rápido\nLa atención es excelente todos muy atentos!',
   },
   {
     author: 'Rosario Concioni',
-    detail: '16 reseñas',
     text: 'Excelente lugar para ir a almorzar, los menu ejecutivos son abundantes y muy ricos, y el precio es muy razonable! La atención excelente',
   },
   {
     author: 'Juan Manuel Arroyo',
-    detail: 'Local Guide · 9 reseñas',
     text: 'Hermoso lugar para compartir un lindo momento y desayunar, merendar o cenar algo muy rico.\nTotalmente recomendable!!',
   },
   {
     author: 'Fede Morales Rampulla',
-    detail: 'Local Guide · 180 reseñas',
     text: 'Muy buena atención y mucho mejor sus sandwiches que está de más decir son abundantes, ricos, tiernos!',
   },
   {
     author: 'Gabriela Valcelli',
-    detail: 'Local Guide · 69 reseñas',
     text: 'Nos sorprendió este lugar lo rico que se come, encontramos que en el cerro hacen cosas con mollejas de lo que somos fans. Pedimos pizza de molleja, sándwich de mollejas y los sándwiches de entraña terribleeee',
   },
 ].map((review) => ({ ...review, when: 'Reseña de Google' }))
@@ -137,7 +130,6 @@ export function Reviews({ place }: { place: GooglePlace | null }) {
                 <div>
                   <p className="flex justify-between gap-4 text-xs font-bold">
                     <span>{review.when}</span>
-                    {review.rating ? <span>{review.rating} de 5</span> : null}
                   </p>
                   <div className="ticket-rule my-3" />
                   <blockquote
@@ -158,7 +150,13 @@ export function Reviews({ place }: { place: GooglePlace | null }) {
                   ) : (
                     <span>{review.author}</span>
                   )}
-                  {review.detail && <span className="shrink-0 text-right opacity-60">{review.detail}</span>}
+                  {review.rating ? (
+                    <span className="flex shrink-0 gap-0.5 text-accent" role="img" aria-label={`${review.rating} de 5 estrellas`}>
+                      {Array.from({ length: 5 }, (_, i) => (
+                        <Star key={i} className={cn('size-3.5', i < Math.round(review.rating!) ? 'fill-current' : 'opacity-30')} aria-hidden="true" />
+                      ))}
+                    </span>
+                  ) : null}
                 </p>
               </article>
             </div>

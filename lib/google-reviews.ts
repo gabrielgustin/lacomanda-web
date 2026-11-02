@@ -7,8 +7,6 @@ export type GoogleReview = {
   rating?: number
   text: string
   when: string
-  /** Dato extra del autor, p. ej. "Local Guide · 104 reseñas". */
-  detail?: string
 }
 
 export type GooglePlace = {

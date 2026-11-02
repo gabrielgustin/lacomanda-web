@@ -9,13 +9,15 @@ export const site = {
   instagram: 'https://instagram.com/lacomanda', // TODO
   instagramHandle: '@lacomanda', // TODO
   email: 'hola@lacomanda.com.ar', // TODO
-  address: 'Dirección a confirmar', // TODO
-  addressDetail: 'Ciudad, provincia', // TODO
-  mapsUrl: 'https://maps.google.com/?q=La+Comanda', // TODO: link real de Google Maps
+  address: 'Luis José de Tejeda 4320', // según la ficha de Google Maps
+  addressDetail: 'Cerro de las Rosas, Córdoba',
+  // Ficha de "La Comanda Tejeda" en Google Maps (abre el local con su mapa y sus opiniones).
+  mapsUrl: 'https://www.google.com/maps?cid=13604217121055167239',
   // TODO: nota y cantidad de reseñas reales de Google, p. ej. { score: '4.8', reviews: '1.200' }.
   // Mientras sea null, la tarjeta de Google del hero no se muestra.
   rating: null as { score: string; reviews: string } | null,
-  reviewUrl: 'https://search.google.com/local/writereview', // TODO: link real para dejar reseña
+  // Misma ficha: desde ahí se ven todas las reseñas y se escribe una ("Escribir una opinión").
+  reviewUrl: 'https://www.google.com/maps?cid=13604217121055167239',
   hours: [
     // TODO: horarios reales
     { days: 'Lunes', time: 'Cerrado' },
