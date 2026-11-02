@@ -34,7 +34,10 @@ const looks = [
   { tone: 'bg-[#ecd9bd] text-ink', rotate: 1 },
 ]
 
-const CARD_HEIGHT = 216
+// Alto del ticket (máximo y mínimo) y separación mínima entre tickets, para que la pila entre en cualquier pantalla.
+const MAX_CARD = 216
+const MIN_CARD = 170
+const MIN_STEP = 32
 
 // Escena fija: los tickets de promo se apilan uno sobre otro a medida que bajás, cada uno un poco más abajo,
 // así siempre se lee el día de los de abajo y el último queda entero. Con movimiento reducido, la pila ya está armada.
@@ -44,13 +47,17 @@ export function Promos() {
 
   useGSAP(
     () => {
-      // El paso entre tickets se ajusta al alto disponible, para que la pila entre en cualquier pantalla.
+      // La pila se ajusta al alto disponible: primero se reparte el paso entre tickets y, si aun así no entra,
+      // se achica el alto de cada ticket. Así el último nunca se pasa del borde de la sección.
       const fit = () => {
         const el = stack.current
         if (!el) return
-        const step = Math.min(64, Math.max(30, (el.clientHeight - CARD_HEIGHT) / (promos.length - 1)))
-        const pile = CARD_HEIGHT + step * (promos.length - 1)
+        const gaps = promos.length - 1
+        const step = Math.min(64, Math.max(MIN_STEP, (el.clientHeight - MIN_CARD) / gaps))
+        const card = Math.min(MAX_CARD, Math.max(110, el.clientHeight - step * gaps))
+        const pile = card + step * gaps
         el.style.setProperty('--step', `${step}px`)
+        el.style.setProperty('--card', `${card}px`)
         // Si sobra alto, la pila se centra en vez de quedar pegada arriba.
         el.style.setProperty('--offset', `${Math.max(0, (el.clientHeight - pile) / 2)}px`)
       }
@@ -90,13 +97,13 @@ export function Promos() {
       aria-labelledby="promos-title"
       className="relative z-10 flex h-svh flex-col overflow-hidden bg-muted md:grid md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:items-center"
     >
-      <div className="px-5 pb-6 pt-24 md:py-24 md:pl-8 md:pr-10 lg:pl-[max(2rem,calc((100vw-90rem)/2+2rem))] lg:pr-14">
+      <div className="px-5 pb-6 pt-20 md:py-24 md:pl-8 md:pr-10 lg:pl-[max(2rem,calc((100vw-90rem)/2+2rem))] lg:pr-14">
         <SplitTitle
           id="promos-title"
           lines={['Todos los días', 'hay algo']}
           className="text-[clamp(2.4rem,5.4vw,5rem)] text-primary"
         />
-        <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground text-pretty md:mt-6 md:text-base">
+        <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground text-pretty max-md:[@media(max-height:679px)]:hidden md:mt-6 md:text-base">
           Las promos de la semana en La Comanda. Elegí el día y venite con hambre.
         </p>
         <div className="mt-6 md:mt-8">
@@ -117,16 +124,16 @@ export function Promos() {
               >
                 <div className="ticket-shadow">
                   <div
-                    className={cn('ticket flex flex-col px-5 pt-4 md:px-6', looks[i].tone)}
-                    style={{ height: CARD_HEIGHT }}
+                    className={cn('ticket flex flex-col px-5 pt-2.5 md:px-6 md:pt-4', looks[i].tone)}
+                    style={{ height: 'var(--card, 216px)' }}
                   >
                     {/* El día va solo en la primera línea: es lo que queda a la vista cuando otro ticket lo tapa. */}
-                    <p className="font-display truncate text-xl md:text-2xl">{promo.day}</p>
+                    <p className="font-display truncate text-[15px] leading-none md:text-2xl">{promo.day}</p>
                     <div className="mt-auto flex items-end justify-between gap-3">
                       <p className="font-display text-4xl leading-none md:text-5xl">{promo.highlight}</p>
                       {promo.tag && <span className="stamp mb-1 shrink-0 -rotate-3 text-[11px]">{promo.tag}</span>}
                     </div>
-                    <p className="mt-2 text-sm leading-snug opacity-85">{promo.text}</p>
+                    <p className="mt-2 text-sm leading-snug opacity-85 max-md:[@media(max-height:599px)]:hidden">{promo.text}</p>
                   </div>
                 </div>
               </li>
