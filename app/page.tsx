@@ -3,7 +3,6 @@ import { Hero } from '@/components/hero'
 import { About } from '@/components/about'
 import { Signature } from '@/components/signature'
 import { Events } from '@/components/events'
-import { Bar } from '@/components/bar'
 import { Promos } from '@/components/promos'
 import { Reviews } from '@/components/reviews'
 import { getGooglePlace } from '@/lib/google-reviews'
@@ -30,7 +29,6 @@ export default async function Home() {
         <About />
         <Signature />
         <Events />
-        <Bar />
         <Promos />
         <Reviews place={place} />
         <Story />

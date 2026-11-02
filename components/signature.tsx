@@ -122,7 +122,7 @@ export function Signature() {
               return (
                 <li key={pick.id} className="w-[72vw] max-w-[19rem] shrink-0 snap-start">
                   <figure className="relative h-[clamp(12rem,calc(100svh-29rem),24rem)] overflow-hidden bg-ink">
-                    <Image src={pick.image} alt={pick.alt} fill sizes="75vw" className={cn('object-cover', pick.focus)} />
+                    <Image src={pick.image} alt={pick.alt} fill sizes="75vw" loading="eager" className={cn('object-cover', pick.focus)} />
                   </figure>
                   <div className="mt-3">
                     <div className="flex items-baseline gap-3">
@@ -186,17 +186,20 @@ export function Signature() {
           <Buttons className="mt-6" />
         </div>
 
-        <div className="order-1">
+        {/* Cada foto vive en un marco más chico y centrado; el fondo suave deja respirar la composición. */}
+        <div className="order-1 bg-muted">
           {picks.map((pick) => (
-            <figure key={pick.id} id={`plato-${pick.id}`} data-dish data-clip className="relative h-svh overflow-hidden bg-ink">
-              <Image
-                data-parallax="8"
-                src={pick.image}
-                alt={pick.alt}
-                fill
-                sizes="50vw"
-                className={cn('scale-115 object-cover', pick.focus)}
-              />
+            <figure key={pick.id} id={`plato-${pick.id}`} data-dish className="flex h-svh items-center justify-center">
+              <div data-clip className="relative aspect-[4/5] h-[62svh] max-w-[80%] overflow-hidden bg-ink shadow-[0_24px_48px_-20px_rgb(36_21_14/0.5)]">
+                <Image
+                  data-parallax="8"
+                  src={pick.image}
+                  alt={pick.alt}
+                  fill
+                  sizes="(min-width: 1024px) 30vw, 40vw"
+                  className={cn('scale-115 object-cover', pick.focus)}
+                />
+              </div>
             </figure>
           ))}
         </div>

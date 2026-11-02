@@ -9,6 +9,21 @@ export function SmoothScroll() {
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
+    // En celulares y tablets el scroll nativo ya es fluido: Lenis solo agregaría trabajo en cada frame.
+    // Los links internos (#seccion) se desplazan con el scroll suave del navegador.
+    if (window.matchMedia('(pointer: coarse)').matches) {
+      const onTouchLink = (event: MouseEvent) => {
+        const link = (event.target as HTMLElement).closest<HTMLAnchorElement>('a[href^="#"]')
+        const target = link && document.querySelector(link.getAttribute('href')!)
+        if (!link || !target) return
+        event.preventDefault()
+        target.scrollIntoView({ behavior: 'smooth' })
+        history.replaceState(null, '', link.getAttribute('href'))
+      }
+      document.addEventListener('click', onTouchLink)
+      return () => document.removeEventListener('click', onTouchLink)
+    }
+
     const lenis = new Lenis({ duration: 1.15, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) })
     lenis.on('scroll', ScrollTrigger.update)
     const tick = (time: number) => lenis.raf(time * 1000)

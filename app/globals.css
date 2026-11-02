@@ -89,6 +89,12 @@
 .ticket-shadow {
   filter: drop-shadow(0 22px 28px rgb(20 10 5 / 0.38));
 }
+/* En celular el desenfoque grande de cada ticket pesa mucho al moverse: sombra más corta. */
+@media (max-width: 767px) {
+  .ticket-shadow {
+    filter: drop-shadow(0 10px 12px rgb(20 10 5 / 0.34));
+  }
+}
 .ticket-rule {
   border-top: 1.5px dashed currentColor;
   opacity: 0.55;
@@ -168,7 +174,10 @@ html.lenis body {
     opacity: 0;
   }
   .js [data-plan] ~ [data-plan] {
-    clip-path: inset(100% 0% 0% 0%);
+    transform: translateY(100vh);
+  }
+  .js [data-plan] ~ [data-plan] [data-plan-inner] {
+    transform: translateY(-100vh);
   }
   /* Promos: antes de que arranque la escena, solo el primer ticket está en la pila. */
   .js [data-promo] ~ [data-promo] {

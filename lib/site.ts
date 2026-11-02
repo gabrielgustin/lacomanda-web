@@ -33,6 +33,5 @@ export const navLinks = [
   { href: '#nosotros', label: 'Nosotros' },
   { href: '#platos', label: 'Platos' },
   { href: '#eventos', label: 'Eventos' },
-  { href: '#barra', label: 'Barra' },
   { href: '#contacto', label: 'Contacto' },
 ]

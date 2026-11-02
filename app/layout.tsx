@@ -12,6 +12,7 @@ const description =
   'La Comanda: cocina para compartir, cerveza bien fría y mesas largas. Reservá tu mesa, pedí por WhatsApp o mirá la carta.'
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://web-lacomanda.vercel.app'),
   title,
   description,
   icons: {

@@ -39,13 +39,14 @@ export function Events() {
       if (prefersReducedMotion()) return
       const q = gsap.utils.selector(root)
       const panels = q('[data-plan]')
+      const inners = q('[data-plan-inner]')
       const copies = q('[data-plan-copy]')
       const fills = q('[data-plan-fill]')
       const step = 1.6
 
       const tl = gsap.timeline({
         defaults: { ease: 'none' },
-        scrollTrigger: { trigger: root.current, start: 'top top', end: '+=320%', scrub: 1, pin: true, anticipatePin: 1 },
+        scrollTrigger: { trigger: root.current, start: 'top top', end: '+=320%', scrub: 1, pin: true, anticipatePin: 1, invalidateOnRefresh: true },
       })
 
       // Cada foto se aleja despacio mientras está en pantalla.
@@ -59,12 +60,9 @@ export function Events() {
       // Los planes siguientes tapan al anterior de abajo hacia arriba.
       for (let i = 1; i < panels.length; i++) {
         const at = 0.9 + i * step
-        tl.fromTo(
-          panels[i],
-          { clipPath: 'inset(100% 0% 0% 0%)' },
-          { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.8, ease: 'power3.inOut' },
-          at - 0.5,
-        )
+        // El panel sube tapando al anterior y su contenido baja lo mismo: la foto queda quieta y solo se corre la "ventana".
+        tl.fromTo(panels[i], { y: () => window.innerHeight }, { y: 0, duration: 0.8, ease: 'power3.inOut' }, at - 0.5)
+          .fromTo(inners[i], { y: () => -window.innerHeight }, { y: 0, duration: 0.8, ease: 'power3.inOut' }, at - 0.5)
           .to(copies[i - 1], { opacity: 0, y: -30, duration: 0.3 }, at - 0.5)
           .fromTo(copies[i], { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, at)
           .fromTo(fills[i], { scaleX: 0 }, { scaleX: 1, duration: step }, at)
@@ -104,25 +102,27 @@ export function Events() {
           aria-labelledby={`plan-${i}`}
           className="relative h-[85svh] overflow-hidden motion-safe:absolute motion-safe:inset-0 motion-safe:h-auto"
         >
-          <Image data-plan-img src={plan.image} alt={plan.alt} fill sizes="100vw" className="object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-ink/10 md:bg-gradient-to-r md:from-ink/90 md:via-ink/40 md:to-transparent" />
-          <div
-            data-plan-copy
-            className="absolute bottom-24 left-5 right-5 max-w-xl md:bottom-28 md:left-8 lg:left-[max(2rem,calc((100vw-90rem)/2+2rem))]"
-          >
-            <h3 id={`plan-${i}`} className="font-display text-[clamp(2.6rem,7vw,6.5rem)] leading-[0.9]">
-              {plan.title}
-            </h3>
-            <p className="mt-4 max-w-md text-base leading-relaxed text-paper/85 md:text-lg">{plan.text}</p>
-            <PillLink
-              href={whatsappLink(`¡Hola La Comanda! Quiero consultar por ${plan.title.toLowerCase()}.`)}
-              target="_blank"
-              rel="noreferrer"
-              variant="cream"
-              className="mt-6"
+          <div data-plan-inner className="absolute inset-0 will-change-transform">
+            <Image data-plan-img src={plan.image} alt={plan.alt} fill sizes="100vw" className="object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-ink/10 md:bg-gradient-to-r md:from-ink/90 md:via-ink/40 md:to-transparent" />
+            <div
+              data-plan-copy
+              className="absolute bottom-24 left-5 right-5 max-w-xl md:bottom-28 md:left-8 lg:left-[max(2rem,calc((100vw-90rem)/2+2rem))]"
             >
-              <MessageCircle className="size-4" aria-hidden="true" /> Consultá por WhatsApp
-            </PillLink>
+              <h3 id={`plan-${i}`} className="font-display text-[clamp(2.6rem,7vw,6.5rem)] leading-[0.9]">
+                {plan.title}
+              </h3>
+              <p className="mt-4 max-w-md text-base leading-relaxed text-paper/85 md:text-lg">{plan.text}</p>
+              <PillLink
+                href={whatsappLink(`¡Hola La Comanda! Quiero consultar por ${plan.title.toLowerCase()}.`)}
+                target="_blank"
+                rel="noreferrer"
+                variant="cream"
+                className="mt-6"
+              >
+                <MessageCircle className="size-4" aria-hidden="true" /> Consultá por WhatsApp
+              </PillLink>
+            </div>
           </div>
         </article>
       ))}

@@ -83,12 +83,12 @@ export function About() {
         </a>
       </div>
 
-      {/* El borde de arriba y de abajo se difumina: si algo llegara a tocar el límite, no se corta en recto. */}
-      <div className="relative min-h-0 flex-1 overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,#000_12%,#000_88%,transparent)]">
+      {/* El borde de arriba y de abajo se difumina con degradados (más baratos que una máscara en cada frame). */}
+      <div className="relative min-h-0 flex-1 overflow-hidden">
         <div data-kb-stage className="absolute inset-0">
           <div data-kb-back className="absolute inset-0" aria-hidden="true">
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_55%_50%_at_50%_48%,#7a4220_0%,#3a1f12_45%,transparent_75%)]" />
-            <div className="absolute inset-x-[18%] bottom-[16%] h-[8%] rounded-[50%] bg-black/70 blur-2xl" />
+            <div className="absolute inset-x-[14%] bottom-[10%] h-[16%] bg-[radial-gradient(ellipse_at_center,rgb(0_0_0/0.65),transparent_70%)]" />
           </div>
           <Image
             data-kb-front
@@ -97,9 +97,11 @@ export function About() {
             fill
             priority
             sizes="(min-width: 768px) 55vw, 100vw"
-            className="object-contain px-4 drop-shadow-[0_30px_40px_rgb(0_0_0/0.55)] will-change-transform md:px-8"
+            className="object-contain px-4 will-change-transform md:px-8"
           />
         </div>
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-[12%] bg-gradient-to-b from-ink to-transparent" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[12%] bg-gradient-to-t from-ink to-transparent" />
       </div>
     </section>
   )

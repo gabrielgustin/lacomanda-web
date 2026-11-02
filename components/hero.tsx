@@ -45,16 +45,19 @@ export function Hero() {
           '>-0.05',
         )
 
-      gsap.to('[data-hero-content]', {
-        yPercent: -14,
-        opacity: 0,
-        ease: 'none',
-        scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom top', scrub: true },
-      })
-      gsap.to('[data-hero-img]', {
-        scale: 1.1,
-        ease: 'none',
-        scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom top', scrub: true },
+      // Al bajar, el hero queda fijo y se oscurece: solo en escritorio (lg), donde es fijo.
+      gsap.matchMedia().add('(min-width: 1024px)', () => {
+        gsap.to('[data-hero-content]', {
+          yPercent: -14,
+          opacity: 0,
+          ease: 'none',
+          scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom top', scrub: true },
+        })
+        gsap.to('[data-hero-img]', {
+          scale: 1.1,
+          ease: 'none',
+          scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom top', scrub: true },
+        })
       })
     },
     { scope: root },
