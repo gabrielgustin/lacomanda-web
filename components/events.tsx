@@ -114,7 +114,7 @@ export function Events() {
               </h3>
               <p className="mt-4 max-w-md text-base leading-relaxed text-paper/85 md:text-lg">{plan.text}</p>
               <PillLink
-                href={whatsappLink(`¡Hola La Comanda! Quiero consultar por ${plan.title.toLowerCase()}.`)}
+                href={whatsappLink(`¡Hola La Comanda! Quiero consultar por ${plan.title}. ¿Me pasan información y disponibilidad?`)}
                 target="_blank"
                 rel="noreferrer"
                 variant="cream"

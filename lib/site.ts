@@ -4,7 +4,7 @@ export const site = {
   city: 'Argentina', // TODO: ciudad real
   since: '2018', // TODO: año de apertura
   cartaUrl: 'https://lacomanda-xi.vercel.app',
-  whatsapp: '5490000000000', // TODO: número real, formato internacional sin "+"
+  whatsapp: '5493512681910', // formato internacional sin "+" (54 9 + código de área + número)
   phoneLabel: 'Número a confirmar', // TODO
   instagram: 'https://instagram.com/lacomanda', // TODO
   instagramHandle: '@lacomanda', // TODO
