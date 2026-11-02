@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { ArrowUpRight } from 'lucide-react'
-import { gsap, ScrollTrigger, useGSAP, prefersReducedMotion } from '@/lib/gsap'
+import { gsap, ScrollTrigger, useGSAP, prefersReducedMotion, STRIP_PACE, STRIP_HOLD } from '@/lib/gsap'
 import { PillLink, SplitTitle } from '@/components/ui'
 import { itemsById } from '@/lib/menu-data'
 import { formatPrice } from '@/lib/format'
@@ -45,26 +45,30 @@ export function Signature() {
   useGSAP(
     () => {
       const mm = gsap.matchMedia()
-      mm.add('(max-width: 767px)', () => {
+      mm.add('(max-width: 767px) and (min-height: 520px)', () => {
         // Con movimiento reducido queda el carrusel con scroll propio.
         if (prefersReducedMotion()) return
         const wrap = strip.current!
         const ul = track.current!
         gsap.set(wrap, { overflowX: 'hidden' })
         const distance = () => Math.max(0, ul.scrollWidth - wrap.clientWidth)
-        gsap.to(ul, {
-          x: () => -distance(),
-          ease: 'none',
-          scrollTrigger: {
-            trigger: mobile.current,
-            start: 'top top',
-            end: () => `+=${distance()}`,
-            pin: true,
-            scrub: 0.6,
-            invalidateOnRefresh: true,
-            onUpdate: (self) => setSlide(Math.round(self.progress * (picks.length - 1))),
-          },
-        })
+        // El tramo fijo es más largo que lo que recorre la tira y termina con una pausa en la última tarjeta.
+        gsap
+          .timeline({
+            scrollTrigger: {
+              trigger: mobile.current,
+              start: 'top top',
+              end: () => `+=${Math.round(distance() * STRIP_PACE * (1 + STRIP_HOLD))}`,
+              pin: true,
+              anticipatePin: 1,
+              scrub: 0.4,
+              invalidateOnRefresh: true,
+              onUpdate: (self) =>
+                setSlide(Math.round(Math.min(1, self.progress * (1 + STRIP_HOLD)) * (picks.length - 1))),
+            },
+          })
+          .to(ul, { x: () => -distance(), ease: 'none', duration: 1 })
+          .to({}, { duration: STRIP_HOLD })
       })
       mm.add('(min-width: 768px)', () => {
         gsap.utils.toArray<HTMLElement>('[data-dish]').forEach((dish, index) => {
@@ -99,7 +103,7 @@ export function Signature() {
   return (
     <section ref={root} id="platos" aria-label="Platos de la casa" className="relative z-10 bg-background">
       {/* Celular: bloque a pantalla completa que se ancla mientras la tira avanza. */}
-      <div ref={mobile} className="flex h-svh flex-col justify-center overflow-hidden pb-6 pt-20 md:hidden">
+      <div ref={mobile} className="flex h-svh flex-col justify-center overflow-hidden pb-6 pt-20 md:hidden [@media(max-height:519px)]:h-auto">
         <div className="px-5">
           <SplitTitle
             id="platos-title-movil"

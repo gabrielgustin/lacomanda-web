@@ -3,7 +3,7 @@
 import { useRef } from 'react'
 import Image from 'next/image'
 import { ArrowUpRight } from 'lucide-react'
-import { gsap, useGSAP, prefersReducedMotion } from '@/lib/gsap'
+import { gsap, useGSAP, prefersReducedMotion, STRIP_PACE, STRIP_HOLD } from '@/lib/gsap'
 import { PillLink, SplitTitle } from '@/components/ui'
 import { site } from '@/lib/site'
 import { cn } from '@/lib/utils'
@@ -34,7 +34,7 @@ export function Bar() {
   useGSAP(
     () => {
       const mm = gsap.matchMedia()
-      mm.add('(max-width: 767px)', () => {
+      mm.add('(max-width: 767px) and (min-height: 520px)', () => {
         const wrap = strip.current!
         const ul = track.current!
         // Con movimiento reducido queda la tira con scroll propio, ya posicionada al final.
@@ -44,22 +44,20 @@ export function Bar() {
         }
         gsap.set(wrap, { overflowX: 'hidden' })
         const distance = () => Math.max(0, ul.scrollWidth - wrap.clientWidth)
-        gsap.fromTo(
-          ul,
-          { x: () => -distance() },
-          {
-            x: 0,
-            ease: 'none',
+        gsap
+          .timeline({
             scrollTrigger: {
               trigger: mobile.current,
               start: 'top top',
-              end: () => `+=${distance()}`,
+              end: () => `+=${Math.round(distance() * STRIP_PACE * (1 + STRIP_HOLD))}`,
               pin: true,
-              scrub: 0.6,
+              anticipatePin: 1,
+              scrub: 0.4,
               invalidateOnRefresh: true,
             },
-          },
-        )
+          })
+          .fromTo(ul, { x: () => -distance() }, { x: 0, ease: 'none', duration: 1 })
+          .to({}, { duration: STRIP_HOLD })
       })
     },
     { scope: root },
@@ -70,25 +68,34 @@ export function Bar() {
 
   return (
     <section ref={root} id="barra" aria-label="La barra" className="relative z-10 bg-background">
-      {/* Celular */}
-      <div ref={mobile} className="flex h-svh flex-col overflow-hidden pb-6 pt-20 md:hidden">
+      {/* Celular: bloque a pantalla completa que se ancla mientras la tira avanza. En pantallas muy bajas (apaisado) no se ancla
+          y las fotos quedan con scroll propio. */}
+      <div ref={mobile} className="flex h-svh flex-col overflow-hidden pb-6 pt-20 md:hidden [@media(max-height:519px)]:h-auto">
         <div className="px-5">
-          <Title id="barra-title-movil" className="text-[clamp(2.2rem,11vw,2.9rem)] text-primary" />
-          <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground text-pretty">{copy}</p>
-          <PillLink href={site.cartaUrl} target="_blank" rel="noreferrer" className="mt-5 w-fit">
-            Ver todas las bebidas <ArrowUpRight className="size-4" aria-hidden="true" />
-          </PillLink>
+          <SplitTitle
+            id="barra-title-movil"
+            lines={['Bien fría,', 'como tiene que ser']}
+            className="text-[clamp(1.8rem,8vw,2.6rem)] text-primary"
+          />
+          {/* Con poco alto se oculta el texto para que las fotos conserven su tamaño. */}
+          <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground text-pretty [@media(max-height:679px)]:hidden">
+            {copy}
+          </p>
         </div>
 
-        <div ref={strip} className="scrollbar-hide mt-6 min-h-0 flex-1 overflow-x-auto overscroll-x-contain">
+        <div ref={strip} className="scrollbar-hide mt-5 min-h-[15rem] flex-1 overflow-x-auto overscroll-x-contain">
           <ul ref={track} className="flex h-full w-max gap-3 px-5">
             {reversed.map((photo) => (
-              <li key={photo.src} className="relative h-full w-[72vw] max-w-[19rem] shrink-0 overflow-hidden bg-ink">
+              <li key={photo.src} className="relative h-full min-h-[15rem] w-[72vw] max-w-[19rem] shrink-0 overflow-hidden bg-ink">
                 <Image src={photo.src} alt={photo.alt} fill sizes="75vw" className={cn('object-cover', photo.focus)} />
               </li>
             ))}
           </ul>
         </div>
+
+        <PillLink href={site.cartaUrl} target="_blank" rel="noreferrer" className="mx-5 mt-5 w-fit">
+          Ver todas las bebidas <ArrowUpRight className="size-4" aria-hidden="true" />
+        </PillLink>
       </div>
 
       {/* Tablet y escritorio */}

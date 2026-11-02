@@ -21,7 +21,6 @@ export function About() {
     () => {
       if (prefersReducedMotion()) return
       const q = gsap.utils.selector(root)
-      const marker = q('[data-hud-marker]')[0]
       const stage = q('[data-kb-stage]')[0]
       const front = q('[data-kb-front]')[0]
 
@@ -44,9 +43,6 @@ export function About() {
             pin: true,
             anticipatePin: 1,
             invalidateOnRefresh: true,
-            onUpdate: (self) => {
-              marker.style.left = `${self.progress * 100}%`
-            },
           },
         })
         // Burger: se acerca, sube un poco y gira apenas, como una cámara que la rodea.
@@ -104,14 +100,6 @@ export function About() {
             className="object-contain px-4 drop-shadow-[0_30px_40px_rgb(0_0_0/0.55)] will-change-transform md:px-8"
           />
         </div>
-      </div>
-
-      {/* Barra de progreso: una regla a todo lo ancho que se va midiendo con el scroll. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-5 bottom-5 z-20 h-4 bg-[repeating-linear-gradient(90deg,rgb(247_243_234/0.35)_0_1px,transparent_1px_10px)] motion-reduce:hidden md:inset-x-8 md:bottom-7 lg:inset-x-[max(2rem,calc((100vw-90rem)/2+2rem))]"
-      >
-        <span data-hud-marker className="absolute top-0 h-full w-0.5 -translate-x-1/2 bg-accent" style={{ left: '0%' }} />
       </div>
     </section>
   )
