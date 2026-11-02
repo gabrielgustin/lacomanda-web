@@ -1,10 +1,10 @@
 import Image from 'next/image'
-import { navLinks, site, whatsappLink } from '@/lib/site'
+import { site, whatsappLink } from '@/lib/site'
 
 const heading = 'mb-5 text-xs font-normal tracking-[0.04em] text-accent'
 const link = 'rounded-sm text-primary-foreground/70 transition-colors duration-200 hover:text-primary-foreground'
 
-// Pie liviano: una línea de marca arriba, cuatro columnas de datos con filetes finos y una línea de cierre.
+// Pie liviano: una línea de marca arriba, tres columnas de datos con filetes finos y una línea de cierre.
 export function SiteFooter() {
   return (
     <footer id="contacto" className="relative z-10 bg-ink text-primary-foreground">
@@ -14,7 +14,7 @@ export function SiteFooter() {
           <p className="font-display text-xl text-primary-foreground/90 md:text-2xl">Lo bueno se comparte</p>
         </div>
 
-        <div className="grid gap-12 py-12 text-[13px] leading-relaxed sm:grid-cols-2 md:py-14 lg:grid-cols-[1fr_1.4fr_1fr_1fr] lg:gap-10">
+        <div className="grid gap-12 py-12 text-[13px] leading-relaxed sm:grid-cols-2 md:py-14 lg:grid-cols-[1fr_1.4fr_1fr] lg:gap-10">
           <div>
             <h2 className={heading}>Dónde estamos</h2>
             <p>{site.address}</p>
@@ -63,23 +63,6 @@ export function SiteFooter() {
             </ul>
           </div>
 
-          <div>
-            <h2 className={heading}>Navegá</h2>
-            <ul className="space-y-2.5">
-              {navLinks.map((item) => (
-                <li key={item.href}>
-                  <a href={item.href} className={link}>
-                    {item.label}
-                  </a>
-                </li>
-              ))}
-              <li>
-                <a href={site.cartaUrl} target="_blank" rel="noreferrer" className={link}>
-                  Carta digital
-                </a>
-              </li>
-            </ul>
-          </div>
         </div>
 
         <p className="border-t border-primary-foreground/10 py-6 text-xs text-primary-foreground/45">

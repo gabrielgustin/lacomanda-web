@@ -109,9 +109,6 @@ export function Hero() {
             <PillLink href="#reservas" variant="cream" className="h-12 px-7">
               Reservá tu mesa
             </PillLink>
-            <PillLink href="#platos" variant="outline-light" className="h-12 px-7">
-              Mirá los platos
-            </PillLink>
           </div>
         </div>
 

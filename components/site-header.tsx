@@ -1,18 +1,56 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import Image from 'next/image'
-import { BookOpen, Menu, ShoppingBag, X } from 'lucide-react'
+import { BookOpen, Menu, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { navLinks, site, whatsappLink } from '@/lib/site'
-
-const orderText = '¡Hola La Comanda! Quiero hacer un pedido para delivery 🍕'
+import { navLinks, site } from '@/lib/site'
+import { gsap, prefersReducedMotion } from '@/lib/gsap'
 
 export function SiteHeader() {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
+  // `mounted` sigue en true mientras el menú se repliega, para poder animar el cierre antes de quitarlo.
+  const [mounted, setMounted] = useState(false)
   const panelRef = useRef<HTMLDivElement>(null)
   const toggleRef = useRef<HTMLButtonElement>(null)
+  const timeline = useRef<ReturnType<typeof gsap.timeline> | null>(null)
+
+  const openMenu = () => {
+    setOpen(true)
+    if (timeline.current) timeline.current.timeScale(1).play()
+    else setMounted(true)
+  }
+  const closeMenu = () => {
+    setOpen(false)
+    if (timeline.current) timeline.current.timeScale(1.8).reverse()
+    else setMounted(false)
+  }
+
+  // Apertura: un círculo crece desde el botón de hamburguesa hasta llenar la pantalla y los links suben escalonados.
+  // Se arma antes de pintar (layout effect) para que el menú no se vea completo ni un instante.
+  useLayoutEffect(() => {
+    const panel = panelRef.current
+    const toggle = toggleRef.current
+    if (!mounted || !panel || !toggle || prefersReducedMotion()) return
+    const box = toggle.getBoundingClientRect()
+    const cx = box.left + box.width / 2
+    const cy = box.top + box.height / 2
+    const radius = Math.hypot(Math.max(cx, window.innerWidth - cx), Math.max(cy, window.innerHeight - cy))
+    const q = gsap.utils.selector(panel)
+    gsap.set(q('[data-menu-bg]'), { width: radius * 2, height: radius * 2, left: cx - radius, top: cy - radius, borderRadius: '50%', scale: 0 })
+    const tl = gsap
+      .timeline({ onReverseComplete: () => setMounted(false) })
+      .to(q('[data-menu-bg]'), { scale: 1, duration: 0.7, ease: 'power3.inOut' })
+      .fromTo(q('[data-menu-top]'), { opacity: 0 }, { opacity: 1, duration: 0.3 }, 0.3)
+      .fromTo(q('[data-menu-item]'), { y: 48, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out', stagger: 0.07 }, 0.3)
+      .fromTo(q('[data-menu-foot]'), { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'power3.out' }, 0.6)
+    timeline.current = tl
+    return () => {
+      tl.kill()
+      timeline.current = null
+    }
+  }, [mounted])
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > window.innerHeight * 0.6)
@@ -29,7 +67,7 @@ export function SiteHeader() {
     focusables()[0]?.focus()
     document.documentElement.classList.add('lenis-stopped')
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setOpen(false)
+      if (event.key === 'Escape') closeMenu()
       if (event.key !== 'Tab') return
       const items = focusables()
       const first = items[0]
@@ -60,8 +98,23 @@ export function SiteHeader() {
       )}
     >
       <div className="mx-auto flex h-16 max-w-[90rem] items-center gap-6 px-5 md:h-20 md:px-8">
-        <a href="#inicio" className="flex shrink-0 items-center gap-3 rounded-full" aria-label="La Comanda, ir al inicio">
-          <Image src="/logo-la-comanda.svg" alt="" width={44} height={44} className="size-10 md:size-11" priority />
+        {/* Sobre la foto va el sello blanco; con el header crema, solo las letras, sin fondo. */}
+        <a href="#inicio" className="relative block size-10 shrink-0 rounded-full md:size-11" aria-label="La Comanda, ir al inicio">
+          <Image
+            src="/logo-la-comanda.svg"
+            alt=""
+            width={44}
+            height={44}
+            className={cn('absolute inset-0 size-full transition-opacity duration-300', !light && 'opacity-0')}
+            priority
+          />
+          <Image
+            src="/logo-la-comanda-sin-fondo.svg"
+            alt=""
+            width={44}
+            height={44}
+            className={cn('absolute inset-0 size-full transition-opacity duration-300', light && 'opacity-0')}
+          />
         </a>
 
         <nav aria-label="Principal" className="hidden lg:block">
@@ -94,19 +147,10 @@ export function SiteHeader() {
             <BookOpen className="size-4" aria-hidden="true" />
             Carta
           </a>
-          <a
-            href={whatsappLink(orderText)}
-            target="_blank"
-            rel="noreferrer"
-            className="pill-sheen inline-flex h-10 items-center gap-2 rounded-full bg-accent px-4 text-xs font-semibold text-primary transition-colors hover:bg-primary-foreground"
-          >
-            <ShoppingBag className="size-4" aria-hidden="true" />
-            Pedí ahora
-          </a>
           <button
             ref={toggleRef}
             type="button"
-            onClick={() => setOpen(true)}
+            onClick={openMenu}
             className={cn(
               'inline-flex size-10 items-center justify-center rounded-full border lg:hidden',
               light ? 'border-primary-foreground/40' : 'border-border',
@@ -120,54 +164,58 @@ export function SiteHeader() {
         </div>
       </div>
 
-      {open && (
+      {mounted && (
         <div
           id="menu-movil"
           ref={panelRef}
           role="dialog"
           aria-modal="true"
           aria-label="Menú"
-          className="fixed inset-0 z-50 flex flex-col bg-primary text-primary-foreground lg:hidden"
+          className="fixed inset-0 z-50 overflow-hidden text-primary-foreground lg:hidden"
           data-lenis-prevent
         >
-          <div className="flex h-16 items-center justify-between px-5">
-            <Image src="/logo-la-comanda.svg" alt="" width={40} height={40} className="size-10" />
-            <button
-              type="button"
-              onClick={() => setOpen(false)}
-              className="inline-flex size-10 items-center justify-center rounded-full border border-primary-foreground/40"
-              aria-label="Cerrar menú"
-            >
-              <X className="size-5" aria-hidden="true" />
-            </button>
-          </div>
-          <nav aria-label="Menú móvil" className="flex flex-1 flex-col justify-center px-5">
-            <ul className="space-y-3">
-              {navLinks.map((link) => (
-                <li key={link.href}>
-                  <a href={link.href} onClick={() => setOpen(false)} className="font-display block rounded-full text-4xl">
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-          <div className="flex gap-3 px-5 pb-8">
-            <a
-              href={site.cartaUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-full border border-primary-foreground/40 text-sm font-semibold"
-            >
-              <BookOpen className="size-4" aria-hidden="true" /> Ver la carta
-            </a>
-            <a
-              href="#reservas"
-              onClick={() => setOpen(false)}
-              className="inline-flex h-11 flex-1 items-center justify-center rounded-full bg-primary-foreground text-sm font-semibold text-primary"
-            >
-              Reservá
-            </a>
+          {/* Fondo: con animación es un círculo que crece desde el botón; sin animación queda a pantalla completa. */}
+          <div data-menu-bg aria-hidden="true" className="absolute inset-0 bg-primary will-change-transform" />
+          <div className="relative flex h-full flex-col">
+            <div data-menu-top className="flex h-16 items-center justify-between px-5">
+              <Image src="/logo-la-comanda.svg" alt="" width={40} height={40} className="size-10" />
+              <button
+                type="button"
+                onClick={closeMenu}
+                className="inline-flex size-10 items-center justify-center rounded-full border border-primary-foreground/40"
+                aria-label="Cerrar menú"
+              >
+                <X className="size-5" aria-hidden="true" />
+              </button>
+            </div>
+            <nav aria-label="Menú móvil" className="flex flex-1 flex-col justify-center px-5">
+              <ul className="space-y-3">
+                {navLinks.map((link) => (
+                  <li key={link.href} data-menu-item>
+                    <a href={link.href} onClick={closeMenu} className="font-display block rounded-full text-4xl">
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+            <div data-menu-foot className="flex gap-3 px-5 pb-8">
+              <a
+                href={site.cartaUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-full border border-primary-foreground/40 text-sm font-semibold"
+              >
+                <BookOpen className="size-4" aria-hidden="true" /> Ver la carta
+              </a>
+              <a
+                href="#reservas"
+                onClick={closeMenu}
+                className="inline-flex h-11 flex-1 items-center justify-center rounded-full bg-primary-foreground text-sm font-semibold text-primary"
+              >
+                Reservá
+              </a>
+            </div>
           </div>
         </div>
       )}
