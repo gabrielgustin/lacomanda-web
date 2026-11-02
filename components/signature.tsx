@@ -186,17 +186,17 @@ export function Signature() {
           <Buttons className="mt-6" />
         </div>
 
-        {/* Cada foto vive en un marco más chico y centrado; el fondo suave deja respirar la composición. */}
+        {/* Cada foto vive en un marco centrado (hasta 72% del alto de la pantalla); el fondo suave deja respirar la composición. */}
         <div className="order-1 bg-muted">
           {picks.map((pick) => (
             <figure key={pick.id} id={`plato-${pick.id}`} data-dish className="flex h-svh items-center justify-center">
-              <div data-clip className="relative aspect-[4/5] h-[62svh] max-w-[80%] overflow-hidden bg-ink shadow-[0_24px_48px_-20px_rgb(36_21_14/0.5)]">
+              <div data-clip className="relative aspect-[4/5] w-[min(86%,calc(72svh*0.8))] overflow-hidden bg-ink shadow-[0_24px_48px_-20px_rgb(36_21_14/0.5)]">
                 <Image
                   data-parallax="8"
                   src={pick.image}
                   alt={pick.alt}
                   fill
-                  sizes="(min-width: 1024px) 30vw, 40vw"
+                  sizes="(min-width: 1024px) 37vw, 45vw"
                   className={cn('scale-115 object-cover', pick.focus)}
                 />
               </div>
