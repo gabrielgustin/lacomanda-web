@@ -73,10 +73,12 @@ export function Hero() {
       aria-labelledby="hero-title"
       className="relative z-0 flex min-h-svh flex-col overflow-hidden bg-ink text-primary-foreground lg:sticky lg:top-0 lg:h-svh lg:min-h-[640px]"
     >
+      {/* El cartel de la foto está al tercio de la altura: por debajo de lg el texto va abajo (justify-end), sin el
+          ticket, para que no se pise con él. */}
       <div className="absolute inset-0" aria-hidden="true">
         <Image
           data-hero-img
-          src="/fotos/principales.webp"
+          src="/fotos/local-noche.webp"
           alt=""
           fill
           priority
@@ -89,7 +91,7 @@ export function Hero() {
 
       <div
         data-hero-content
-        className="relative mx-auto flex w-full max-w-[90rem] flex-1 flex-col justify-center gap-10 px-5 pb-10 pt-28 md:px-8 md:pb-14 lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:content-center lg:items-start lg:gap-16 lg:pt-24"
+        className="relative mx-auto flex w-full max-w-[90rem] flex-1 flex-col justify-end gap-10 px-5 pb-10 pt-28 md:px-8 md:pb-14 lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:content-center lg:items-start lg:gap-16 lg:pt-24"
       >
         <div>
           {/* Dónde y si está abierto: lo primero que se pregunta quien llega. */}
@@ -121,8 +123,9 @@ export function Hero() {
           </div>
         </div>
 
-        {/* El ticket es decorativo. En escritorio va al lado del título, alineado arriba; si no entra, abajo y centrado. */}
-        <div aria-hidden="true" className="ticket-shadow w-full max-w-[19rem] self-center md:max-w-[20rem] lg:mt-3 lg:rotate-[2.5deg] lg:self-start">
+        {/* El ticket es decorativo: solo desde lg, al lado del título y alineado arriba; en celular y tablet se oculta
+            para dejar ver la foto. */}
+        <div aria-hidden="true" className="ticket-shadow w-full max-w-[20rem] self-center max-lg:hidden lg:mt-3 lg:rotate-[2.5deg] lg:self-start">
           <div data-ticket className="ticket px-5 pt-6 text-[13px] leading-snug">
             <p className="font-display text-center text-2xl">La Comanda</p>
             <p className="mt-1 flex justify-between font-bold">
