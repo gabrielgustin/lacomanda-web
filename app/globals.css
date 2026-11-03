@@ -183,7 +183,7 @@ html.lenis body {
   .js [data-promo] ~ [data-promo] {
     transform: translateY(120vh);
   }
-  /* El ticket del hero arranca sin papel a la vista; la animación lo imprime. */
+  /* El ticket de Nosotros arranca sin papel a la vista; la animación lo imprime. */
   .js [data-ticket] {
     clip-path: inset(0% 0% 100% 0%);
   }

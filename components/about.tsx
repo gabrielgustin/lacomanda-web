@@ -1,35 +1,31 @@
 'use client'
 
 import { useRef } from 'react'
-import Image from 'next/image'
 import { gsap, useGSAP, prefersReducedMotion } from '@/lib/gsap'
 import { SplitTitle } from '@/components/ui'
+import { OrderTicket } from '@/components/order-ticket'
 
-// Recorte con fondo transparente: la burger flota sobre la escena.
-const photo = '/fotos/burger-nosotros.png'
-// Proporción de la imagen y alto que ocupa la burger dentro de ella (medido sobre el PNG: 88%).
-const PHOTO_ASPECT = 2560 / 1934
-const BURGER_SHARE = 0.884
-
-// Texto a la izquierda y, a la derecha, la burger con un Ken Burns guiado por el scroll:
-// zoom y paneo lentos y un parallax 2.5D (la burger y el resplandor de atrás se mueven a distinta velocidad).
+// Texto a la izquierda y, a la derecha, el ticket de la comanda: se imprime al llegar y después tiene un Ken Burns
+// guiado por el scroll (zoom y giro lentos, y el resplandor de atrás se mueve a otra velocidad).
 // La sección queda fija mientras dura el recorrido.
 export function About() {
   const root = useRef<HTMLElement>(null)
 
   useGSAP(
     () => {
-      if (prefersReducedMotion()) return
       const q = gsap.utils.selector(root)
       const stage = q('[data-kb-stage]')[0]
       const front = q('[data-kb-front]')[0]
+      const ticket = q('[data-ticket]')[0]
 
-      // Zoom máximo que deja la burger entera dentro de la caja: en una caja baja (celular, tablet) la foto
-      // ya llena el alto y el zoom es corto; en una alta puede acercarse más.
-      const maxScale = () => {
-        const pad = parseFloat(getComputedStyle(front).paddingLeft) || 0
-        const photoHeight = Math.min(stage.clientHeight, (stage.clientWidth - pad * 2) / PHOTO_ASPECT)
-        return Math.min(1.18, Math.max(0.95, (0.88 * stage.clientHeight) / (BURGER_SHARE * photoHeight)))
+      // Zoom que deja el ticket entero dentro de la caja (con aire para los degradados de los bordes):
+      // en una caja baja (celular, tablet) achica; en una alta lo agranda hasta un tope.
+      const fit = () =>
+        Math.min(1.4, (0.74 * stage.clientHeight) / ticket.offsetHeight, (0.9 * stage.clientWidth) / ticket.offsetWidth)
+
+      if (prefersReducedMotion()) {
+        gsap.set(front, { scale: Math.min(1, fit()) })
+        return
       }
 
       gsap
@@ -45,15 +41,34 @@ export function About() {
             invalidateOnRefresh: true,
           },
         })
-        // Burger: se acerca, sube un poco y gira apenas, como una cámara que la rodea.
+        // Ticket: se acerca, sube un poco y gira apenas, como una cámara que lo rodea.
         .fromTo(
           front,
-          { scale: () => maxScale() * 0.78, yPercent: 3, rotate: -2 },
-          { scale: () => maxScale(), yPercent: -2, rotate: 1.5, duration: 4 },
+          { scale: () => fit() * 0.88, yPercent: 3, rotate: -2 },
+          { scale: () => fit(), yPercent: -2, rotate: 1.5, duration: 4 },
           0,
         )
-        // Resplandor y sombra: más lentos y hacia el otro lado, así la burger se despega del fondo.
+        // Resplandor: más lento y hacia el otro lado, así el ticket se despega del fondo.
         .fromTo('[data-kb-back]', { scale: 0.9, yPercent: -3 }, { scale: 1.1, yPercent: 4, duration: 4 }, 0)
+
+      // El papel sale de la impresora al entrar la sección y después cae el sello; la rotación final del sello
+      // la pone GSAP (no la clase) para no pisarse.
+      gsap
+        .timeline({
+          defaults: { ease: 'power4.out' },
+          scrollTrigger: { trigger: root.current, start: 'top 55%', once: true },
+        })
+        .fromTo(
+          ticket,
+          { clipPath: 'inset(0% 0% 100% 0%)', y: -32 },
+          { clipPath: 'inset(0% 0% 0% 0%)', y: 0, duration: 1.6, ease: 'power2.inOut' },
+        )
+        .fromTo(
+          '[data-stamp]',
+          { scale: 2.2, opacity: 0, rotate: -24 },
+          { scale: 1, opacity: 1, rotate: -6, duration: 0.4, ease: 'back.out(2.2)' },
+          '>-0.05',
+        )
     },
     { scope: root },
   )
@@ -89,17 +104,10 @@ export function About() {
         <div data-kb-stage className="absolute inset-0">
           <div data-kb-back className="absolute inset-0" aria-hidden="true">
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_55%_50%_at_50%_48%,#7a4220_0%,#3a1f12_45%,transparent_75%)]" />
-            <div className="absolute inset-x-[14%] bottom-[10%] h-[16%] bg-[radial-gradient(ellipse_at_center,rgb(0_0_0/0.65),transparent_70%)]" />
           </div>
-          <Image
-            data-kb-front
-            src={photo}
-            alt="Burger doble con panceta, cheddar, pepinillos y pan con sésamo"
-            fill
-            priority
-            sizes="(min-width: 768px) 55vw, 100vw"
-            className="object-contain px-4 will-change-transform md:px-8"
-          />
+          <div data-kb-front className="absolute inset-0 flex items-center justify-center px-4 md:px-8">
+            <OrderTicket />
+          </div>
         </div>
         <div className="pointer-events-none absolute inset-x-0 top-0 h-[12%] bg-gradient-to-b from-ink to-transparent" />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[12%] bg-gradient-to-t from-ink to-transparent" />

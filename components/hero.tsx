@@ -4,21 +4,8 @@ import { useRef } from 'react'
 import Image from 'next/image'
 import { gsap, useGSAP, prefersReducedMotion } from '@/lib/gsap'
 import { PillLink } from '@/components/ui'
-import { itemsById } from '@/lib/menu-data'
-import { formatPrice } from '@/lib/format'
 import { site } from '@/lib/site'
 import { OpenStatus } from '@/components/open-status'
-
-// Pedido de ejemplo que se imprime en el ticket del hero (precios de la carta).
-const order = [
-  { id: 'entradas-papas-jodidas', qty: 1 },
-  { id: 'pizzas-la-comanda', qty: 1 },
-  { id: 'burgers-de-costillas', qty: 2 },
-  { id: 'cervezas-chopp-stella', qty: 4 },
-]
-  .filter((line) => itemsById[line.id])
-  .map((line) => ({ ...line, item: itemsById[line.id] }))
-const orderTotal = order.reduce((sum, line) => sum + line.item.price * line.qty, 0)
 
 export function Hero() {
   const root = useRef<HTMLElement>(null)
@@ -26,26 +13,12 @@ export function Hero() {
   useGSAP(
     () => {
       if (prefersReducedMotion()) return
-      // Único momento orquestado: el título sube y el ticket se imprime de arriba hacia abajo.
+      // Único momento orquestado: la foto se asienta y el título sube.
       const intro = gsap.timeline({ defaults: { ease: 'power4.out' } })
       intro
         .from('[data-hero-img]', { scale: 1.2, duration: 2.2, ease: 'power3.out' })
         .from('[data-hero-line]', { yPercent: 110, duration: 1.2, stagger: 0.12 }, 0.2)
         .from('[data-hero-foot]', { opacity: 0, y: 20, duration: 0.9, stagger: 0.1 }, 0.7)
-        // El papel sale de la impresora: se descubre de arriba hacia abajo mientras baja.
-        .fromTo(
-          '[data-ticket]',
-          { clipPath: 'inset(0% 0% 100% 0%)', y: -32 },
-          { clipPath: 'inset(0% 0% 0% 0%)', y: 0, duration: 1.6, ease: 'power2.inOut' },
-          0.9,
-        )
-        // El sello cae y se estampa; la rotación final la pone GSAP (no la clase) para no pisarse.
-        .fromTo(
-          '[data-stamp]',
-          { scale: 2.2, opacity: 0, rotate: -24 },
-          { scale: 1, opacity: 1, rotate: -6, duration: 0.4, ease: 'back.out(2.2)' },
-          '>-0.05',
-        )
 
       // Al bajar, el hero queda fijo y se oscurece: solo en escritorio (lg), donde es fijo.
       gsap.matchMedia().add('(min-width: 1024px)', () => {
@@ -73,8 +46,7 @@ export function Hero() {
       aria-labelledby="hero-title"
       className="relative z-0 flex min-h-svh flex-col overflow-hidden bg-ink text-primary-foreground lg:sticky lg:top-0 lg:h-svh lg:min-h-[640px]"
     >
-      {/* El cartel de la foto está al tercio de la altura: por debajo de lg el texto va abajo (justify-end), sin el
-          ticket, para que no se pise con él. */}
+      {/* El cartel de la foto está al tercio de la altura: el texto va abajo (justify-end) para no pisarlo. */}
       <div className="absolute inset-0" aria-hidden="true">
         <Image
           data-hero-img
@@ -91,7 +63,7 @@ export function Hero() {
 
       <div
         data-hero-content
-        className="relative mx-auto flex w-full max-w-[90rem] flex-1 flex-col justify-end gap-10 px-5 pb-10 pt-28 md:px-8 md:pb-14 lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:content-center lg:items-start lg:gap-16 lg:pt-24"
+        className="relative mx-auto flex w-full max-w-[90rem] flex-1 flex-col justify-end px-5 pb-10 pt-28 md:px-8 md:pb-14"
       >
         <div>
           {/* Dónde y si está abierto: lo primero que se pregunta quien llega. */}
@@ -120,39 +92,6 @@ export function Hero() {
             <PillLink href="#reservas" variant="cream" className="h-12 px-7">
               Reservá tu mesa
             </PillLink>
-          </div>
-        </div>
-
-        {/* El ticket es decorativo: solo desde lg, al lado del título y alineado arriba; en celular y tablet se oculta
-            para dejar ver la foto. */}
-        <div aria-hidden="true" className="ticket-shadow w-full max-w-[20rem] self-center max-lg:hidden lg:mt-3 lg:rotate-[2.5deg] lg:self-start">
-          <div data-ticket className="ticket px-5 pt-6 text-[13px] leading-snug">
-            <p className="font-display text-center text-2xl">La Comanda</p>
-            <p className="mt-1 flex justify-between font-bold">
-              <span>Mesa 12</span>
-              <span>6 personas</span>
-            </p>
-            <div className="ticket-rule my-3" />
-            <ul className="space-y-1.5">
-              {order.map((line) => (
-                <li key={line.id} className="flex gap-2">
-                  <span className="w-4 shrink-0">{line.qty}</span>
-                  <span className="flex-1 uppercase">{line.item.name}</span>
-                  <span className="tabular-nums">{formatPrice(line.item.price * line.qty)}</span>
-                </li>
-              ))}
-            </ul>
-            <div className="ticket-rule my-3" />
-            <p className="flex justify-between text-base font-bold">
-              <span>Total</span>
-              <span className="tabular-nums">{formatPrice(orderTotal)}</span>
-            </p>
-            <p className="mt-3 text-center text-xs">Para compartir entre todos</p>
-            <div className="mt-3 flex justify-center">
-              <span data-stamp className="stamp inline-block -rotate-6 text-lg">
-                Se comparte
-              </span>
-            </div>
           </div>
         </div>
       </div>
