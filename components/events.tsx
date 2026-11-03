@@ -6,30 +6,34 @@ import { MessageCircle } from 'lucide-react'
 import { gsap, useGSAP, prefersReducedMotion } from '@/lib/gsap'
 import { PillLink, SplitTitle } from '@/components/ui'
 import { whatsappLink } from '@/lib/site'
+import { cn } from '@/lib/utils'
 
 const plans = [
   {
-    image: '/fotos/eventos/cumples.webp',
-    alt: 'Amigos festejando un cumpleaños en la mesa, con un globo de Happy Birthday',
-    title: 'Cumples y festejos',
+    image: '/fotos/eventos/festejos-mesa.webp',
+    alt: 'Amigas riendo en una mesa de madera con pizza, vino y cerveza; al fondo, la pared de madera con el cartel de neón',
+    // Foto casi cuadrada: `focus` encuadra caras y mesa (en celular manda el corrimiento horizontal).
+    focus: 'object-[60%_50%] md:object-[50%_25%]',
+    title: 'Festejos',
     text: 'Mesa larga, torta propia si querés y la pizza que no puede faltar. Nosotros nos encargamos del resto.',
   },
   {
     image: '/fotos/eventos/after-office.webp',
     alt: 'Grupo de amigos brindando con jarras de cerveza en la barra',
     title: 'After office',
-    text: 'Salís del laburo, pedís un chopp y una de papas jodidas. El mejor plan de la semana.',
+    text: 'Salís del laburo, pedís un chopp y unas papas con cheddar. El mejor plan de la semana.',
   },
   {
-    image: '/fotos/eventos/grupos.webp',
-    alt: 'Grupo grande compartiendo una mesa larga en un restaurante',
+    image: '/fotos/eventos/grupos-oficina.webp',
+    alt: 'Tres compañeras charlando con una notebook, un cuaderno y un café sobre la mesa de madera, frente a la pared de ladrillo',
+    focus: 'object-[45%_50%] md:object-[50%_45%]',
     title: 'Grupos y empresas',
     text: 'Armamos menú cerrado para grupos grandes, con opciones para todos y precio fijo por persona.',
   },
 ]
 
 // Escena fija a pantalla completa: arranca con el título sobre la primera foto y, al bajar,
-// cada plan entra con un barrido de abajo hacia arriba y un Ken Burns lento. Abajo, una regla
+// cada plan entra con un barrido de abajo hacia arriba (las fotos, sin zoom). Abajo, una regla
 // con los tres planes se va llenando. Con movimiento reducido, los planes quedan uno debajo del otro.
 export function Events() {
   const root = useRef<HTMLElement>(null)
@@ -48,9 +52,6 @@ export function Events() {
         defaults: { ease: 'none' },
         scrollTrigger: { trigger: root.current, start: 'top top', end: '+=320%', scrub: 1, pin: true, anticipatePin: 1, invalidateOnRefresh: true },
       })
-
-      // Cada foto se aleja despacio mientras está en pantalla.
-      q('[data-plan-img]').forEach((img, i) => tl.fromTo(img, { scale: 1.18 }, { scale: 1, duration: step + 1.2 }, i * step))
 
       // Apertura: el título se va y entra el primer plan.
       tl.to('[data-plan-intro]', { opacity: 0, y: -40, duration: 0.5, ease: 'power2.in' }, 0.5)
@@ -104,7 +105,7 @@ export function Events() {
           className="relative h-[85svh] overflow-hidden motion-safe:absolute motion-safe:inset-0 motion-safe:h-auto"
         >
           <div data-plan-inner className="absolute inset-0 will-change-transform">
-            <Image data-plan-img src={plan.image} alt={plan.alt} fill sizes="100vw" className="object-cover" />
+            <Image src={plan.image} alt={plan.alt} fill sizes="100vw" className={cn('object-cover', plan.focus)} />
             <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-ink/10 md:bg-gradient-to-r md:from-ink/90 md:via-ink/40 md:to-transparent" />
             <div
               data-plan-copy

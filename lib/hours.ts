@@ -14,8 +14,6 @@ const dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes
 const toMinutes = (time: string) => Number(time.slice(0, 2)) * 60 + Number(time.slice(3))
 // '08:00' → '8:00', para leer como se dice.
 export const shortTime = (time: string) => time.replace(/^0/, '')
-// "a la 1:00", "a las 16:00".
-const article = (time: string) => (time.startsWith('01:') ? 'la' : 'las')
 
 // Filas para mostrar, de lunes a domingo, juntando días seguidos con el mismo horario
 // ("Martes a jueves", "Viernes y sábado").
@@ -49,20 +47,13 @@ export function cordobaNow(date = new Date()) {
   return { day, minutes: Number(parts.hour) * 60 + Number(parts.minute) }
 }
 
-// Estado del local en este momento, listo para mostrar.
-export function openStatus(date = new Date()) {
-  const { day, minutes } = cordobaNow(date)
-  // El turno de ayer puede seguir abierto pasada la medianoche.
-  const [prevOpen, prevClose] = weeklyHours[(day + 6) % 7]
-  if (toMinutes(prevClose) < toMinutes(prevOpen) && minutes < toMinutes(prevClose)) {
-    return { open: true, text: `Abierto ahora · hasta ${article(prevClose)} ${shortTime(prevClose)}` }
-  }
+// Reserva para el día `day` (0 = domingo) a la hora `time` ('HH:MM'; pasada la medianoche cuenta como la noche de
+// ese día): tiene que caer dentro de la atención, hasta una hora antes del cierre. Devuelve el aviso, o '' si se puede.
+export function bookingIssue(day: number, time: string) {
   const [open, close] = weeklyHours[day]
-  const overnight = toMinutes(close) < toMinutes(open)
-  if (minutes >= toMinutes(open) && (overnight || minutes < toMinutes(close))) {
-    return { open: true, text: `Abierto ahora · hasta ${article(close)} ${shortTime(close)}` }
-  }
-  const later = minutes < toMinutes(open)
-  const opensAt = later ? open : weeklyHours[(day + 1) % 7][0]
-  return { open: false, text: `Cerrado · abrimos ${later ? 'hoy' : 'mañana'} a ${article(opensAt)} ${shortTime(opensAt)}` }
+  const start = toMinutes(open)
+  const afterMidnight = (t: string) => toMinutes(t) + (toMinutes(t) < start ? 24 * 60 : 0)
+  return afterMidnight(time) <= afterMidnight(close) - 60
+    ? ''
+    : `Ese día atendemos de ${shortTime(open)} a ${shortTime(close)}: elegí otro horario.`
 }

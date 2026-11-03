@@ -2,6 +2,8 @@
 const nextConfig = {
   images: {
     formats: ['image/avif', 'image/webp'],
+    // Next 16 solo permite la calidad 75 (se nota en degradés oscuros y caras): todas las fotos salen a 90.
+    qualities: [90],
   },
 }
 

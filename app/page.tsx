@@ -22,7 +22,7 @@ const jsonLd = {
   '@type': 'Restaurant',
   name: 'La Comanda Tejeda',
   url: site.url,
-  image: `${site.url}/og.jpg`,
+  image: `${site.url}/og-fachada.jpg`,
   telephone: site.phone,
   priceRange: '$$',
   servesCuisine: ['Argentina', 'Hamburguesas', 'Pizzas'],

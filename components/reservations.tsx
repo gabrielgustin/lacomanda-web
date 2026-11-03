@@ -4,16 +4,15 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { Clock, Send } from 'lucide-react'
 import { SplitTitle } from '@/components/ui'
 import { DateField, ListField, type FieldOption } from '@/components/fields'
-import { OpenStatus } from '@/components/open-status'
 import { site, whatsappLink } from '@/lib/site'
-import { cordobaNow, hourRows } from '@/lib/hours'
+import { bookingIssue, cordobaNow, hourRows } from '@/lib/hours'
 import { cn } from '@/lib/utils'
 
 const labelClass = 'block text-xs font-bold'
 const nameClass =
   'mt-1 h-11 w-full border-0 border-b-2 border-dashed border-ink/50 bg-transparent px-0 text-base text-ink outline-none transition-colors placeholder:text-ink/45 hover:bg-ink/5 focus:bg-ink/5 focus-visible:rounded-none'
 
-// Turnos cada media hora: mediodía (domingos) y noche. Se confirma por WhatsApp.
+// Turnos cada media hora: mediodía y noche (hasta las 0:30, la última mesa de viernes y sábado). Se confirma por WhatsApp.
 const slots = (from: number, to: number, group: string): FieldOption[] =>
   Array.from({ length: Math.floor((to - from) * 2) + 1 }, (_, i) => {
     const t = (from + i / 2) % 24
@@ -21,7 +20,7 @@ const slots = (from: number, to: number, group: string): FieldOption[] =>
     return { value: label, label, group }
   })
 const pad = (n: number) => String(n).padStart(2, '0')
-const timeOptions = [...slots(12, 15.5, 'Mediodía'), ...slots(19.5, 25.5, 'Noche')]
+const timeOptions = [...slots(12, 15.5, 'Mediodía'), ...slots(19.5, 24.5, 'Noche')]
 const peopleOptions: FieldOption[] = [...Array.from({ length: 10 }, (_, i) => String(i + 1)), 'Más de 10'].map((n) => ({
   value: n,
   label: n,
@@ -45,8 +44,13 @@ export function Reservations() {
       setError('Completá tu nombre, la fecha y la hora.')
       return
     }
-    setError('')
     const [y, m, d] = date.split('-')
+    const issue = bookingIssue(new Date(Number(y), Number(m) - 1, Number(d)).getDay(), time)
+    if (issue) {
+      setError(issue)
+      return
+    }
+    setError('')
     const text = `¡Hola La Comanda! Quiero reservar una mesa.\n\nNombre: ${name}\nDía: ${d}/${m}/${y}\nHora: ${time}\nPersonas: ${people}`
     window.open(whatsappLink(text), '_blank', 'noopener')
   }
@@ -67,7 +71,6 @@ export function Reservations() {
           <div className="mt-10 flex gap-4 text-sm">
             <Clock className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" />
             <div className="flex-1">
-              <OpenStatus className="mb-3 font-semibold text-primary" />
               <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-1">
                 {hourRows.map((row) => (
                   <div key={row.label} className={cn('contents', today !== null && row.days.includes(today) && '[&>*]:text-primary [&>dt]:font-bold')}>

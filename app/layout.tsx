@@ -11,8 +11,8 @@ const courier = Courier_Prime({ subsets: ['latin'], weight: ['400', '700'], vari
 const title = 'La Comanda | Bodegón en el Cerro de las Rosas, Córdoba'
 const description =
   'Burgers, pizzas, milanesas y chopp bien frío en Luis José de Tejeda 4320. Abierto todos los días: reservá tu mesa por WhatsApp.'
-// Vista previa al compartir el link (WhatsApp, Instagram, Facebook): el cartel de neón del salón con el logo.
-const image = { url: '/og.jpg', width: 1200, height: 630, alt: 'Cartel de neón de La Comanda: «Lo bueno se comparte»' }
+// Vista previa al compartir el link (WhatsApp, Instagram, Facebook): la fachada de noche con el cartel del local.
+const image = { url: '/og-fachada.jpg', width: 1200, height: 630, alt: 'Fachada de La Comanda de noche, con el cartel iluminado' }
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),

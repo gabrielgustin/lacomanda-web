@@ -28,24 +28,10 @@ export function ScrollEffects() {
         ),
     })
 
-    // Parallax y marcos que se abren: solo en tablet y escritorio. En celular las fotos grandes no están (o están
+    // Marcos que se abren: solo en tablet y escritorio. En celular las fotos grandes no están (o están
     // dentro de tiras fijas) y animar elementos ocultos en cada scroll sólo suma trabajo.
     const wide = gsap.matchMedia()
     wide.add('(min-width: 768px)', () => {
-    // Fotos con parallax suave dentro de su marco.
-    gsap.utils.toArray<HTMLElement>('[data-parallax]').forEach((img) => {
-      const amount = Number(img.dataset.parallax || 12)
-      gsap.fromTo(
-        img,
-        { yPercent: -amount },
-        {
-          yPercent: amount,
-          ease: 'none',
-          scrollTrigger: { trigger: img.parentElement, start: 'top bottom', end: 'bottom top', scrub: true },
-        },
-      )
-    })
-
     // Marcos de foto que se abren de abajo hacia arriba.
     gsap.utils.toArray<HTMLElement>('[data-clip]').forEach((frame) => {
       gsap.fromTo(

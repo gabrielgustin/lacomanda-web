@@ -10,7 +10,7 @@ export interface MenuItem {
 const items: MenuItem[] = [
   {
     id: 'burgers-de-costillas',
-    name: 'De Costillas',
+    name: 'Hamburguesas', // en la carta es la burger «De Costillas»; acá se presenta como la categoría
     description: 'Medallón de costilla 200 gr., cheddar x2, panceta, cebolla crispy, pepinillos y papas fritas',
     price: 19300,
   },
@@ -22,7 +22,7 @@ const items: MenuItem[] = [
   },
   {
     id: 'entradas-papas-jodidas',
-    name: 'Papas jodidas',
+    name: 'Papas con cheddar', // en la carta, «Papas jodidas»
     description: 'Papas fritas, cheddar, huevo, panceta, verdeo y chile opcional',
     price: 12900,
   },
@@ -32,8 +32,6 @@ const items: MenuItem[] = [
     description: 'Bife de chorizo de 350 gr., salsa criolla, huevo frito y papas rústicas',
     price: 38900,
   },
-  // En la carta no lleva descripción.
-  { id: 'milanesas-con-guarnicion', name: 'Milanesa con guarnición', description: '', price: 28500 },
   {
     id: 'mexicana-fajitas-mixtas',
     name: 'Fajitas mixtas',
@@ -42,7 +40,7 @@ const items: MenuItem[] = [
   },
   {
     id: 'sandwiches-entrana',
-    name: 'Entraña',
+    name: 'Sandwich de Entraña', // en la carta es «Entraña», bajo la categoría Sandwiches; acá no la tiene al lado
     description: 'Mayonesa casera, entraña braseada, rúcula, champiñones, tomate confitado y papas fritas',
     price: 27000,
   },

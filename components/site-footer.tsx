@@ -10,12 +10,11 @@ export function SiteFooter() {
   return (
     <footer id="contacto" data-tone="dark" className="relative z-10 bg-ink text-primary-foreground">
       {/* La foto es apaisada y el cartel ocupa casi todo su ancho: en celular la foto se muestra entera, con su
-          proporción, arriba de la banda (abajo queda el logo); desde md cubre la banda y el parallax mueve una
-          capa más alta en vez de agrandar la foto. */}
+          proporción, arriba de la banda (abajo queda el logo); desde md cubre la banda, quieta y sin zoom. */}
       <div className="relative h-[min(105vw,80svh)] overflow-hidden md:h-[85svh]">
-        <div data-parallax="8" className="absolute inset-x-0 top-0 aspect-[1532/1027] [mask-image:linear-gradient(to_bottom,transparent,#000_14%,#000_78%,transparent)] md:-inset-y-[10%] md:aspect-auto md:[mask-image:none]">
+        <div className="absolute inset-x-0 top-0 aspect-[1532/1027] [mask-image:linear-gradient(to_bottom,transparent,#000_14%,#000_78%,transparent)] md:inset-y-0 md:aspect-auto md:[mask-image:none]">
           <Image
-            src="/fotos/cartel-neon-barra.webp"
+            src="/fotos/cartel-neon-madera.webp"
             alt="Cartel de neón «Lo bueno se comparte» sobre la pared de madera de La Comanda, con las canillas de chopp arriba"
             fill
             sizes="100vw"

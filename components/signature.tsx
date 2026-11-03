@@ -12,13 +12,11 @@ import { cn } from '@/lib/utils'
 
 // Platos estrella de la carta: vidriera de la casa, no un pedido. `focus` encuadra el plato dentro de la foto.
 const picks = [
-  { id: 'burgers-de-costillas', image: '/fotos/costillas.webp', alt: 'Burger de costilla con cheddar, panceta y cebolla crispy, con papas fritas', focus: 'object-[50%_20%]' },
-  { id: 'pizzas-la-comanda', image: '/fotos/pizzas.webp', alt: 'Pizza recién salida del horno', focus: 'object-center' },
-  { id: 'entradas-papas-jodidas', image: '/fotos/entradas.webp', alt: 'Papas con cheddar, panceta y huevo', focus: 'object-center' },
-  { id: 'milanesas-con-guarnicion', image: '/fotos/milanesa.webp', alt: 'Milanesa con papas fritas y limón sobre el individual de La Comanda', focus: 'object-[50%_30%]' },
+  { id: 'burgers-de-costillas', image: '/fotos/burger-costillas.webp', alt: 'Burger de costilla con cheddar, panceta y cebolla crispy, con papas fritas', focus: 'object-[50%_20%]' },
+  { id: 'entradas-papas-jodidas', image: '/fotos/papas-cheddar.webp', alt: 'Papas fritas con cheddar, huevo revuelto, panceta y verdeo', focus: 'object-center' },
   { id: 'principales-bife-de-chorizo-criollo', image: '/fotos/principales.webp', alt: 'Bife de chorizo con huevo frito y papas', focus: 'object-center' },
-  { id: 'mexicana-fajitas-mixtas', image: '/fotos/mexicana.webp', alt: 'Fajitas con tortillas y salsas', focus: 'object-center' },
-  { id: 'sandwiches-entrana', image: '/fotos/sandwiches.webp', alt: 'Sándwich de entraña con papas fritas', focus: 'object-center' },
+  { id: 'mexicana-fajitas-mixtas', image: '/fotos/fajitas-taco.webp', alt: 'Tortilla con carne, morrones, cheddar y guacamole, junto a la plancha de fajitas y las salsas', focus: 'object-[50%_60%]' },
+  { id: 'sandwiches-entrana', image: '/fotos/sandwich-entrana.webp', alt: 'Sándwich de carne desmenuzada con huevo frito, tomate y lechuga, sostenido con las manos, con papas fritas de fondo', focus: 'object-center' },
 ].filter((pick) => itemsById[pick.id])
 
 const Buttons = ({ className }: { className?: string }) => (
@@ -187,26 +185,12 @@ export function Signature() {
           <Buttons className="mt-6" />
         </div>
 
-        {/* Cada foto vive en un marco cuadrado que ocupa casi todo el ancho de la columna (sin pasarse del alto, bajo el header);
-            las cajas se solapan para que entre marco y marco queden 6rem. */}
-        <div className="order-1 bg-muted @container [--frame:min(92cqw,calc(100svh-11rem))]">
+        {/* Cada foto ocupa toda la columna y todo el alto de la pantalla, sin marco, sin zoom ni parallax
+            (así no se recorta ni se agranda más de lo necesario). */}
+        <div className="order-1">
           {picks.map((pick) => (
-            <figure
-              key={pick.id}
-              id={`plato-${pick.id}`}
-              data-dish
-              className="flex h-svh items-center justify-center not-last:mb-[calc(var(--frame)+6rem-100svh)]"
-            >
-              <div data-clip className="relative aspect-square w-[var(--frame)] overflow-hidden bg-ink shadow-[0_24px_48px_-20px_rgb(36_21_14/0.5)]">
-                <Image
-                  data-parallax="8"
-                  src={pick.image}
-                  alt={pick.alt}
-                  fill
-                  sizes="46vw"
-                  className={cn('scale-115 object-cover', pick.focus)}
-                />
-              </div>
+            <figure key={pick.id} id={`plato-${pick.id}`} data-dish data-clip className="relative h-svh overflow-hidden bg-ink">
+              <Image src={pick.image} alt={pick.alt} fill sizes="50vw" className={cn('object-cover', pick.focus)} />
             </figure>
           ))}
         </div>
