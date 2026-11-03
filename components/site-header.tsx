@@ -8,8 +8,9 @@ import { navLinks, site } from '@/lib/site'
 import { gsap, prefersReducedMotion } from '@/lib/gsap'
 
 export function SiteHeader() {
-  const [scrolled, setScrolled] = useState(false)
+  const [tone, setTone] = useState<'clear' | 'dark' | 'light'>('clear')
   const [open, setOpen] = useState(false)
+  const headerRef = useRef<HTMLElement>(null)
   // `mounted` sigue en true mientras el menú se repliega, para poder animar el cierre antes de quitarlo.
   const [mounted, setMounted] = useState(false)
   const panelRef = useRef<HTMLDivElement>(null)
@@ -52,11 +53,26 @@ export function SiteHeader() {
     }
   }, [mounted])
 
+  // Arriba de todo, transparente sobre la foto. Después toma el tono de lo que pasa por debajo:
+  // oscuro sobre las secciones marcadas con data-tone="dark", crema sobre las claras.
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > window.innerHeight * 0.6)
-    onScroll()
+    let frame = 0
+    const update = () => {
+      frame = 0
+      if (window.scrollY < window.innerHeight * 0.6) return setTone('clear')
+      const edge = (headerRef.current?.offsetHeight ?? 64) - 1
+      const below = document.elementsFromPoint(window.innerWidth / 2, edge).find((el) => !headerRef.current?.contains(el))
+      setTone(below?.closest('[data-tone="dark"]') ? 'dark' : 'light')
+    }
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update)
+    }
+    update()
     window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      cancelAnimationFrame(frame)
+    }
   }, [])
 
   // Menú móvil: Esc cierra, el foco queda atrapado adentro y vuelve al botón al cerrar.
@@ -88,17 +104,21 @@ export function SiteHeader() {
     }
   }, [open])
 
-  const light = !scrolled
+  // `light`: texto y logo claros (sobre la foto o sobre secciones oscuras).
+  const light = tone !== 'light'
 
   return (
     <header
+      ref={headerRef}
       className={cn(
-        'fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,color] duration-300',
-        light ? 'border-b border-transparent text-primary-foreground' : 'border-b border-border bg-background text-foreground',
+        'fixed inset-x-0 top-0 z-50 border-b transition-[background-color,border-color,color] duration-300',
+        tone === 'clear' && 'border-transparent text-primary-foreground',
+        tone === 'dark' && 'border-primary-foreground/10 bg-ink/95 text-primary-foreground',
+        tone === 'light' && 'border-border bg-background text-foreground',
       )}
     >
       <div className="mx-auto flex h-16 max-w-[90rem] items-center gap-6 px-5 md:h-20 md:px-8">
-        {/* Sobre la foto va el sello blanco; con el header crema, solo las letras, sin fondo. */}
+        {/* Sobre fondo oscuro va el sello blanco; con el header crema, solo las letras, sin fondo. */}
         <a href="#inicio" className="relative block size-10 shrink-0 rounded-full md:size-11" aria-label="La Comanda, ir al inicio">
           <Image
             src="/logo-la-comanda.svg"

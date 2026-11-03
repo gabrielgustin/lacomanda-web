@@ -12,9 +12,10 @@ import { cn } from '@/lib/utils'
 
 // Platos estrella de la carta: vidriera de la casa, no un pedido. `focus` encuadra el plato dentro de la foto.
 const picks = [
-  { id: 'burgers-de-costillas', image: '/fotos/costilla.webp', alt: 'Burger de costilla con el hueso asomando', focus: 'object-[50%_72%]' },
+  { id: 'burgers-de-costillas', image: '/fotos/costillas.webp', alt: 'Burger de costilla con cheddar, panceta y cebolla crispy, con papas fritas', focus: 'object-[50%_20%]' },
   { id: 'pizzas-la-comanda', image: '/fotos/pizzas.webp', alt: 'Pizza recién salida del horno', focus: 'object-center' },
   { id: 'entradas-papas-jodidas', image: '/fotos/entradas.webp', alt: 'Papas con cheddar, panceta y huevo', focus: 'object-center' },
+  { id: 'milanesas-con-guarnicion', image: '/fotos/milanesa.webp', alt: 'Milanesa con papas fritas y limón sobre el individual de La Comanda', focus: 'object-[50%_30%]' },
   { id: 'principales-bife-de-chorizo-criollo', image: '/fotos/principales.webp', alt: 'Bife de chorizo con huevo frito y papas', focus: 'object-center' },
   { id: 'mexicana-fajitas-mixtas', image: '/fotos/mexicana.webp', alt: 'Fajitas con tortillas y salsas', focus: 'object-center' },
   { id: 'sandwiches-entrana', image: '/fotos/sandwiches.webp', alt: 'Sándwich de entraña con papas fritas', focus: 'object-center' },
@@ -130,7 +131,7 @@ export function Signature() {
                       <span className="mb-1 min-w-3 flex-1 border-b-2 border-dotted border-primary/35" aria-hidden="true" />
                       <p className="font-display shrink-0 text-base text-primary">{formatPrice(item.price)}</p>
                     </div>
-                    <p className="mt-1.5 text-[13px] leading-snug text-muted-foreground">{item.description}</p>
+                    {item.description && <p className="mt-1.5 text-[13px] leading-snug text-muted-foreground">{item.description}</p>}
                   </div>
                 </li>
               )
@@ -138,7 +139,7 @@ export function Signature() {
           </ul>
         </div>
 
-        {/* Cuál de los seis estás viendo. */}
+        {/* Qué plato de la tira estás viendo. */}
         <div className="mt-4 flex gap-1.5 px-5" aria-hidden="true">
           {picks.map((pick, i) => (
             <span key={pick.id} className={cn('h-0.5 flex-1 transition-colors duration-300', i === slide ? 'bg-primary' : 'bg-primary/20')} />

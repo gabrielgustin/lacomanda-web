@@ -1,23 +1,26 @@
 import { Bevan, Courier_Prime, DM_Sans } from 'next/font/google'
 import type { Metadata, Viewport } from 'next'
 import { SmoothScroll } from '@/components/smooth-scroll'
+import { site } from '@/lib/site'
 import './globals.css'
 
 const bevan = Bevan({ subsets: ['latin'], weight: '400', variable: '--font-bevan' })
 const dmSans = DM_Sans({ subsets: ['latin'], variable: '--font-dm-sans' })
 const courier = Courier_Prime({ subsets: ['latin'], weight: ['400', '700'], variable: '--font-courier' })
 
-const title = 'La Comanda | Bodegón, burgers, pizzas y cerveza bien fría'
+const title = 'La Comanda | Bodegón en el Cerro de las Rosas, Córdoba'
 const description =
-  'La Comanda: cocina para compartir, cerveza bien fría y mesas largas. Reservá tu mesa, pedí por WhatsApp o mirá la carta.'
+  'Burgers, pizzas, milanesas y chopp bien frío en Luis José de Tejeda 4320. Abierto todos los días: reservá tu mesa por WhatsApp.'
+// Vista previa al compartir el link (WhatsApp, Instagram, Facebook): el cartel de neón del salón con el logo.
+const image = { url: '/og.jpg', width: 1200, height: 630, alt: 'Cartel de neón de La Comanda: «Lo bueno se comparte»' }
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://web-lacomanda.vercel.app'),
+  metadataBase: new URL(site.url),
   title,
   description,
   icons: {
     icon: [{ url: '/logo-la-comanda.svg', type: 'image/svg+xml' }],
-    apple: '/logo-la-comanda.svg',
+    apple: '/apple-touch-icon.png',
   },
   openGraph: {
     title,
@@ -25,8 +28,9 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'es_AR',
     siteName: 'La Comanda',
-    images: [{ url: '/fotos/pizzas.webp', width: 1024, height: 1024, alt: 'Pizza en una mesa de La Comanda' }],
+    images: [image],
   },
+  twitter: { card: 'summary_large_image', title, description, images: [image] },
 }
 
 export const viewport: Viewport = {

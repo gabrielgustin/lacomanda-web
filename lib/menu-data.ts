@@ -32,6 +32,8 @@ const items: MenuItem[] = [
     description: 'Bife de chorizo de 350 gr., salsa criolla, huevo frito y papas rústicas',
     price: 38900,
   },
+  // En la carta no lleva descripción.
+  { id: 'milanesas-con-guarnicion', name: 'Milanesa con guarnición', description: '', price: 28500 },
   {
     id: 'mexicana-fajitas-mixtas',
     name: 'Fajitas mixtas',

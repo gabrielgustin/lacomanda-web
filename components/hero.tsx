@@ -6,6 +6,8 @@ import { gsap, useGSAP, prefersReducedMotion } from '@/lib/gsap'
 import { PillLink } from '@/components/ui'
 import { itemsById } from '@/lib/menu-data'
 import { formatPrice } from '@/lib/format'
+import { site } from '@/lib/site'
+import { OpenStatus } from '@/components/open-status'
 
 // Pedido de ejemplo que se imprime en el ticket del hero (precios de la carta).
 const order = [
@@ -66,6 +68,7 @@ export function Hero() {
   return (
     <section
       id="inicio"
+      data-tone="dark"
       ref={root}
       aria-labelledby="hero-title"
       className="relative z-0 flex min-h-svh flex-col overflow-hidden bg-ink text-primary-foreground lg:sticky lg:top-0 lg:h-svh lg:min-h-[640px]"
@@ -89,6 +92,12 @@ export function Hero() {
         className="relative mx-auto flex w-full max-w-[90rem] flex-1 flex-col justify-center gap-10 px-5 pb-10 pt-28 md:px-8 md:pb-14 lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:content-center lg:items-start lg:gap-16 lg:pt-24"
       >
         <div>
+          {/* Dónde y si está abierto: lo primero que se pregunta quien llega. */}
+          <div data-hero-foot className="mb-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-primary-foreground/85">
+            <span>{site.address} · Cerro de las Rosas</span>
+            <span aria-hidden="true" className="hidden h-3 w-px bg-primary-foreground/30 sm:block" />
+            <OpenStatus />
+          </div>
           <h1
             id="hero-title"
             className="font-display text-[clamp(2.8rem,7vw,6.5rem)] leading-[0.9]"

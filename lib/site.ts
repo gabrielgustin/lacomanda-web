@@ -1,30 +1,21 @@
-// Datos del negocio. Todo lo marcado con TODO es provisorio: reemplazar por los datos reales.
+// Datos del negocio. Dirección, teléfono y horarios salen de la ficha de Google Maps; el WhatsApp lo pasó el cliente.
+// Los horarios viven en lib/hours.ts.
 export const site = {
   name: 'La Comanda',
-  city: 'Argentina', // TODO: ciudad real
-  since: '2018', // TODO: año de apertura
+  url: 'https://web-lacomanda.vercel.app',
   cartaUrl: 'https://lacomanda-xi.vercel.app',
   whatsapp: '5493512681910', // formato internacional sin "+" (54 9 + código de área + número)
-  phoneLabel: 'Número a confirmar', // TODO
-  instagram: 'https://instagram.com/lacomanda', // TODO
-  instagramHandle: '@lacomanda', // TODO
-  email: 'hola@lacomanda.com.ar', // TODO
-  address: 'Luis José de Tejeda 4320', // según la ficha de Google Maps
+  whatsappLabel: '351 268-1910',
+  phone: '+5493512540808', // el "15" de la ficha es celular: +54 9 351 254-0808
+  phoneLabel: '0351 15-254-0808',
+  address: 'Luis José de Tejeda 4320',
   addressDetail: 'Cerro de las Rosas, Córdoba',
+  geo: { lat: -31.3691723, lng: -64.2348894 },
   // Ficha de "La Comanda Tejeda" en Google Maps (abre el local con su mapa y sus opiniones).
   mapsUrl: 'https://www.google.com/maps?cid=13604217121055167239',
-  // TODO: nota y cantidad de reseñas reales de Google, p. ej. { score: '4.8', reviews: '1.200' }.
-  // Mientras sea null, la tarjeta de Google del hero no se muestra.
-  rating: null as { score: string; reviews: string } | null,
   // Misma ficha: desde ahí se ven todas las reseñas y se escribe una ("Escribir una opinión").
   reviewUrl: 'https://www.google.com/maps?cid=13604217121055167239',
-  hours: [
-    // TODO: horarios reales
-    { days: 'Lunes', time: 'Cerrado' },
-    { days: 'Martes a jueves', time: '19:30 – 00:30' },
-    { days: 'Viernes y sábado', time: '19:30 – 02:00' },
-    { days: 'Domingo', time: '12:00 – 16:00 · 19:30 – 00:30' },
-  ],
+  directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=La+Comanda+Tejeda%2C+Luis+Jos%C3%A9+de+Tejeda+4320%2C+C%C3%B3rdoba',
 }
 
 export const whatsappLink = (text: string) =>

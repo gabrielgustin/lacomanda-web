@@ -75,6 +75,7 @@ export function Events() {
   return (
     <section
       id="eventos"
+      data-tone="dark"
       ref={root}
       aria-labelledby="eventos-title"
       className="relative z-10 overflow-hidden bg-ink text-paper motion-safe:h-svh"

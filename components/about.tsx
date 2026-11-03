@@ -61,6 +61,7 @@ export function About() {
   return (
     <section
       id="nosotros"
+      data-tone="dark"
       ref={root}
       aria-labelledby="nosotros-title"
       className="relative z-10 flex h-svh flex-col overflow-hidden bg-ink text-paper md:grid md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]"

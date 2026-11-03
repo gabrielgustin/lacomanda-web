@@ -1,10 +1,13 @@
 'use client'
 
-import { useState, type FormEvent } from 'react'
-import { Clock, MapPin, Send } from 'lucide-react'
+import { useEffect, useState, type FormEvent } from 'react'
+import { Clock, Send } from 'lucide-react'
 import { SplitTitle } from '@/components/ui'
 import { DateField, ListField, type FieldOption } from '@/components/fields'
+import { OpenStatus } from '@/components/open-status'
 import { site, whatsappLink } from '@/lib/site'
+import { cordobaNow, hourRows } from '@/lib/hours'
+import { cn } from '@/lib/utils'
 
 const labelClass = 'block text-xs font-bold'
 const nameClass =
@@ -30,6 +33,9 @@ export function Reservations() {
   const [date, setDate] = useState('')
   const [time, setTime] = useState('')
   const [people, setPeople] = useState('2')
+  // El día de hoy (en Córdoba) se resalta en los horarios; solo en el navegador.
+  const [today, setToday] = useState<number | null>(null)
+  useEffect(() => setToday(cordobaNow().day), [])
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -52,41 +58,26 @@ export function Reservations() {
           <SplitTitle
             id="reservas-title"
             lines={['Guardamos', 'tu mesa']}
-            className="text-[clamp(2.8rem,6.4vw,5.5rem)] text-primary"
+            className="text-[clamp(2.8rem,6.4vw,5rem)] text-primary"
           />
           <p className="mt-6 max-w-md text-base leading-relaxed text-muted-foreground text-pretty">
             Completá la comanda y te abrimos WhatsApp con el mensaje listo. Te confirmamos la mesa en el chat.
           </p>
 
-          <ul className="mt-10 space-y-6 text-sm">
-            <li className="flex gap-4">
-              <MapPin className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" />
-              <div>
-                <p className="font-semibold">{site.address}</p>
-                <p className="text-muted-foreground">{site.addressDetail}</p>
-                <a href={site.mapsUrl} target="_blank" rel="noreferrer" className="mt-1 inline-block rounded-full font-semibold text-primary underline underline-offset-4">
-                  Cómo llegar
-                </a>
-              </div>
-            </li>
-            <li className="flex gap-4">
-              <Clock className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" />
-              <dl className="grid flex-1 grid-cols-[auto_1fr] gap-x-6 gap-y-1">
-                {site.hours.map((row) => (
-                  <div key={row.days} className="contents">
-                    <dt className="font-semibold">{row.days}</dt>
-                    <dd className="text-muted-foreground">
-                      {row.time.split(' · ').map((slot) => (
-                        <span key={slot} className="block">
-                          {slot}
-                        </span>
-                      ))}
-                    </dd>
+          <div className="mt-10 flex gap-4 text-sm">
+            <Clock className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" />
+            <div className="flex-1">
+              <OpenStatus className="mb-3 font-semibold text-primary" />
+              <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-1">
+                {hourRows.map((row) => (
+                  <div key={row.label} className={cn('contents', today !== null && row.days.includes(today) && '[&>*]:text-primary [&>dt]:font-bold')}>
+                    <dt className="font-semibold">{row.label}</dt>
+                    <dd className="tabular-nums text-muted-foreground">{row.time}</dd>
                   </div>
                 ))}
               </dl>
-            </li>
-          </ul>
+            </div>
+          </div>
         </div>
 
         <div className="ticket-shadow lg:rotate-[1.5deg]">
@@ -123,6 +114,19 @@ export function Reservations() {
               <Send className="size-4" aria-hidden="true" /> Reservar por WhatsApp
             </button>
           </form>
+        </div>
+      </div>
+
+      {/* Dónde estamos: el mapa real del local (la ficha de Google trae su propio "Cómo llegar"). */}
+      <div className="mx-auto mt-20 max-w-6xl px-5 md:mt-28">
+        <div className="relative overflow-hidden bg-ink shadow-[0_24px_48px_-24px_rgb(36_21_14/0.55)]">
+          <iframe
+            title={`Mapa de La Comanda en ${site.address}, ${site.addressDetail}`}
+            src={`https://www.google.com/maps?q=${encodeURIComponent(`La Comanda Tejeda, ${site.address}, Córdoba`)}&z=16&output=embed`}
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            className="block h-[20rem] w-full border-0 [filter:sepia(0.3)_saturate(0.85)_contrast(1.05)] md:h-[28rem]"
+          />
         </div>
       </div>
     </section>
