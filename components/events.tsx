@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils'
 
 const plans = [
   {
-    image: '/fotos/eventos/festejos-mesa.webp',
+    image: '/fotos/eventos/festejos-mesa-hd.webp',
     alt: 'Amigas riendo en una mesa de madera con pizza, vino y cerveza; al fondo, la pared de madera con el cartel de neón',
     // Foto casi cuadrada: `focus` encuadra caras y mesa (en celular manda el corrimiento horizontal).
     focus: 'object-[60%_50%] md:object-[50%_25%]',
@@ -18,16 +18,17 @@ const plans = [
     text: 'Mesa larga, torta propia si querés y la pizza que no puede faltar. Nosotros nos encargamos del resto.',
   },
   {
-    image: '/fotos/eventos/after-office.webp',
-    alt: 'Grupo de amigos brindando con jarras de cerveza en la barra',
+    image: '/fotos/eventos/after-office-brindis-hd.webp',
+    alt: 'Amigos brindando con chopp, gin tonic y Aperol en una mesa de madera con papas y picada, frente a la pared de ladrillo',
+    focus: 'object-[55%_50%] md:object-[50%_40%]',
     title: 'After office',
     text: 'Salís del laburo, pedís un chopp y unas papas con cheddar. El mejor plan de la semana.',
   },
   {
-    image: '/fotos/eventos/grupos-oficina.webp',
+    image: '/fotos/eventos/grupos-oficina-hd.webp',
     alt: 'Tres compañeras charlando con una notebook, un cuaderno y un café sobre la mesa de madera, frente a la pared de ladrillo',
     focus: 'object-[45%_50%] md:object-[50%_45%]',
-    title: 'Grupos y empresas',
+    title: 'Empresas',
     text: 'Armamos menú cerrado para grupos grandes, con opciones para todos y precio fijo por persona.',
   },
 ]
@@ -105,7 +106,7 @@ export function Events() {
           className="relative h-[85svh] overflow-hidden motion-safe:absolute motion-safe:inset-0 motion-safe:h-auto"
         >
           <div data-plan-inner className="absolute inset-0 will-change-transform">
-            <Image src={plan.image} alt={plan.alt} fill sizes="100vw" className={cn('object-cover', plan.focus)} />
+            <Image src={plan.image} alt={plan.alt} fill sizes="100vw" className={cn('photo-tone object-cover', plan.focus)} />
             <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-ink/10 md:bg-gradient-to-r md:from-ink/90 md:via-ink/40 md:to-transparent" />
             <div
               data-plan-copy

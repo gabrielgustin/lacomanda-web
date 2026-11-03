@@ -14,7 +14,7 @@ export function SiteFooter() {
       <div className="relative h-[min(105vw,80svh)] overflow-hidden md:h-[85svh]">
         <div className="absolute inset-x-0 top-0 aspect-[1532/1027] [mask-image:linear-gradient(to_bottom,transparent,#000_14%,#000_78%,transparent)] md:inset-y-0 md:aspect-auto md:[mask-image:none]">
           <Image
-            src="/fotos/cartel-neon-madera.webp"
+            src="/fotos/cartel-neon-madera-hd.webp"
             alt="Cartel de neón «Lo bueno se comparte» sobre la pared de madera de La Comanda, con las canillas de chopp arriba"
             fill
             sizes="100vw"

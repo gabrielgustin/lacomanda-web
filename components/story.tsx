@@ -6,7 +6,7 @@ export function Story() {
     <section id="historia" data-tone="dark" aria-labelledby="historia-title" className="relative z-10 overflow-hidden bg-ink text-primary-foreground">
       <div className="relative min-h-svh">
         <Image
-          src="/fotos/cartel-invitarte.webp"
+          src="/fotos/cartel-invitarte-hd.webp"
           alt="Salón de La Comanda con las mesas vacías y, en la pared de ladrillo, el cartel luminoso «La mejor idea fue invitarte»"
           fill
           sizes="100vw"

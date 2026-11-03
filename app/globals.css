@@ -66,6 +66,12 @@
   line-height: 0.95;
 }
 
+/* Tono común de las fotos de platos y planes: un poco más oscuras y menos saturadas, para que no se vean
+   chillonas sobre el crema y queden parejas entre sí. Se aplica en CSS para no recomprimir los originales. */
+@utility photo-tone {
+  filter: brightness(0.9) saturate(0.82) contrast(1.04);
+}
+
 /* Texto chico de apoyo (encabezados del footer, rótulos de vale). */
 @utility eyebrow {
   font-family: var(--font-sans);

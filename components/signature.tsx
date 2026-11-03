@@ -12,19 +12,20 @@ import { cn } from '@/lib/utils'
 
 // Platos estrella de la carta: vidriera de la casa, no un pedido. `focus` encuadra el plato dentro de la foto.
 const picks = [
-  { id: 'burgers-de-costillas', image: '/fotos/burger-costillas.webp', alt: 'Burger de costilla con cheddar, panceta y cebolla crispy, con papas fritas', focus: 'object-[50%_20%]' },
-  { id: 'entradas-papas-jodidas', image: '/fotos/papas-cheddar.webp', alt: 'Papas fritas con cheddar, huevo revuelto, panceta y verdeo', focus: 'object-center' },
-  { id: 'principales-bife-de-chorizo-criollo', image: '/fotos/principales.webp', alt: 'Bife de chorizo con huevo frito y papas', focus: 'object-center' },
-  { id: 'mexicana-fajitas-mixtas', image: '/fotos/fajitas-taco.webp', alt: 'Tortilla con carne, morrones, cheddar y guacamole, junto a la plancha de fajitas y las salsas', focus: 'object-[50%_60%]' },
-  { id: 'sandwiches-entrana', image: '/fotos/sandwich-entrana.webp', alt: 'Sándwich de carne desmenuzada con huevo frito, tomate y lechuga, sostenido con las manos, con papas fritas de fondo', focus: 'object-center' },
+  { id: 'burgers-de-costillas', image: '/fotos/burger-costillas-hd.webp', alt: 'Burger de costilla con cheddar, panceta y cebolla crispy, con papas fritas', focus: 'object-[50%_20%]' },
+  { id: 'entradas-papas-jodidas', image: '/fotos/papas-cheddar-hd.webp', alt: 'Papas fritas con cheddar, huevo revuelto, panceta y verdeo', focus: 'object-center' },
+  { id: 'principales-bife-de-chorizo-criollo', image: '/fotos/principales-hd.webp', alt: 'Bife de chorizo con huevo frito y papas', focus: 'object-center' },
+  { id: 'mexicana-fajitas-mixtas', image: '/fotos/fajitas-taco-hd.webp', alt: 'Tortilla con carne, morrones, cheddar y guacamole, junto a la plancha de fajitas y las salsas', focus: 'object-[50%_60%]' },
+  { id: 'sandwiches-entrana', image: '/fotos/sandwich-entrana-hd.webp', alt: 'Sándwich de carne desmenuzada con huevo frito, tomate y lechuga, sostenido con las manos, con papas fritas de fondo', focus: 'object-center' },
 ].filter((pick) => itemsById[pick.id])
 
-const Buttons = ({ className }: { className?: string }) => (
+// `compact`: en celular los dos botones entran en una sola línea (texto más corto y menos relleno).
+const Buttons = ({ className, compact }: { className?: string; compact?: boolean }) => (
   <div className={cn('flex flex-wrap items-center gap-3', className)}>
-    <PillLink href={site.cartaUrl} target="_blank" rel="noreferrer">
-      Ver la carta completa <ArrowUpRight className="size-4" aria-hidden="true" />
+    <PillLink href={site.cartaUrl} target="_blank" rel="noreferrer" className={cn(compact && 'px-5')}>
+      {compact ? 'Ver la carta' : 'Ver la carta completa'} <ArrowUpRight className="size-4" aria-hidden="true" />
     </PillLink>
-    <PillLink href="#reservas" variant="outline">
+    <PillLink href="#reservas" variant="outline" className={cn(compact && 'px-5')}>
       Reservá tu mesa
     </PillLink>
   </div>
@@ -52,6 +53,7 @@ export function Signature() {
         gsap.set(wrap, { overflowX: 'hidden' })
         const distance = () => Math.max(0, ul.scrollWidth - wrap.clientWidth)
         // El tramo fijo es más largo que lo que recorre la tira y termina con una pausa en la última tarjeta.
+        // La tira va pegada al scroll (sin suavizado): con un deslizón rápido igual llega a la última antes de soltarse.
         gsap
           .timeline({
             scrollTrigger: {
@@ -60,7 +62,7 @@ export function Signature() {
               end: () => `+=${Math.round(distance() * STRIP_PACE * (1 + STRIP_HOLD))}`,
               pin: true,
               anticipatePin: 1,
-              scrub: 0.4,
+              scrub: true,
               invalidateOnRefresh: true,
               onUpdate: (self) =>
                 setSlide(Math.round(Math.min(1, self.progress * (1 + STRIP_HOLD)) * (picks.length - 1))),
@@ -101,7 +103,9 @@ export function Signature() {
 
   return (
     <section ref={root} id="platos" aria-label="Platos de la casa" className="relative z-10 bg-background">
-      {/* Celular: bloque a pantalla completa que se ancla mientras la tira avanza. */}
+      {/* Celular: bloque a pantalla completa que se ancla mientras la tira avanza. La tira toma el alto que sobra
+          (con tope) y, en cada tarjeta, la foto se queda con lo que deja el texto: así nada se corta en ninguna
+          altura de pantalla. En pantallas bajas se omite el texto de introducción. */}
       <div ref={mobile} className="flex h-svh flex-col justify-center overflow-hidden pb-6 pt-20 md:hidden [@media(max-height:519px)]:h-auto">
         <div className="px-5">
           <SplitTitle
@@ -109,21 +113,25 @@ export function Signature() {
             lines={['Recetas de siempre.', 'Hambre de ahora.']}
             className="text-[clamp(1.6rem,7.2vw,2.6rem)] text-primary"
           />
-          <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground text-pretty">
+          <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground text-pretty [@media(max-height:620px)]:hidden">
             Pizzas con masa propia, burgers de 200 gramos, bifes de 350 y salsas de todos los días.
           </p>
         </div>
 
-        <div ref={strip} className="scrollbar-hide mt-5 snap-x snap-mandatory overflow-x-auto overscroll-x-contain">
+        <div
+          ref={strip}
+          className="scrollbar-hide mt-5 flex max-h-[31rem] min-h-0 flex-1 snap-x snap-mandatory overflow-x-auto overscroll-x-contain"
+        >
           <ul ref={track} className="flex w-max gap-4 px-5">
             {picks.map((pick) => {
               const item = itemsById[pick.id]
               return (
-                <li key={pick.id} className="w-[72vw] max-w-[19rem] shrink-0 snap-start">
-                  <figure className="relative h-[clamp(12rem,calc(100svh-29rem),24rem)] overflow-hidden bg-ink">
-                    <Image src={pick.image} alt={pick.alt} fill sizes="75vw" loading="eager" className={cn('object-cover', pick.focus)} />
+                <li key={pick.id} className="flex w-[72vw] max-w-[19rem] shrink-0 snap-start flex-col">
+                  <figure className="relative min-h-[9rem] flex-1 overflow-hidden bg-ink">
+                    <Image src={pick.image} alt={pick.alt} fill sizes="75vw" loading="eager" className={cn('photo-tone object-cover', pick.focus)} />
                   </figure>
-                  <div className="mt-3">
+                  {/* Alto fijo para el texto: todas las fotos de la tira quedan del mismo alto. */}
+                  <div className="mt-3 min-h-[7.25rem]">
                     <div className="flex items-baseline gap-3">
                       <h3 className="font-display min-w-0 text-xl leading-tight text-primary">{item.name}</h3>
                       <span className="mb-1 min-w-3 flex-1 border-b-2 border-dotted border-primary/35" aria-hidden="true" />
@@ -144,7 +152,7 @@ export function Signature() {
           ))}
         </div>
 
-        <Buttons className="mt-5 px-5" />
+        <Buttons compact className="mt-5 px-5" />
       </div>
 
       {/* Tablet y escritorio */}
@@ -190,7 +198,7 @@ export function Signature() {
         <div className="order-1">
           {picks.map((pick) => (
             <figure key={pick.id} id={`plato-${pick.id}`} data-dish data-clip className="relative h-svh overflow-hidden bg-ink">
-              <Image src={pick.image} alt={pick.alt} fill sizes="50vw" className={cn('object-cover', pick.focus)} />
+              <Image src={pick.image} alt={pick.alt} fill sizes="50vw" className={cn('photo-tone object-cover', pick.focus)} />
             </figure>
           ))}
         </div>
