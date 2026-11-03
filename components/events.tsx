@@ -51,7 +51,7 @@ export function Events() {
 
       const tl = gsap.timeline({
         defaults: { ease: 'none' },
-        scrollTrigger: { trigger: root.current, start: 'top top', end: '+=320%', scrub: 1, pin: true, anticipatePin: 1, invalidateOnRefresh: true },
+        scrollTrigger: { trigger: root.current, start: 'top top', end: '+=320%', scrub: true, pin: true, anticipatePin: 1, invalidateOnRefresh: true },
       })
 
       // Apertura: el título se va y entra el primer plan.
@@ -103,7 +103,7 @@ export function Events() {
           key={plan.title}
           data-plan
           aria-labelledby={`plan-${i}`}
-          className="relative h-[85svh] overflow-hidden motion-safe:absolute motion-safe:inset-0 motion-safe:h-auto"
+          className="relative h-[85svh] overflow-hidden will-change-transform motion-safe:absolute motion-safe:inset-0 motion-safe:h-auto"
         >
           <div data-plan-inner className="absolute inset-0 will-change-transform">
             <Image src={plan.image} alt={plan.alt} fill sizes="100vw" className={cn('photo-tone object-cover', plan.focus)} />

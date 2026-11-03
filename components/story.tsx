@@ -10,7 +10,7 @@ export function Story() {
           alt="Salón de La Comanda con las mesas vacías y, en la pared de ladrillo, el cartel luminoso «La mejor idea fue invitarte»"
           fill
           sizes="100vw"
-          className="object-cover object-[100%_28%] max-md:translate-x-[-20%] max-md:translate-y-[4%] max-md:[mask-image:linear-gradient(to_right,#000_70%,transparent_100%)]"
+          className="object-cover object-[100%_28%] max-md:translate-x-[-20%] max-md:translate-y-[4%] max-md:[mask-image:linear-gradient(to_right,#000_86%,transparent_100%)]"
         />
         {/* El cartel de la foto está a la derecha: en escritorio todo el texto va a la izquierda, sobre una sombra que
             se abre hacia él, y el cartel queda sin nada encima. En celular la foto baja un poco (sin agrandarla) para que

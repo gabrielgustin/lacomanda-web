@@ -35,7 +35,7 @@ export function About() {
             trigger: root.current,
             start: 'top top',
             end: '+=200%',
-            scrub: 1,
+            scrub: true,
             pin: true,
             anticipatePin: 1,
             invalidateOnRefresh: true,
@@ -102,10 +102,10 @@ export function About() {
       {/* El borde de arriba y de abajo se difumina con degradados (más baratos que una máscara en cada frame). */}
       <div className="relative min-h-0 flex-1 overflow-hidden">
         <div data-kb-stage className="absolute inset-0">
-          <div data-kb-back className="absolute inset-0" aria-hidden="true">
+          <div data-kb-back className="absolute inset-0 will-change-transform" aria-hidden="true">
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_55%_50%_at_50%_48%,#7a4220_0%,#3a1f12_45%,transparent_75%)]" />
           </div>
-          <div data-kb-front className="absolute inset-0 flex items-center justify-center px-4 md:px-8">
+          <div data-kb-front className="absolute inset-0 will-change-transform flex items-center justify-center px-4 md:px-8">
             <OrderTicket />
           </div>
         </div>

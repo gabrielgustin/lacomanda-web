@@ -70,7 +70,7 @@ export function Promos() {
 
       if (!prefersReducedMotion()) {
         const tl = gsap.timeline({
-          scrollTrigger: { trigger: root.current, start: 'top top', end: '+=300%', scrub: 1, pin: true, anticipatePin: 1 },
+          scrollTrigger: { trigger: root.current, start: 'top top', end: '+=300%', scrub: true, pin: true, anticipatePin: 1 },
         })
         // El primero ya está apoyado; los demás suben desde abajo y caen encima, girando hasta su lugar.
         cards.slice(1).forEach((card, i) => {
@@ -119,7 +119,7 @@ export function Promos() {
               <li
                 key={promo.day + promo.highlight}
                 data-promo
-                className="absolute inset-x-0"
+                className="absolute inset-x-0 will-change-transform"
                 style={{ top: `calc(var(--offset, 0px) + var(--step, 56px) * ${i})`, zIndex: i }}
               >
                 <div className="ticket-shadow">

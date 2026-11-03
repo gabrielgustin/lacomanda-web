@@ -114,7 +114,7 @@ export function Reservations() {
               type="submit"
               className="pill-sheen inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-primary font-sans text-sm font-semibold text-primary-foreground transition-colors hover:bg-ink"
             >
-              <Send className="size-4" aria-hidden="true" /> Reservar por WhatsApp
+              <Send className="size-4" aria-hidden="true" /> Reservar
             </button>
           </form>
         </div>
