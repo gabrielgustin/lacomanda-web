@@ -12,13 +12,7 @@ const items: MenuItem[] = [
     id: 'burgers-de-costillas',
     name: 'Hamburguesas', // en la carta es la burger «De Costillas»; acá se presenta como la categoría
     description: 'Medallón de costilla 200 gr., cheddar x2, panceta, cebolla crispy, pepinillos y papas fritas',
-    price: 19300,
-  },
-  {
-    id: 'pizzas-la-comanda',
-    name: 'La Comanda',
-    description: 'Salsa de tomate, mozzarella, verdeo, panceta, pollo y champiñones',
-    price: 30000,
+    price: 20500,
   },
   {
     id: 'entradas-papas-jodidas',

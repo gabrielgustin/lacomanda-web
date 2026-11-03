@@ -22,7 +22,7 @@ const picks = [
 // `compact`: en celular los dos botones entran en una sola línea (texto más corto y menos relleno).
 const Buttons = ({ className, compact }: { className?: string; compact?: boolean }) => (
   <div className={cn('flex flex-wrap items-center gap-3', className)}>
-    <PillLink href={site.cartaUrl} target="_blank" rel="noreferrer" className={cn(compact && 'px-5')}>
+    <PillLink href={site.cartaUrl} data-carta target="_blank" rel="noreferrer" className={cn(compact && 'px-5')}>
       {compact ? 'Ver la carta' : 'Ver la carta completa'} <ArrowUpRight className="size-4" aria-hidden="true" />
     </PillLink>
     <PillLink href="#reservas" variant="outline" className={cn(compact && 'px-5')}>

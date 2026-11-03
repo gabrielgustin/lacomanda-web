@@ -1,12 +1,11 @@
 import { itemsById } from '@/lib/menu-data'
 import { formatPrice } from '@/lib/format'
 
-// Pedido de ejemplo que se imprime en el ticket (precios de la carta).
+// Pedido de ejemplo que se imprime en el ticket (precios de la carta). `name` pisa el de la web: en la comanda va el nombre de la carta.
 const order = [
-  { id: 'entradas-papas-jodidas', qty: 1 },
-  { id: 'pizzas-la-comanda', qty: 1 },
-  { id: 'burgers-de-costillas', qty: 2 },
-  { id: 'cervezas-chopp-stella', qty: 4 },
+  { id: 'entradas-papas-jodidas', qty: 1, name: 'Papas jodidas' },
+  { id: 'burgers-de-costillas', qty: 2, name: undefined },
+  { id: 'cervezas-chopp-stella', qty: 2, name: undefined },
 ]
   .filter((line) => itemsById[line.id])
   .map((line) => ({ ...line, item: itemsById[line.id] }))
@@ -27,7 +26,7 @@ export function OrderTicket() {
           {order.map((line) => (
             <li key={line.id} className="flex gap-2">
               <span className="w-4 shrink-0">{line.qty}</span>
-              <span className="flex-1 uppercase">{line.item.name}</span>
+              <span className="flex-1 uppercase">{line.name ?? line.item.name}</span>
               <span className="tabular-nums">{formatPrice(line.item.price * line.qty)}</span>
             </li>
           ))}

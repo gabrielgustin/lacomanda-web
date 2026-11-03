@@ -22,13 +22,6 @@ export function SiteFooter() {
           />
         </div>
         <div className="absolute inset-0 bg-gradient-to-b from-ink via-transparent to-ink" />
-        <Image
-          src="/logo-la-comanda.svg"
-          alt="La Comanda"
-          width={96}
-          height={96}
-          className="absolute bottom-10 left-1/2 size-20 -translate-x-1/2 md:bottom-14 md:size-24"
-        />
       </div>
 
       <div className="mx-auto max-w-[90rem] px-5 md:px-8">
@@ -70,7 +63,7 @@ export function SiteFooter() {
                 </a>
               </li>
               <li>
-                <a href={site.cartaUrl} target="_blank" rel="noreferrer" className={link}>
+                <a href={site.cartaUrl} data-carta target="_blank" rel="noreferrer" className={link}>
                   Carta digital
                 </a>
               </li>

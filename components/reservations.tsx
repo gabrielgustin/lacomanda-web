@@ -4,7 +4,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { Clock, Send } from 'lucide-react'
 import { SplitTitle } from '@/components/ui'
 import { DateField, ListField, type FieldOption } from '@/components/fields'
-import { site, whatsappLink } from '@/lib/site'
+import { whatsappLink } from '@/lib/site'
 import { bookingIssue, cordobaNow, hourRows } from '@/lib/hours'
 import { cn } from '@/lib/utils'
 
@@ -117,19 +117,6 @@ export function Reservations() {
               <Send className="size-4" aria-hidden="true" /> Reservar por WhatsApp
             </button>
           </form>
-        </div>
-      </div>
-
-      {/* Dónde estamos: el mapa real del local (la ficha de Google trae su propio "Cómo llegar"). */}
-      <div className="mx-auto mt-20 max-w-6xl px-5 md:mt-28">
-        <div className="relative overflow-hidden bg-ink shadow-[0_24px_48px_-24px_rgb(36_21_14/0.55)]">
-          <iframe
-            title={`Mapa de La Comanda en ${site.address}, ${site.addressDetail}`}
-            src={`https://www.google.com/maps?q=${encodeURIComponent(`La Comanda Tejeda, ${site.address}, Córdoba`)}&z=16&output=embed`}
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            className="block h-[20rem] w-full border-0 [filter:sepia(0.3)_saturate(0.85)_contrast(1.05)] md:h-[28rem]"
-          />
         </div>
       </div>
     </section>

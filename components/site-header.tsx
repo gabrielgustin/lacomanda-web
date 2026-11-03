@@ -155,6 +155,7 @@ export function SiteHeader() {
         <div className="ml-auto flex items-center gap-2">
           <a
             href={site.cartaUrl}
+            data-carta
             target="_blank"
             rel="noreferrer"
             className={cn(
@@ -222,6 +223,8 @@ export function SiteHeader() {
             <div data-menu-foot className="flex gap-3 px-5 pb-8">
               <a
                 href={site.cartaUrl}
+                data-carta
+                onClick={closeMenu}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-full border border-primary-foreground/40 text-sm font-semibold"

@@ -10,6 +10,7 @@ import { Story } from '@/components/story'
 import { Reservations } from '@/components/reservations'
 import { SiteFooter } from '@/components/site-footer'
 import { MobileCta } from '@/components/mobile-cta'
+import { CartaPhone } from '@/components/carta-phone'
 import { ScrollEffects } from '@/components/scroll-effects'
 import { site } from '@/lib/site'
 import { weeklyHours } from '@/lib/hours'
@@ -70,6 +71,7 @@ export default async function Home() {
       </main>
       <SiteFooter />
       <MobileCta />
+      <CartaPhone />
       <ScrollEffects />
     </>
   )

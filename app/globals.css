@@ -170,6 +170,27 @@ html.lenis body {
   overflow: hidden;
 }
 
+/* Carta en el iPhone: el fondo aparece y el celular sube. */
+@media (prefers-reduced-motion: no-preference) {
+  .carta-backdrop {
+    animation: carta-fade 0.25s ease-out;
+  }
+  .carta-phone {
+    animation: carta-rise 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+@keyframes carta-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes carta-rise {
+  from {
+    opacity: 0;
+    transform: translateY(3rem) scale(0.96);
+  }
+}
+
 /* Elementos que GSAP revela: visibles por defecto si no hay JS o hay movimiento reducido. */
 @media (prefers-reduced-motion: no-preference) {
   .js [data-reveal] {
