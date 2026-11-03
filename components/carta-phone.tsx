@@ -17,7 +17,8 @@ const MIN_WIDTH = 320
 // (celulares chicos) deja de respetar la proporción y llena la ventana.
 function fit() {
   const availW = window.innerWidth - MARGIN * 2 - BEZEL * 2
-  const availH = window.innerHeight - MARGIN * 2 - BEZEL * 2
+  // En celular los botones de arriba tienen su propia franja.
+  const availH = window.innerHeight - MARGIN * 2 - BEZEL * 2 - (window.innerWidth < 640 ? 48 : 0)
   const ratio = SCREEN.h / SCREEN.w
   const scale = Math.min(availW / SCREEN.w, availH / SCREEN.h)
   if (scale >= 1) return { w: SCREEN.w, h: SCREEN.h, scale: Math.min(scale, 1.5) }
@@ -58,7 +59,11 @@ export function CartaPhone() {
     document.addEventListener('keydown', onKey)
     document.addEventListener('focusin', onFocus)
     window.addEventListener('resize', onResize)
+    window.visualViewport?.addEventListener('resize', onResize)
+    window.addEventListener('orientationchange', onResize)
     return () => {
+      window.removeEventListener('orientationchange', onResize)
+      window.visualViewport?.removeEventListener('resize', onResize)
       document.removeEventListener('keydown', onKey)
       document.removeEventListener('focusin', onFocus)
       window.removeEventListener('resize', onResize)
@@ -78,7 +83,7 @@ export function CartaPhone() {
       aria-label="Carta digital"
       data-lenis-prevent
       onClick={(event) => event.target === event.currentTarget && setOpen(false)}
-      className="carta-backdrop fixed inset-0 z-[70] flex items-center justify-center bg-ink/85 backdrop-blur-sm"
+      className="carta-backdrop fixed inset-0 z-[70] flex items-center justify-center bg-ink/85 max-sm:pt-12 backdrop-blur-sm"
     >
       <div className="fixed right-3 top-3 z-10 flex gap-2 md:right-5 md:top-5">
         <a
