@@ -61,9 +61,14 @@ export function SiteHeader() {
       frame = 0
       if (window.scrollY < window.innerHeight * 0.6) return setTone('clear')
       const edge = (headerRef.current?.offsetHeight ?? 64) - 1
-      const below = document.elementsFromPoint(window.innerWidth / 2, edge).find((el) => !headerRef.current?.contains(el))
-      setTone(below?.closest('[data-tone="dark"]') ? 'dark' : 'light')
+      // Comparar rectángulos de las secciones oscuras es mucho más barato que `elementsFromPoint` en cada scroll.
+      const dark = Array.from(darkSections).some((el) => {
+        const { top, bottom } = el.getBoundingClientRect()
+        return top <= edge && bottom > edge
+      })
+      setTone(dark ? 'dark' : 'light')
     }
+    const darkSections = document.querySelectorAll('[data-tone="dark"]')
     const onScroll = () => {
       if (!frame) frame = requestAnimationFrame(update)
     }

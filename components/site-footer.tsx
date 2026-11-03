@@ -9,9 +9,9 @@ const link = 'rounded-sm text-primary-foreground/70 transition-colors duration-2
 export function SiteFooter() {
   return (
     <footer id="contacto" data-tone="dark" className="relative z-10 bg-ink text-primary-foreground">
-      {/* La foto es apaisada y el cartel ocupa casi todo su ancho: en celular la foto se muestra entera, con su
-          proporción, arriba de la banda (abajo queda el logo); desde md cubre la banda, quieta y sin zoom. */}
-      <div className="relative h-[min(105vw,80svh)] overflow-hidden md:h-[85svh]">
+      {/* La foto es apaisada y el cartel ocupa casi todo su ancho: en celular la banda mide lo mismo que la foto
+          entera, con su proporción; desde md la foto cubre la banda, quieta y sin zoom. */}
+      <div className="relative h-[68vw] overflow-hidden md:h-[60svh]">
         <div className="absolute inset-x-0 top-0 aspect-[1532/1027] [mask-image:linear-gradient(to_bottom,transparent,#000_14%,#000_78%,transparent)] md:inset-y-0 md:aspect-auto md:[mask-image:none]">
           <Image
             src="/fotos/cartel-neon-madera-hd.webp"
