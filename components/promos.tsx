@@ -44,6 +44,7 @@ const MIN_STEP = 32
 export function Promos() {
   const root = useRef<HTMLElement>(null)
   const stack = useRef<HTMLDivElement>(null)
+  const scene = useRef<HTMLDivElement>(null)
 
   useGSAP(
     () => {
@@ -70,7 +71,7 @@ export function Promos() {
 
       if (!prefersReducedMotion()) {
         const tl = gsap.timeline({
-          scrollTrigger: { trigger: root.current, start: 'top top', end: '+=150%', scrub: true, pin: true, anticipatePin: 1 },
+          scrollTrigger: { trigger: scene.current, start: 'top top', end: 'bottom bottom', scrub: true },
         })
         // El primero ya está apoyado; los demás suben desde abajo y caen encima, girando hasta su lugar.
         cards.slice(1).forEach((card, i) => {
@@ -91,11 +92,13 @@ export function Promos() {
   )
 
   return (
+    // Anclada con sticky; el contenedor de 250svh da 1,5 pantallas de recorrido para apilar los tickets.
+    <div ref={scene} className="relative z-10 motion-safe:h-[250svh]">
     <section
       id="promos"
       ref={root}
       aria-labelledby="promos-title"
-      className="relative z-10 flex h-svh flex-col overflow-hidden bg-muted md:grid md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:items-center"
+      className="sticky top-0 flex h-svh flex-col overflow-hidden bg-muted md:grid md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:items-center"
     >
       <div className="px-5 pb-6 pt-20 md:py-24 md:pl-8 md:pr-10 lg:pl-[max(2rem,calc((100vw-90rem)/2+2rem))] lg:pr-14">
         <SplitTitle
@@ -142,5 +145,6 @@ export function Promos() {
         </div>
       </div>
     </section>
+    </div>
   )
 }

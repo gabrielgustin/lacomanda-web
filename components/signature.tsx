@@ -37,6 +37,7 @@ const Buttons = ({ className, compact }: { className?: string; compact?: boolean
 export function Signature() {
   const root = useRef<HTMLElement>(null)
   const mobile = useRef<HTMLDivElement>(null)
+  const mobileScene = useRef<HTMLDivElement>(null)
   const strip = useRef<HTMLDivElement>(null)
   const track = useRef<HTMLUListElement>(null)
   const [active, setActive] = useState(0)
@@ -53,16 +54,22 @@ export function Signature() {
         const ul = track.current!
         gsap.set(wrap, { overflowX: 'hidden' })
         const distance = () => Math.max(0, ul.scrollWidth - wrap.clientWidth)
+        // El bloque se ancla con sticky (sin saltos en el celular): el contenedor mide su alto más el recorrido
+        // de la tira, y se recalcula antes de cada refresh de ScrollTrigger.
+        const scene = mobileScene.current!
+        const setHeight = () => {
+          scene.style.height = `${mobile.current!.offsetHeight + Math.round(distance() * STRIP_PACE * (1 + STRIP_HOLD))}px`
+        }
+        setHeight()
+        ScrollTrigger.addEventListener('refreshInit', setHeight)
         // El tramo fijo es más largo que lo que recorre la tira y termina con una pausa en la última tarjeta.
         // La tira va pegada al scroll (sin suavizado): con un deslizón rápido igual llega a la última antes de soltarse.
         gsap
           .timeline({
             scrollTrigger: {
-              trigger: mobile.current,
+              trigger: scene,
               start: 'top top',
-              end: () => `+=${Math.round(distance() * STRIP_PACE * (1 + STRIP_HOLD))}`,
-              pin: true,
-              anticipatePin: 1,
+              end: 'bottom bottom',
               scrub: true,
               invalidateOnRefresh: true,
               // Solo avisa a React cuando cambia la tarjeta, no en cada cuadro del scroll.
@@ -74,6 +81,10 @@ export function Signature() {
           })
           .to(ul, { x: () => -distance(), ease: 'none', duration: 1 })
           .to({}, { duration: STRIP_HOLD })
+        return () => {
+          ScrollTrigger.removeEventListener('refreshInit', setHeight)
+          scene.style.height = ''
+        }
       })
       mm.add('(min-width: 768px)', () => {
         gsap.utils.toArray<HTMLElement>('[data-dish]').forEach((dish, index) => {
@@ -110,7 +121,8 @@ export function Signature() {
       {/* Celular: bloque a pantalla completa que se ancla mientras la tira avanza. La tira toma el alto que sobra
           (con tope) y, en cada tarjeta, la foto se queda con lo que deja el texto: así nada se corta en ninguna
           altura de pantalla. En pantallas bajas se omite el texto de introducción. */}
-      <div ref={mobile} className="flex h-svh flex-col justify-center overflow-hidden pb-6 pt-20 md:hidden [@media(max-height:519px)]:h-auto">
+      <div ref={mobileScene} className="md:hidden">
+      <div ref={mobile} className="sticky top-0 flex h-svh flex-col justify-center overflow-hidden pb-6 pt-20 [@media(max-height:519px)]:h-auto">
         <div className="px-5">
           <SplitTitle
             id="platos-title-movil"
@@ -157,6 +169,7 @@ export function Signature() {
         </div>
 
         <Buttons compact className="mt-5 px-5" />
+      </div>
       </div>
 
       {/* Tablet y escritorio */}

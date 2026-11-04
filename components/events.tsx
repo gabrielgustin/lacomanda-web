@@ -38,6 +38,7 @@ const plans = [
 // con los tres planes se va llenando. Con movimiento reducido, los planes quedan uno debajo del otro.
 export function Events() {
   const root = useRef<HTMLElement>(null)
+  const scene = useRef<HTMLDivElement>(null)
 
   useGSAP(
     () => {
@@ -51,7 +52,7 @@ export function Events() {
 
       const tl = gsap.timeline({
         defaults: { ease: 'none' },
-        scrollTrigger: { trigger: root.current, start: 'top top', end: '+=160%', scrub: true, pin: true, anticipatePin: 1, invalidateOnRefresh: true },
+        scrollTrigger: { trigger: scene.current, start: 'top top', end: 'bottom bottom', scrub: true, invalidateOnRefresh: true },
       })
 
       // Arranca directo en el primer plan: su regla se llena mientras dura.
@@ -73,12 +74,14 @@ export function Events() {
   )
 
   return (
+    // Anclada con sticky; el contenedor de 260svh da 1,6 pantallas de recorrido para los planes.
+    <div ref={scene} className="relative z-10 motion-safe:h-[260svh]">
     <section
       id="eventos"
       data-tone="dark"
       ref={root}
       aria-labelledby="eventos-title"
-      className="relative z-10 overflow-hidden bg-ink text-paper motion-safe:h-svh"
+      className="relative overflow-hidden bg-ink text-paper motion-safe:sticky motion-safe:top-0 motion-safe:h-svh"
     >
       <h2 id="eventos-title" className="sr-only">
         Mesas largas para planes cortos
@@ -131,5 +134,6 @@ export function Events() {
         ))}
       </ol>
     </section>
+    </div>
   )
 }

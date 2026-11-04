@@ -9,6 +9,7 @@ import { OrderTicket } from '@/components/order-ticket'
 // (sube y se mece apenas). La sección queda fija mientras dura el recorrido.
 export function About() {
   const root = useRef<HTMLElement>(null)
+  const scene = useRef<HTMLDivElement>(null)
 
   useGSAP(
     () => {
@@ -30,15 +31,7 @@ export function About() {
       gsap
         .timeline({
           defaults: { ease: 'none' },
-          scrollTrigger: {
-            trigger: root.current,
-            start: 'top top',
-            end: '+=100%',
-            scrub: true,
-            pin: true,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-          },
+          scrollTrigger: { trigger: scene.current, start: 'top top', end: 'bottom bottom', scrub: true, invalidateOnRefresh: true },
         })
         // Ticket: sube y se mece apenas. El tamaño queda fijo: escalar el papel (con sombra y borde dentado)
         // en cada cuadro obliga a redibujarlo y es lo que más pesaba de la escena.
@@ -72,12 +65,15 @@ export function About() {
   )
 
   return (
+    // La escena se ancla con sticky (lo resuelve el navegador, sin saltos en el celular); el contenedor
+    // de 200svh da el recorrido: una pantalla extra mientras el ticket flota.
+    <div ref={scene} className="relative z-10 motion-safe:h-[200svh]">
     <section
       id="nosotros"
       data-tone="dark"
       ref={root}
       aria-labelledby="nosotros-title"
-      className="relative z-10 flex h-svh flex-col overflow-hidden bg-primary text-paper md:grid md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]"
+      className="sticky top-0 flex h-svh flex-col overflow-hidden bg-primary text-paper md:grid md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]"
     >
       <div className="flex flex-col justify-center gap-5 px-5 pb-4 pt-24 md:gap-8 md:py-24 md:pl-8 md:pr-10 lg:pl-[max(2rem,calc((100vw-90rem)/2+2rem))] lg:pr-14">
         <SplitTitle
@@ -102,5 +98,6 @@ export function About() {
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[12%] bg-gradient-to-t from-primary to-transparent" />
       </div>
     </section>
+    </div>
   )
 }
