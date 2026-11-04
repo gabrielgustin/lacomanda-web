@@ -6,7 +6,7 @@ import { SplitTitle } from '@/components/ui'
 export function Story({ rating = 4.5 }: { rating?: number }) {
   return (
     <section id="historia" data-tone="dark" aria-labelledby="historia-title" className="relative z-10 overflow-hidden bg-ink text-primary-foreground">
-      <div className="relative min-h-svh">
+      <div className="relative md:min-h-svh">
         {/* Escritorio: foto apaisada con el cartel a la derecha. */}
         <Image
           src="/fotos/cartel-invitarte-hd.webp"
@@ -15,9 +15,9 @@ export function Story({ rating = 4.5 }: { rating?: number }) {
           sizes="100vw"
           className="object-cover object-[100%_28%] max-md:hidden"
         />
-        {/* Celular: foto cuadrada con el cartel en el centro, a 1,67 veces el ancho de pantalla (el cartel ocupa ~85 %), o menos en pantallas bajas para no pisar el título;
-            abajo se funde con el fondo, donde van el título y las cifras. */}
-        <div className="absolute left-1/2 top-6 aspect-square w-[min(167%,calc(85svh-41px))] -translate-x-1/2 [mask-image:linear-gradient(to_bottom,#000_72%,transparent)] md:hidden">
+        {/* Celular: foto cuadrada con el cartel en el centro, a 1,67 veces el ancho de pantalla (el cartel ocupa ~85 %);
+            abajo se funde con el fondo y las cifras van justo debajo del cartel (la sección mide lo que la foto, no toda la pantalla). */}
+        <div className="absolute left-1/2 top-6 aspect-square w-[167%] -translate-x-1/2 [mask-image:linear-gradient(to_bottom,#000_72%,transparent)] md:hidden">
           <Image
             src="/fotos/cartel-invitarte-movil.webp"
             alt="Pared de ladrillo con el cartel luminoso «La mejor idea fue invitarte» sobre mesas vacías y plantas"
@@ -33,7 +33,7 @@ export function Story({ rating = 4.5 }: { rating?: number }) {
         <div className="absolute inset-x-0 bottom-0 h-[45%] bg-gradient-to-t from-ink via-ink/85 to-transparent md:hidden" />
         <div className="absolute inset-0 hidden bg-gradient-to-r from-ink/85 via-ink/30 to-transparent md:block" />
 
-        <div className="relative mx-auto flex min-h-svh max-w-[90rem] flex-col justify-end gap-10 md:justify-between px-5 py-20 md:px-8 md:py-28">
+        <div className="relative mx-auto flex max-w-[90rem] flex-col justify-end gap-10 px-5 py-20 max-md:pt-[calc(1.5rem+130vw)] max-md:pb-12 md:min-h-svh md:justify-between md:px-8 md:py-28">
           <SplitTitle
             id="historia-title"
             lines={['Una mesa', 'que nunca', 'se levanta']}
@@ -46,7 +46,7 @@ export function Story({ rating = 4.5 }: { rating?: number }) {
               conocemos y una barra que siempre tiene algo frío para vos.
             </p>
             {/* Cifras de la carta digital y de la ficha de Google (horarios). */}
-            <dl className="grid grid-cols-3 gap-4 border-t border-primary-foreground/20 pt-6">
+            <dl className="grid grid-cols-3 gap-4 border-t border-primary-foreground/20 pt-6 max-md:text-center">
               <div>
                 <dt className="text-sm text-primary-foreground/70">Abrimos</dt>
                 <dd className="font-display mt-2 text-lg sm:text-2xl md:text-3xl">7 días</dd>
@@ -57,7 +57,7 @@ export function Story({ rating = 4.5 }: { rating?: number }) {
               </div>
               <div>
                 <dt className="text-sm text-primary-foreground/70">Reseñas</dt>
-                <dd className="font-display mt-2 flex items-center gap-1.5 text-lg sm:text-2xl md:text-3xl">
+                <dd className="font-display mt-2 flex items-center gap-1.5 max-md:justify-center text-lg sm:text-2xl md:text-3xl">
                   {rating.toLocaleString('es-AR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
                   <Star className="size-[0.8em] fill-accent text-accent drop-shadow-[0_0_8px_rgb(201_145_95/0.55)]" aria-hidden="true" />
                 </dd>
