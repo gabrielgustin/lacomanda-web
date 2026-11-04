@@ -61,14 +61,15 @@ export function SiteHeader() {
       frame = 0
       if (window.scrollY < window.innerHeight * 0.6) return setTone('clear')
       const edge = (headerRef.current?.offsetHeight ?? 64) - 1
-      // Comparar rectángulos de las secciones oscuras es mucho más barato que `elementsFromPoint` en cada scroll.
-      const dark = Array.from(darkSections).some((el) => {
+      // Comparar rectángulos es mucho más barato que `elementsFromPoint` en cada scroll. Manda el último bloque que
+      // pasa por debajo: los de más abajo en la página tapan al hero, que en escritorio queda fijo (sticky) atrás.
+      const below = blocks.findLast((el) => {
         const { top, bottom } = el.getBoundingClientRect()
         return top <= edge && bottom > edge
       })
-      setTone(dark ? 'dark' : 'light')
+      setTone(below?.matches('[data-tone="dark"], :has(> [data-tone="dark"])') ? 'dark' : 'light')
     }
-    const darkSections = document.querySelectorAll('[data-tone="dark"]')
+    const blocks = Array.from(document.querySelectorAll<HTMLElement>('main > *, footer'))
     const onScroll = () => {
       if (!frame) frame = requestAnimationFrame(update)
     }

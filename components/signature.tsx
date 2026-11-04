@@ -59,30 +59,32 @@ export function Signature() {
         const scene = mobileScene.current!
         const setHeight = () => {
           scene.style.height = `${mobile.current!.offsetHeight + Math.round(distance() * STRIP_PACE * (1 + STRIP_HOLD))}px`
+          scene.style.setProperty('--strip', `${-distance()}px`)
         }
         setHeight()
         ScrollTrigger.addEventListener('refreshInit', setHeight)
-        // El tramo fijo es más largo que lo que recorre la tira y termina con una pausa en la última tarjeta.
-        // La tira va pegada al scroll (sin suavizado): con un deslizón rápido igual llega a la última antes de soltarse.
-        gsap
-          .timeline({
-            scrollTrigger: {
-              trigger: scene,
-              start: 'top top',
-              end: 'bottom bottom',
-              scrub: true,
-              invalidateOnRefresh: true,
-              // Solo avisa a React cuando cambia la tarjeta, no en cada cuadro del scroll.
-              onUpdate: (self) => {
-                const next = Math.round(Math.min(1, self.progress * (1 + STRIP_HOLD)) * (picks.length - 1))
-                if (next !== slideRef.current) setSlide((slideRef.current = next))
-              },
-            },
-          })
-          .to(ul, { x: () => -distance(), ease: 'none', duration: 1 })
-          .to({}, { duration: STRIP_HOLD })
+        // Solo avisa a React cuando cambia la tarjeta, no en cada cuadro del scroll.
+        const onUpdate = (self: ScrollTrigger) => {
+          const next = Math.round(Math.min(1, self.progress * (1 + STRIP_HOLD)) * (picks.length - 1))
+          if (next !== slideRef.current) setSlide((slideRef.current = next))
+        }
+        // La tira la mueve el navegador con una animación de CSS atada al scroll (`.strip-scroll`): corre en el mismo
+        // hilo que el scroll y en el iPhone no queda un paso atrás. Si el navegador no la soporta, la mueve GSAP.
+        if (CSS.supports('animation-timeline: view()')) {
+          scene.classList.add('strip-scene')
+          ScrollTrigger.create({ trigger: scene, start: 'top top', end: 'bottom bottom', onUpdate })
+        } else {
+          // El tramo fijo es más largo que lo que recorre la tira y termina con una pausa en la última tarjeta.
+          gsap
+            .timeline({
+              scrollTrigger: { trigger: scene, start: 'top top', end: 'bottom bottom', scrub: true, invalidateOnRefresh: true, onUpdate },
+            })
+            .to(ul, { x: () => -distance(), ease: 'none', duration: 1 })
+            .to({}, { duration: STRIP_HOLD })
+        }
         return () => {
           ScrollTrigger.removeEventListener('refreshInit', setHeight)
+          scene.classList.remove('strip-scene')
           scene.style.height = ''
         }
       })

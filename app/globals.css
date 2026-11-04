@@ -191,6 +191,24 @@ html.lenis body {
   }
 }
 
+/* Platos en celular: la tira avanza con el scroll del bloque anclado (sticky). La línea de tiempo es el contenedor
+   alto (`contain`: mientras cubre toda la pantalla); al 89 % ya llegó a la última tarjeta y el resto es la pausa
+   final (1 / (1 + STRIP_HOLD) de lib/gsap.ts). `--strip` es la distancia a recorrer, la calcula signature.tsx. */
+.strip-scene {
+  view-timeline: --platos block;
+}
+.strip-scene ul {
+  animation: strip-x linear both;
+  animation-timeline: --platos;
+  animation-range: contain 0% contain 100%;
+}
+@keyframes strip-x {
+  89%,
+  to {
+    transform: translateX(var(--strip));
+  }
+}
+
 /* Elementos que GSAP revela: visibles por defecto si no hay JS o hay movimiento reducido. */
 @media (prefers-reduced-motion: no-preference) {
   .js [data-reveal] {
@@ -210,9 +228,13 @@ html.lenis body {
   .js [data-promo] ~ [data-promo] {
     transform: translateY(120vh);
   }
-  /* El ticket de Nosotros arranca sin papel a la vista; la animación lo imprime. */
-  .js [data-ticket] {
-    clip-path: inset(0% 0% 100% 0%);
+  /* El ticket de Nosotros arranca adentro de la impresora, sin renglones ni sello; la animación lo imprime. */
+  .js [data-feed] {
+    transform: translateY(-100%);
+  }
+  .js [data-feed] [data-line],
+  .js [data-feed] [data-stamp] {
+    opacity: 0;
   }
 }
 @media (prefers-reduced-motion: reduce) {

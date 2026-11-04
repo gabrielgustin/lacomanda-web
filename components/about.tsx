@@ -4,9 +4,10 @@ import { useRef } from 'react'
 import { gsap, useGSAP, prefersReducedMotion } from '@/lib/gsap'
 import { SplitTitle } from '@/components/ui'
 import { OrderTicket } from '@/components/order-ticket'
+import { formatPrice } from '@/lib/format'
 
-// Texto a la izquierda y, a la derecha, el ticket de la comanda: se imprime al llegar y después flota con el scroll
-// (sube y se mece apenas). La sección queda fija mientras dura el recorrido.
+// Texto a la izquierda y, a la derecha, la impresora de comandas: con el scroll sale el papel, se imprime renglón
+// por renglón, el total se va sumando y al final cae el sello. La sección queda fija (sticky) mientras dura.
 export function About() {
   const root = useRef<HTMLElement>(null)
   const scene = useRef<HTMLDivElement>(null)
@@ -14,90 +15,90 @@ export function About() {
   useGSAP(
     () => {
       const q = gsap.utils.selector(root)
-      const stage = q('[data-kb-stage]')[0]
-      const front = q('[data-kb-front]')[0]
-      const ticket = q('[data-ticket]')[0]
+      const stage = q('[data-stage]')[0]
+      const printer = q('[data-printer]')[0]
+      const total = q('[data-total]')[0]
 
-      // Zoom que deja el ticket entero dentro de la caja (con aire para los degradados de los bordes):
-      // en una caja baja (celular, tablet) achica; en una alta lo agranda hasta un tope.
+      // La impresora con el ticket entero tiene que entrar en la caja: en celular achica, en pantallas altas agranda (con tope).
       const fit = () =>
-        Math.min(1.4, (0.74 * stage.clientHeight) / ticket.offsetHeight, (0.9 * stage.clientWidth) / ticket.offsetWidth)
+        gsap.set(printer, {
+          scale: Math.min(1.25, stage.clientHeight / printer.offsetHeight, stage.clientWidth / printer.offsetWidth),
+        })
+      fit()
+      if (prefersReducedMotion()) return
 
-      if (prefersReducedMotion()) {
-        gsap.set(front, { scale: Math.min(1, fit()) })
-        return
-      }
+      const sum = { value: 0 }
+      const showSum = () => (total.textContent = formatPrice(Math.round(sum.value / 100) * 100))
+      showSum()
 
       gsap
         .timeline({
           defaults: { ease: 'none' },
-          scrollTrigger: { trigger: scene.current, start: 'top top', end: 'bottom bottom', scrub: true, invalidateOnRefresh: true },
+          // Arranca un poco antes de que la sección se ancle, así el papel ya asoma al llegar.
+          scrollTrigger: { trigger: scene.current, start: 'top 60%', end: 'bottom bottom', scrub: true, invalidateOnRefresh: true, onRefresh: fit },
         })
-        // Ticket: sube y se mece apenas. El tamaño queda fijo: escalar el papel (con sombra y borde dentado)
-        // en cada cuadro obliga a redibujarlo y es lo que más pesaba de la escena.
-        .fromTo(
-          front,
-          { scale: () => fit(), yPercent: 5, rotate: -3 },
-          { scale: () => fit(), yPercent: -5, rotate: 2, duration: 4, ease: 'sine.inOut' },
-          0,
-        )
-
-      // El papel sale de la impresora al entrar la sección y después cae el sello; la rotación final del sello
-      // la pone GSAP (no la clase) para no pisarse.
-      gsap
-        .timeline({
-          defaults: { ease: 'power4.out' },
-          scrollTrigger: { trigger: root.current, start: 'top 55%', once: true },
-        })
-        .fromTo(
-          ticket,
-          { clipPath: 'inset(0% 0% 100% 0%)', y: -32 },
-          { clipPath: 'inset(0% 0% 0% 0%)', y: 0, duration: 1.6, ease: 'power2.inOut' },
-        )
+        // El papel sale por la ranura (se mueve la capa entera, con su sombra: no se redibuja en cada cuadro).
+        // `y: 0` anula el corrimiento inicial del CSS (GSAP lo leería como `y` y lo sumaría al yPercent).
+        .fromTo('[data-feed]', { y: 0, yPercent: -100 }, { y: 0, yPercent: 0, duration: 3 }, 0)
+        .fromTo('[data-line]', { opacity: 0, x: -8 }, { opacity: 1, x: 0, duration: 0.35, stagger: 0.4 }, 0.5)
+        .to(sum, { value: Number(total.dataset.total), duration: 0.8, ease: 'power1.out', onUpdate: showSum }, 2.1)
         .fromTo(
           '[data-stamp]',
-          { scale: 2.2, opacity: 0, rotate: -24 },
-          { scale: 1, opacity: 1, rotate: -6, duration: 0.4, ease: 'back.out(2.2)' },
-          '>-0.05',
+          { scale: 2.4, opacity: 0, rotate: -24 },
+          { scale: 1, opacity: 1, rotate: -6, duration: 0.35, ease: 'back.out(2)' },
+          3.05,
         )
+        .to({}, { duration: 0.5 })
     },
     { scope: root },
   )
 
   return (
     // La escena se ancla con sticky (lo resuelve el navegador, sin saltos en el celular); el contenedor
-    // de 200svh da el recorrido: una pantalla extra mientras el ticket flota.
-    <div ref={scene} className="relative z-10 motion-safe:h-[200svh]">
-    <section
-      id="nosotros"
-      data-tone="dark"
-      ref={root}
-      aria-labelledby="nosotros-title"
-      className="sticky top-0 flex h-svh flex-col overflow-hidden bg-primary text-paper md:grid md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]"
-    >
-      <div className="flex flex-col justify-center gap-5 px-5 pb-4 pt-24 md:gap-8 md:py-24 md:pl-8 md:pr-10 lg:pl-[max(2rem,calc((100vw-90rem)/2+2rem))] lg:pr-14">
-        <SplitTitle
-          id="nosotros-title"
-          lines={['Acá no hay', 'protocolo,', 'hay sobremesa']}
-          className="text-[clamp(2.1rem,4.6vw,4.75rem)]"
-        />
-        <p className="max-w-md text-sm leading-relaxed text-paper/80 text-pretty md:text-base">
-          Cocinamos lo que nos gusta comer: porciones generosas, salsas caseras y masa que leva sin apuro. Burgers
-          altas, de las que se agarran con las dos manos.
-        </p>
-      </div>
+    // de 250svh da el recorrido: pantalla y media para imprimir la comanda y que quede un rato sellada.
+    <div ref={scene} className="relative z-10 motion-safe:h-[250svh]">
+      <section
+        id="nosotros"
+        ref={root}
+        aria-labelledby="nosotros-title"
+        className="sticky top-0 flex h-svh flex-col overflow-hidden bg-muted bg-[radial-gradient(rgb(67_40_28/0.13)_1px,transparent_1.5px)] bg-[size:18px_18px] text-primary md:grid md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]"
+      >
+        <div className="flex flex-col justify-center gap-5 px-5 pb-2 pt-24 md:gap-7 md:py-24 md:pl-8 md:pr-10 lg:pl-[max(2rem,calc((100vw-90rem)/2+2rem))] lg:pr-14">
+          <p className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.2em] text-primary/70">
+            <span className="h-px w-8 bg-accent" aria-hidden="true" />
+            Nosotros
+          </p>
+          <SplitTitle
+            id="nosotros-title"
+            lines={['Acá no hay', 'protocolo,', 'hay sobremesa']}
+            className="text-[clamp(2.1rem,4.6vw,4.75rem)]"
+          />
+          <p className="max-w-md text-sm leading-relaxed text-muted-foreground text-pretty md:text-base">
+            Cocinamos lo que nos gusta comer: porciones generosas, salsas caseras y masa que leva sin apuro. Burgers
+            altas, de las que se agarran con las dos manos.
+          </p>
+        </div>
 
-      {/* El borde de arriba y de abajo se difumina con degradados (más baratos que una máscara en cada frame). */}
-      <div className="relative min-h-0 flex-1 overflow-hidden">
-        <div data-kb-stage className="absolute inset-0">
-          <div data-kb-front className="absolute inset-0 will-change-transform flex items-center justify-center px-4 md:px-8">
-            <OrderTicket />
+        <div className="relative min-h-0 flex-1 overflow-hidden">
+          {/* La impresora cuelga desde arriba de su caja: en escritorio, la caja deja libre el alto del header. */}
+          <div className="absolute inset-0 px-4 pb-8 pt-4 md:pb-12 md:pt-28">
+          <div data-stage className="flex size-full justify-center">
+            <div data-printer className="relative h-fit w-[21.5rem] origin-top">
+              {/* Boca de la impresora: cuerpo oscuro, ranura y la luz de encendido. */}
+              <div className="relative z-10 h-8 rounded-xl bg-[#1d120c] shadow-[inset_0_1px_0_rgb(255_255_255/0.1),0_14px_28px_-10px_rgb(0_0_0/0.7)]">
+                <span className="absolute inset-x-4 bottom-2 h-1 rounded-full bg-black" aria-hidden="true" />
+                <span className="absolute right-3.5 top-2 size-1.5 rounded-full bg-[#8fdc8f] shadow-[0_0_6px_#8fdc8f]" aria-hidden="true" />
+              </div>
+              {/* El papel sale por la ranura: el recorte esconde lo que todavía no salió y deja aire a los costados
+                  y abajo para la sombra. */}
+              <div className="-mt-3 flex justify-center px-3 [clip-path:inset(0.75rem_-3rem_-5rem_-3rem)]">
+                <OrderTicket />
+              </div>
+            </div>
+          </div>
           </div>
         </div>
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-[12%] bg-gradient-to-b from-primary to-transparent" />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[12%] bg-gradient-to-t from-primary to-transparent" />
-      </div>
-    </section>
+      </section>
     </div>
   )
 }
