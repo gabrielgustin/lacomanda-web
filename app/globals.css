@@ -216,13 +216,15 @@ html.lenis body {
   }
 }
 
-/* Mesas largas en pantallas táctiles: frenado nativo en cada plan. `always` impide que el impulso del dedo pase de
-   largo un punto; `proximity` deja el resto de la página con scroll libre. */
+/* Mesas largas en pantallas táctiles: frenado nativo. En After office (`always`) el impulso del dedo no puede pasar
+   de largo; en Cowork solo atrae si soltás cerca. `proximity` deja libre el resto del recorrido. */
 .touch-snap {
   scroll-snap-type: y proximity;
 }
 .touch-snap [data-snap] {
   scroll-snap-align: start;
+}
+.touch-snap [data-snap='always'] {
   scroll-snap-stop: always;
 }
 

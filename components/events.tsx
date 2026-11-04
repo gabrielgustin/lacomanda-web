@@ -107,10 +107,10 @@ export function Events() {
   return (
     // Anclada con sticky; el contenedor de 500svh da 4 pantallas de recorrido para los planes.
     <div ref={scene} className="relative z-10 motion-safe:h-[500svh]">
-      {/* Puntos de frenado en celular: inicio, mitad y final del recorrido (500svh − una pantalla = 400svh). */}
-      {[0, 200, 400].map((top) => (
-        <span key={top} aria-hidden="true" data-snap style={{ top: `${top}svh` }} className="pointer-events-none absolute inset-x-0 h-px" />
-      ))}
+      {/* Puntos de frenado en celular: After office (mitad del recorrido, frena siempre) y Cowork (final, solo atrae
+          si soltás cerca). 500svh − una pantalla = 400svh. Al entrar no frena, así la escena arranca fluida. */}
+      <span aria-hidden="true" data-snap="always" style={{ top: '200svh' }} className="pointer-events-none absolute inset-x-0 h-px" />
+      <span aria-hidden="true" data-snap style={{ top: '400svh' }} className="pointer-events-none absolute inset-x-0 h-px" />
     <section
       id="eventos"
       data-tone="dark"
