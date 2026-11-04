@@ -3,7 +3,7 @@
 import { useRef } from 'react'
 import Image from 'next/image'
 import { MessageCircle } from 'lucide-react'
-import { gsap, useGSAP, prefersReducedMotion, scrollTimelines } from '@/lib/gsap'
+import { gsap, ScrollTrigger, useGSAP, prefersReducedMotion, scrollTimelines } from '@/lib/gsap'
 import { PillLink } from '@/components/ui'
 import { whatsappLink } from '@/lib/site'
 import { cn } from '@/lib/utils'
@@ -43,6 +43,14 @@ export function Events() {
   useGSAP(
     () => {
       if (prefersReducedMotion()) return
+      // Al soltar el scroll dentro de la escena, la página se acomoda sola en el plan más cercano (inicio, mitad o
+      // final del recorrido): así un deslizón rápido no deja una foto a medio barrer y el pasaje se ve completo.
+      ScrollTrigger.create({
+        trigger: scene.current,
+        start: 'top top',
+        end: 'bottom bottom',
+        snap: { snapTo: [0, 0.5, 1], duration: { min: 1.6, max: 2.4 }, delay: 0.08, ease: 'sine.inOut' },
+      })
       // Con animaciones de CSS atadas al scroll, la escena la mueve el navegador (`.plans-scene` en globals.css).
       if (scrollTimelines()) {
         const el = scene.current!
@@ -70,8 +78,8 @@ export function Events() {
       for (let i = 1; i < panels.length; i++) {
         const at = sweeps[i - 1]
         // El panel sube tapando al anterior y su contenido baja lo mismo: la foto queda quieta y solo se corre la "ventana".
-        tl.fromTo(panels[i], { y: () => window.innerHeight }, { y: 0, duration: 1.4, ease: 'power3.inOut' }, at)
-          .fromTo(inners[i], { y: () => -window.innerHeight }, { y: 0, duration: 1.4, ease: 'power3.inOut' }, at)
+        tl.fromTo(panels[i], { y: () => window.innerHeight }, { y: 0, duration: 1.4, ease: 'sine.inOut' }, at)
+          .fromTo(inners[i], { y: () => -window.innerHeight }, { y: 0, duration: 1.4, ease: 'sine.inOut' }, at)
           .to(copies[i - 1], { opacity: 0, y: -30, duration: 0.4 }, at)
           .fromTo(copies[i], { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, at + 1.2)
       }

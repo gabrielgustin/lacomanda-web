@@ -276,13 +276,14 @@ html.lenis body {
 .plans-scene {
   view-timeline: --eventos block;
 }
-/* El panel sube y su contenido baja lo mismo: la foto queda quieta y solo se corre la "ventana". */
+/* El panel sube y su contenido baja lo mismo: la foto queda quieta y solo se corre la "ventana". Curva suave
+   (sine): el movimiento se reparte parejo en todo el tramo en vez de concentrarse en el medio. */
 .plans-scene article:nth-of-type(n + 2) {
-  animation: plan-up cubic-bezier(0.65, 0, 0.35, 1) both;
+  animation: plan-up cubic-bezier(0.37, 0, 0.63, 1) both;
   animation-timeline: --eventos;
 }
 .plans-scene article:nth-of-type(n + 2) [data-plan-inner] {
-  animation: plan-down cubic-bezier(0.65, 0, 0.35, 1) both;
+  animation: plan-down cubic-bezier(0.37, 0, 0.63, 1) both;
   animation-timeline: --eventos;
 }
 .plans-scene article:nth-of-type(2),
