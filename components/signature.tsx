@@ -14,7 +14,7 @@ import { cn } from '@/lib/utils'
 const picks = [
   { id: 'burgers-de-costillas', image: '/fotos/burger-costillas-hd.webp', alt: 'Burger de costilla con cheddar, panceta y cebolla crispy, con papas fritas', focus: 'object-[50%_20%]' },
   { id: 'entradas-papas-jodidas', image: '/fotos/papas-cheddar-hd.webp', alt: 'Papas fritas con cheddar, huevo revuelto, panceta y verdeo', focus: 'object-center' },
-  { id: 'principales-bife-de-chorizo-criollo', image: '/fotos/principales-hd.webp', alt: 'Bife de chorizo con huevo frito y papas', focus: 'object-center' },
+  { id: 'principales-bife-de-chorizo-criollo', image: '/fotos/bife-papas.webp', alt: 'Bife de chorizo grillado con sal gruesa y perejil, junto a papas doradas al romero', focus: 'object-[60%_50%]' },
   { id: 'mexicana-fajitas-mixtas', image: '/fotos/fajitas-taco-hd.webp', alt: 'Tortilla con carne, morrones, cheddar y guacamole, junto a la plancha de fajitas y las salsas', focus: 'object-[50%_60%]' },
   { id: 'sandwiches-entrana', image: '/fotos/sandwich-entrana-hd.webp', alt: 'Sándwich de carne desmenuzada con huevo frito, tomate y lechuga, sostenido con las manos, con papas fritas de fondo', focus: 'object-center' },
 ].filter((pick) => itemsById[pick.id])

@@ -5,28 +5,31 @@ import { BatteryFull, ExternalLink, Signal, Wifi, X } from 'lucide-react'
 import { site } from '@/lib/site'
 import { lockPageScroll } from '@/lib/gsap'
 
-// Pantalla del iPhone 17 Pro Max: 440 × 956 pt. `BEZEL` es el marco metálico alrededor.
+// Pantalla del iPhone 17 Pro Max: 440 × 956 pt. Todo el aparato se dibuja en proporción al ancho de la pantalla:
+// el cuerpo real mide 78 × 163,4 mm, así que el borde (marco metálico + vidrio negro) es ~3,2 % por lado.
 const SCREEN = { w: 440, h: 956 }
-const BEZEL = 10
-const STATUS_BAR = 46
-const HOME_BAR = 22
+const BEZEL = 14 / 440
 const MARGIN = 12
-const MIN_WIDTH = 320
 
-// Elige el tamaño del celular para ocupar lo máximo posible de la ventana: en pantallas grandes se agranda,
-// y si no entra se angosta (la carta se ve con su tamaño de letra real). Si ni así llega a 320 de ancho
-// (celulares chicos) deja de respetar la proporción y llena la ventana.
+// La pantalla siempre mide 440 × 956 (la carta se ve como en el iPhone real) y el aparato entero se escala
+// para ocupar lo máximo posible de la ventana, sin deformarse.
 function fit() {
-  const availW = window.innerWidth - MARGIN * 2 - BEZEL * 2
+  const availW = window.innerWidth - MARGIN * 2
   // En celular los botones de arriba tienen su propia franja.
-  const availH = window.innerHeight - MARGIN * 2 - BEZEL * 2 - (window.innerWidth < 640 ? 48 : 0)
-  const ratio = SCREEN.h / SCREEN.w
-  const scale = Math.min(availW / SCREEN.w, availH / SCREEN.h)
-  if (scale >= 1) return { w: SCREEN.w, h: SCREEN.h, scale: Math.min(scale, 1.5) }
-  const w = Math.min(SCREEN.w, availW, availH / ratio)
-  if (w >= MIN_WIDTH) return { w, h: w * ratio, scale: 1 }
-  return { w: Math.min(SCREEN.w, availW), h: availH, scale: 1 }
+  const availH = window.innerHeight - MARGIN * 2 - (window.innerWidth < 640 ? 48 : 0)
+  const scale = Math.min(availW / (SCREEN.w * (1 + 2 * BEZEL)), availH / (SCREEN.h + 2 * BEZEL * SCREEN.w), 1.5)
+  return { w: SCREEN.w, h: SCREEN.h, scale }
 }
+
+// Botones laterales del 17 Pro Max, en % del alto del cuerpo: acción y volumen a la izquierda;
+// lateral y Control de Cámara a la derecha.
+const buttons = [
+  { side: 'left', top: 17.5, height: 4.5 },
+  { side: 'left', top: 25.5, height: 7.5 },
+  { side: 'left', top: 35, height: 7.5 },
+  { side: 'right', top: 27, height: 11.5 },
+  { side: 'right', top: 58, height: 6 },
+] as const
 
 // La carta digital dentro de un iPhone flotante. Los links marcados con `data-carta` lo abren (clic simple);
 // con Ctrl/Cmd/Shift o clic del medio siguen abriendo la carta en una pestaña nueva.
@@ -75,7 +78,11 @@ export function CartaPhone() {
 
   if (!open || !size) return null
 
-  const radius = Math.min(size.w, size.h) * 0.14
+  // `u`: 1 pt de la pantalla real. Marco metálico de 4 pt y vidrio negro de 10 pt alrededor de la pantalla.
+  const u = size.w / SCREEN.w
+  const metal = 4 * u
+  const glass = 10 * u
+  const radius = 55 * u
   return (
     <div
       ref={overlay}
@@ -109,51 +116,58 @@ export function CartaPhone() {
 
       {/* El tamaño real del celular (en px) se escala entero con transform, así el contenido no se reacomoda. */}
       <div
-        style={{ width: size.w + BEZEL * 2, height: size.h + BEZEL * 2, transform: `scale(${size.scale})` }}
+        style={{ width: size.w + 2 * (metal + glass), height: size.h + 2 * (metal + glass), transform: `scale(${size.scale})` }}
         className="relative shrink-0"
       >
-        {/* Botones laterales: acción y volumen a la izquierda, encendido a la derecha. */}
-        {[
-          ['left', '15%', '3%'],
-          ['left', '22%', '6%'],
-          ['left', '30%', '6%'],
-          ['right', '27%', '10%'],
-        ].map(([side, top, height]) => (
+        {buttons.map(({ side, top, height }) => (
           <span
             key={`${side}${top}`}
             aria-hidden="true"
-            style={{ top, height, [side]: -3 }}
-            className="absolute w-[3px] rounded-sm bg-[#4a4a4d]"
+            style={{ top: `${top}%`, height: `${height}%`, width: 3.5 * u, [side]: -2.5 * u, borderRadius: 2 * u }}
+            className="absolute bg-gradient-to-b from-[#8d8d92] via-[#55555a] to-[#8d8d92]"
           />
         ))}
 
+        {/* Cuerpo: marco de aluminio con brillo en los cantos, después el borde negro del vidrio y la pantalla. */}
         <div
-          style={{ borderRadius: radius + BEZEL }}
-          className="carta-phone absolute inset-0 bg-gradient-to-br from-[#5a5a5e] via-[#232326] to-[#4a4a4e] p-[10px] shadow-[0_30px_80px_-10px_rgb(0_0_0/0.65),inset_0_0_0_1.5px_rgb(255_255_255/0.18)]"
+          style={{ borderRadius: radius + glass + metal, padding: metal }}
+          className="carta-phone absolute inset-0 bg-[linear-gradient(135deg,#9a9aa0_0%,#4a4a4f_18%,#2c2c30_50%,#4a4a4f_82%,#9a9aa0_100%)] shadow-[0_40px_90px_-20px_rgb(0_0_0/0.75),0_0_0_1px_rgb(0_0_0/0.5)]"
         >
-          <div style={{ borderRadius: radius }} className="relative flex h-full w-full flex-col overflow-hidden bg-background">
-            {/* Barra de estado con la isla dinámica. */}
-            <div style={{ height: STATUS_BAR }} className="relative flex shrink-0 items-center justify-between px-7 text-foreground" aria-hidden="true">
-              <span className="text-[15px] font-semibold tabular-nums">9:41</span>
-              <span className="absolute left-1/2 top-[11px] h-[30px] w-[28%] -translate-x-1/2 rounded-full bg-black" />
-              <span className="flex items-center gap-1.5">
-                <Signal className="size-4" />
-                <Wifi className="size-4" />
-                <BatteryFull className="size-5" />
-              </span>
-            </div>
+          <div
+            style={{ borderRadius: radius + glass, padding: glass }}
+            className="size-full bg-[#050505] shadow-[inset_0_0_0_1px_rgb(255_255_255/0.08)]"
+          >
+            <div style={{ borderRadius: radius }} className="relative flex size-full flex-col overflow-hidden bg-background">
+              {/* Barra de estado: hora e íconos a los costados de la isla dinámica (126 × 37 pt, a 11 pt del borde). */}
+              <div
+                style={{ height: 54 * u, fontSize: 17 * u }}
+                className="relative grid shrink-0 grid-cols-[1fr_auto_1fr] items-center font-semibold text-foreground"
+                aria-hidden="true"
+              >
+                <span className="text-center tabular-nums tracking-tight">9:41</span>
+                <span style={{ width: 126 * u, height: 37 * u, marginTop: -6 * u }} className="rounded-full bg-black" />
+                <span style={{ gap: 6 * u }} className="flex items-center justify-center">
+                  <Signal style={{ width: 17 * u, height: 17 * u }} strokeWidth={2.5} />
+                  <Wifi style={{ width: 17 * u, height: 17 * u }} strokeWidth={2.5} />
+                  <BatteryFull style={{ width: 26 * u, height: 26 * u }} strokeWidth={2} />
+                </span>
+              </div>
 
-            <div className="relative min-h-0 flex-1">
-              <iframe
-                title="Carta digital de La Comanda"
-                src={site.cartaUrl}
-                className="absolute inset-0 size-full border-0 bg-background"
-              />
-            </div>
+              <div className="relative min-h-0 flex-1">
+                <iframe
+                  title="Carta digital de La Comanda"
+                  src={site.cartaUrl}
+                  className="absolute inset-0 size-full border-0 bg-background"
+                />
+              </div>
 
-            {/* Barra de inicio. */}
-            <div style={{ height: HOME_BAR }} className="relative shrink-0" aria-hidden="true">
-              <span className="absolute bottom-2 left-1/2 h-[5px] w-[34%] -translate-x-1/2 rounded-full bg-foreground/80" />
+              {/* Indicador de inicio: 140 × 5 pt, a 8 pt del borde. */}
+              <div style={{ height: 24 * u }} className="relative shrink-0" aria-hidden="true">
+                <span
+                  style={{ width: 140 * u, height: 5 * u, bottom: 8 * u }}
+                  className="absolute left-1/2 -translate-x-1/2 rounded-full bg-foreground"
+                />
+              </div>
             </div>
           </div>
         </div>
