@@ -48,7 +48,14 @@ export function Events() {
       // del dedo en cada plan. Con mouse o trackpad (Lenis) la escena se acomoda sola al soltar el scroll.
       const html = document.documentElement
       const touch = window.matchMedia('(pointer: coarse)').matches
-      if (touch) html.classList.add('touch-snap')
+      // El frenado se enciende solo mientras la escena está anclada: el resto de la página sigue con scroll libre.
+      if (touch)
+        ScrollTrigger.create({
+          trigger: scene.current,
+          start: 'top top',
+          end: 'bottom bottom',
+          onToggle: (self) => html.classList.toggle('touch-snap', self.isActive),
+        })
       else
         ScrollTrigger.create({
           trigger: scene.current,
