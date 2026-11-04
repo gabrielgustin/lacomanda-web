@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { BatteryFull, ExternalLink, Signal, Wifi, X } from 'lucide-react'
 import { site } from '@/lib/site'
+import { lockPageScroll } from '@/lib/gsap'
 
 // Pantalla del iPhone 17 Pro Max: 440 × 956 pt. `BEZEL` es el marco metálico alrededor.
 const SCREEN = { w: 440, h: 956 }
@@ -52,7 +53,7 @@ export function CartaPhone() {
     if (!open) return
     const trigger = document.activeElement as HTMLElement | null
     closeButton.current?.focus()
-    document.documentElement.classList.add('lenis-stopped')
+    lockPageScroll(true)
     const onKey = (event: KeyboardEvent) => event.key === 'Escape' && setOpen(false)
     const onFocus = (event: FocusEvent) => !overlay.current?.contains(event.target as Node) && closeButton.current?.focus()
     const onResize = () => setSize(fit())
@@ -67,7 +68,7 @@ export function CartaPhone() {
       document.removeEventListener('keydown', onKey)
       document.removeEventListener('focusin', onFocus)
       window.removeEventListener('resize', onResize)
-      document.documentElement.classList.remove('lenis-stopped')
+      lockPageScroll(false)
       trigger?.focus()
     }
   }, [open])

@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { BookOpen, Menu, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { navLinks, site } from '@/lib/site'
-import { gsap, prefersReducedMotion } from '@/lib/gsap'
+import { gsap, lockPageScroll, prefersReducedMotion } from '@/lib/gsap'
 
 export function SiteHeader() {
   const [tone, setTone] = useState<'clear' | 'dark' | 'light'>('clear')
@@ -86,7 +86,7 @@ export function SiteHeader() {
     const panel = panelRef.current
     const focusables = () => Array.from(panel?.querySelectorAll<HTMLElement>('a, button') ?? [])
     focusables()[0]?.focus()
-    document.documentElement.classList.add('lenis-stopped')
+    lockPageScroll(true)
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') closeMenu()
       if (event.key !== 'Tab') return
@@ -104,7 +104,7 @@ export function SiteHeader() {
     document.addEventListener('keydown', onKey)
     return () => {
       document.removeEventListener('keydown', onKey)
-      document.documentElement.classList.remove('lenis-stopped')
+      lockPageScroll(false)
       toggleRef.current?.focus()
     }
   }, [open])
