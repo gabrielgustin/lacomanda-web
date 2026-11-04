@@ -5,9 +5,8 @@ import { gsap, useGSAP, prefersReducedMotion } from '@/lib/gsap'
 import { SplitTitle } from '@/components/ui'
 import { OrderTicket } from '@/components/order-ticket'
 
-// Texto a la izquierda y, a la derecha, el ticket de la comanda: se imprime al llegar y después tiene un Ken Burns
-// guiado por el scroll (zoom y giro lentos, y el resplandor de atrás se mueve a otra velocidad).
-// La sección queda fija mientras dura el recorrido.
+// Texto a la izquierda y, a la derecha, el ticket de la comanda: se imprime al llegar y después flota con el scroll
+// (sube y se mece apenas). La sección queda fija mientras dura el recorrido.
 export function About() {
   const root = useRef<HTMLElement>(null)
 
@@ -41,15 +40,14 @@ export function About() {
             invalidateOnRefresh: true,
           },
         })
-        // Ticket: se acerca, sube un poco y gira apenas, como una cámara que lo rodea.
+        // Ticket: sube y se mece apenas. El tamaño queda fijo: escalar el papel (con sombra y borde dentado)
+        // en cada cuadro obliga a redibujarlo y es lo que más pesaba de la escena.
         .fromTo(
           front,
-          { scale: () => fit() * 0.88, yPercent: 3, rotate: -2 },
-          { scale: () => fit(), yPercent: -2, rotate: 1.5, duration: 4 },
+          { scale: () => fit(), yPercent: 5, rotate: -3 },
+          { scale: () => fit(), yPercent: -5, rotate: 2, duration: 4, ease: 'sine.inOut' },
           0,
         )
-        // Resplandor: más lento y hacia el otro lado, así el ticket se despega del fondo.
-        .fromTo('[data-kb-back]', { scale: 0.9, yPercent: -3 }, { scale: 1.1, yPercent: 4, duration: 4 }, 0)
 
       // El papel sale de la impresora al entrar la sección y después cae el sello; la rotación final del sello
       // la pone GSAP (no la clase) para no pisarse.
@@ -79,7 +77,7 @@ export function About() {
       data-tone="dark"
       ref={root}
       aria-labelledby="nosotros-title"
-      className="relative z-10 flex h-svh flex-col overflow-hidden bg-ink text-paper md:grid md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]"
+      className="relative z-10 flex h-svh flex-col overflow-hidden bg-primary text-paper md:grid md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]"
     >
       <div className="flex flex-col justify-center gap-5 px-5 pb-4 pt-24 md:gap-8 md:py-24 md:pl-8 md:pr-10 lg:pl-[max(2rem,calc((100vw-90rem)/2+2rem))] lg:pr-14">
         <SplitTitle
@@ -96,15 +94,12 @@ export function About() {
       {/* El borde de arriba y de abajo se difumina con degradados (más baratos que una máscara en cada frame). */}
       <div className="relative min-h-0 flex-1 overflow-hidden">
         <div data-kb-stage className="absolute inset-0">
-          <div data-kb-back className="absolute inset-0 will-change-transform" aria-hidden="true">
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_55%_50%_at_50%_48%,#7a4220_0%,#3a1f12_45%,transparent_75%)]" />
-          </div>
           <div data-kb-front className="absolute inset-0 will-change-transform flex items-center justify-center px-4 md:px-8">
             <OrderTicket />
           </div>
         </div>
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-[12%] bg-gradient-to-b from-ink to-transparent" />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[12%] bg-gradient-to-t from-ink to-transparent" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-[12%] bg-gradient-to-b from-primary to-transparent" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[12%] bg-gradient-to-t from-primary to-transparent" />
       </div>
     </section>
   )
