@@ -103,8 +103,8 @@ export function Promos() {
   )
 
   return (
-    // Anclada con sticky; el contenedor de 250svh da 1,5 pantallas de recorrido para apilar los tickets.
-    <div ref={scene} className="relative z-10 motion-safe:h-[250svh]">
+    // Anclada con sticky; el contenedor de 350svh da 2,5 pantallas de recorrido para apilar los tickets.
+    <div ref={scene} className="relative z-10 motion-safe:h-[350svh]">
     <section
       id="promos"
       ref={root}
