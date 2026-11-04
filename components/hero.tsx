@@ -48,6 +48,8 @@ export function Hero() {
             arriba para el header. */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_130%_55%_at_0%_100%,rgb(36_21_14/0.8),rgb(36_21_14/0.4)_45%,transparent_80%)] lg:bg-[radial-gradient(ellipse_65%_65%_at_0%_100%,rgb(36_21_14/0.8),rgb(36_21_14/0.4)_45%,transparent_80%)]" />
         <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-ink/45 to-transparent" />
+        {/* En escritorio la foto apaisada es muy luminosa: un velo parejo y suave la baja un poco. */}
+        <div className="absolute inset-0 hidden bg-ink/25 lg:block" />
       </div>
 
       <div
