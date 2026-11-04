@@ -10,10 +10,10 @@ import { cn } from '@/lib/utils'
 
 const plans = [
   {
-    image: '/fotos/eventos/festejos-mesa-hd.webp',
-    alt: 'Amigas riendo en una mesa de madera con pizza, vino y cerveza; al fondo, la pared de madera con el cartel de neón',
+    image: '/fotos/eventos/festejos-pizzas.webp',
+    alt: 'Amigas riendo alrededor de una mesa de madera con pizzas, vino y chopp; al fondo, el neón «Lo bueno se comparte»',
     // Foto casi cuadrada: `focus` encuadra caras y mesa (en celular manda el corrimiento horizontal).
-    focus: 'object-[60%_50%] md:object-[50%_25%]',
+    focus: 'object-[58%_50%] md:object-[50%_30%]',
     title: 'Festejos',
     text: 'Mesa larga, torta propia si querés y la pizza que no puede faltar. Nosotros nos encargamos del resto.',
   },
