@@ -4,7 +4,7 @@ import { useRef } from 'react'
 import Image from 'next/image'
 import { MessageCircle } from 'lucide-react'
 import { gsap, useGSAP, prefersReducedMotion } from '@/lib/gsap'
-import { PillLink, SplitTitle } from '@/components/ui'
+import { PillLink } from '@/components/ui'
 import { whatsappLink } from '@/lib/site'
 import { cn } from '@/lib/utils'
 
@@ -28,12 +28,12 @@ const plans = [
     image: '/fotos/eventos/grupos-oficina-hd.webp',
     alt: 'Tres compañeras charlando con una notebook, un cuaderno y un café sobre la mesa de madera, frente a la pared de ladrillo',
     focus: 'object-[45%_50%] md:object-[50%_45%]',
-    title: 'Empresas',
+    title: 'Cowork',
     text: 'Armamos menú cerrado para grupos grandes, con opciones para todos y precio fijo por persona.',
   },
 ]
 
-// Escena fija a pantalla completa: arranca con el título sobre la primera foto y, al bajar,
+// Escena fija a pantalla completa: arranca directo en el primer plan y, al bajar,
 // cada plan entra con un barrido de abajo hacia arriba (las fotos, sin zoom). Abajo, una regla
 // con los tres planes se va llenando. Con movimiento reducido, los planes quedan uno debajo del otro.
 export function Events() {
@@ -54,14 +54,12 @@ export function Events() {
         scrollTrigger: { trigger: root.current, start: 'top top', end: '+=320%', scrub: true, pin: true, anticipatePin: 1, invalidateOnRefresh: true },
       })
 
-      // Apertura: el título se va y entra el primer plan.
-      tl.to('[data-plan-intro]', { opacity: 0, y: -40, duration: 0.5, ease: 'power2.in' }, 0.5)
-        .fromTo(copies[0], { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, 0.9)
-        .fromTo(fills[0], { scaleX: 0 }, { scaleX: 1, duration: step }, 0.9)
+      // Arranca directo en el primer plan: su regla se llena mientras dura.
+      tl.fromTo(fills[0], { scaleX: 0 }, { scaleX: 1, duration: step }, 0)
 
       // Los planes siguientes tapan al anterior de abajo hacia arriba.
       for (let i = 1; i < panels.length; i++) {
-        const at = 0.9 + i * step
+        const at = i * step
         // El panel sube tapando al anterior y su contenido baja lo mismo: la foto queda quieta y solo se corre la "ventana".
         tl.fromTo(panels[i], { y: () => window.innerHeight }, { y: 0, duration: 0.8, ease: 'power3.inOut' }, at - 0.5)
           .fromTo(inners[i], { y: () => -window.innerHeight }, { y: 0, duration: 0.8, ease: 'power3.inOut' }, at - 0.5)
@@ -82,21 +80,9 @@ export function Events() {
       aria-labelledby="eventos-title"
       className="relative z-10 overflow-hidden bg-ink text-paper motion-safe:h-svh"
     >
-      {/* Apertura: en la escena va encima de la primera foto, oscurecida. */}
-      <div
-        data-plan-intro
-        className="relative z-10 flex flex-col justify-center px-5 py-24 md:px-8 lg:px-[max(2rem,calc((100vw-90rem)/2+2rem))] motion-safe:absolute motion-safe:inset-0 motion-safe:bg-ink/70"
-      >
-        <SplitTitle
-          id="eventos-title"
-          lines={['Mesas largas', 'para planes cortos']}
-          className="text-[clamp(2.8rem,8vw,7.5rem)]"
-        />
-        <p className="mt-6 max-w-lg text-base leading-relaxed text-paper/85 text-pretty md:text-lg">
-          Cumpleaños, despedidas, after office o la juntada que venís postergando hace meses. Contanos cuántos son y
-          te armamos la mesa.
-        </p>
-      </div>
+      <h2 id="eventos-title" className="sr-only">
+        Mesas largas para planes cortos
+      </h2>
 
       {plans.map((plan, i) => (
         <article
