@@ -119,12 +119,12 @@ export function Signature() {
   }, [measure])
 
   return (
-    <section ref={root} id="platos" aria-label="Platos de la casa" className="relative z-10 bg-background">
+    <section ref={root} id="platos" aria-label="Platos de la casa" className="relative z-10 bg-dots">
       {/* Celular: bloque a pantalla completa que se ancla mientras la tira avanza. La tira toma el alto que sobra
           (con tope) y, en cada tarjeta, la foto se queda con lo que deja el texto: así nada se corta en ninguna
           altura de pantalla. En pantallas bajas se omite el texto de introducción. */}
       <div ref={mobileScene} className="md:hidden">
-      <div ref={mobile} className="sticky top-0 flex h-svh flex-col justify-center overflow-hidden pb-6 pt-20 [@media(max-height:519px)]:h-auto">
+      <div ref={mobile} className="sticky top-0 flex h-svh flex-col justify-center overflow-hidden bg-dots pb-6 pt-20 [@media(max-height:519px)]:h-auto">
         <div className="px-5">
           <SplitTitle
             id="platos-title-movil"
@@ -176,7 +176,7 @@ export function Signature() {
 
       {/* Tablet y escritorio */}
       <div className="hidden md:grid md:grid-cols-2">
-        <div className="sticky top-0 order-2 flex h-svh flex-col justify-center self-start pb-8 pl-10 pr-8 pt-24 lg:pl-14 lg:pr-[max(2rem,calc((100vw-90rem)/2+2rem))]">
+        <div className="sticky top-0 order-2 flex h-svh bg-dots flex-col justify-center self-start pb-8 pl-10 pr-8 pt-24 lg:pl-14 lg:pr-[max(2rem,calc((100vw-90rem)/2+2rem))]">
           <SplitTitle
             id="platos-title"
             lines={['Recetas de siempre.', 'Hambre de ahora.']}

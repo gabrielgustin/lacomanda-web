@@ -72,6 +72,13 @@
   filter: brightness(0.9) saturate(0.82) contrast(1.04);
 }
 
+/* Fondo claro de las secciones de la casa: crema con una trama de puntitos marrones, como el papel de la carta. */
+@utility bg-dots {
+  background-color: var(--muted);
+  background-image: radial-gradient(rgb(67 40 28 / 0.13) 1px, transparent 1.5px);
+  background-size: 18px 18px;
+}
+
 /* Texto chico de apoyo (encabezados del footer, rótulos de vale). */
 @utility eyebrow {
   font-family: var(--font-sans);

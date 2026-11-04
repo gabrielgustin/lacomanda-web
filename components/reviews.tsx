@@ -87,7 +87,7 @@ export function Reviews({ place }: { place: GooglePlace | null }) {
   }
 
   return (
-    <section aria-labelledby="resenas-title" className="relative z-10 overflow-x-clip bg-background py-20 md:py-28">
+    <section aria-labelledby="resenas-title" className="relative z-10 overflow-x-clip bg-dots py-20 md:py-28">
       <div className="mx-auto flex w-full max-w-[90rem] flex-wrap items-end justify-between gap-6 px-5 md:px-8">
         <div>
           <SplitTitle

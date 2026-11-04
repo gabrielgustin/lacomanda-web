@@ -98,7 +98,7 @@ export function Promos() {
       id="promos"
       ref={root}
       aria-labelledby="promos-title"
-      className="sticky top-0 flex h-svh flex-col overflow-hidden bg-muted md:grid md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:items-center"
+      className="sticky top-0 flex h-svh flex-col overflow-hidden bg-dots md:grid md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:items-center"
     >
       <div className="px-5 pb-6 pt-20 md:py-24 md:pl-8 md:pr-10 lg:pl-[max(2rem,calc((100vw-90rem)/2+2rem))] lg:pr-14">
         <SplitTitle

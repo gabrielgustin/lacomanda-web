@@ -61,7 +61,7 @@ export function About() {
         id="nosotros"
         ref={root}
         aria-labelledby="nosotros-title"
-        className="sticky top-0 flex h-svh flex-col overflow-hidden bg-muted bg-[radial-gradient(rgb(67_40_28/0.13)_1px,transparent_1.5px)] bg-[size:18px_18px] text-primary md:grid md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]"
+        className="sticky top-0 flex h-svh flex-col overflow-hidden bg-dots text-primary md:grid md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]"
       >
         <div className="flex flex-col justify-center gap-5 px-5 pb-2 pt-24 md:gap-7 md:py-24 md:pl-8 md:pr-10 lg:pl-[max(2rem,calc((100vw-90rem)/2+2rem))] lg:pr-14">
           <p className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.2em] text-primary/70">
