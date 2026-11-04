@@ -6,6 +6,17 @@ import { gsap, ScrollTrigger, touchScroll } from '@/lib/gsap'
 
 // Scroll suave con Lenis, sincronizado con ScrollTrigger. Con movimiento reducido no se activa.
 export function SmoothScroll() {
+  // La web siempre abre arriba, en «Lo bueno se comparte»: el navegador no restaura la posición al entrar o refrescar
+  // (con las secciones fijas la restauración caía en un lugar cualquiera). Un link con #seccion sí se respeta.
+  useEffect(() => {
+    history.scrollRestoration = 'manual'
+    const toTop = () => !location.hash && window.scrollTo(0, 0)
+    toTop()
+    const onShow = (event: PageTransitionEvent) => event.persisted && toTop()
+    window.addEventListener('pageshow', onShow)
+    return () => window.removeEventListener('pageshow', onShow)
+  }, [])
+
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
