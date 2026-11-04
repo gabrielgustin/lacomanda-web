@@ -12,12 +12,6 @@ export function Hero() {
   useGSAP(
     () => {
       if (prefersReducedMotion()) return
-      // Único momento orquestado: el título sube (la foto queda quieta, sin zoom).
-      const intro = gsap.timeline({ defaults: { ease: 'power4.out' } })
-      intro
-        .from('[data-hero-line]', { yPercent: 110, duration: 1.2, stagger: 0.12 }, 0.2)
-        .from('[data-hero-foot]', { opacity: 0, y: 20, duration: 0.9, stagger: 0.1 }, 0.7)
-
       // Al bajar, el hero queda fijo y se oscurece: solo en escritorio (lg), donde es fijo.
       gsap.matchMedia().add('(min-width: 1024px)', () => {
         gsap.to('[data-hero-content]', {
@@ -59,7 +53,7 @@ export function Hero() {
       >
         <div>
           {/* Dónde queda: lo primero que se pregunta quien llega. */}
-          <p data-hero-foot className="mb-6 text-sm text-primary-foreground/85">
+          <p className="mb-6 text-sm text-primary-foreground/85">
             {site.address} · Cerro de las Rosas
           </p>
           <h1
@@ -68,17 +62,17 @@ export function Hero() {
             aria-label="Lo bueno se comparte"
           >
             <span className="-mb-[0.1em] -mt-[0.18em] block overflow-hidden pb-[0.2em] pt-[0.18em]" aria-hidden="true">
-              <span data-hero-line className="block">
+              <span className="block">
                 Lo bueno
               </span>
             </span>
             <span className="-mb-[0.1em] -mt-[0.18em] block overflow-hidden pb-[0.2em] pt-[0.18em]" aria-hidden="true">
-              <span data-hero-line className="block text-accent">
+              <span className="block text-accent">
                 se comparte
               </span>
             </span>
           </h1>
-          <div data-hero-foot className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-8 flex flex-wrap gap-3">
             <PillLink href="#reservas" variant="cream" className="h-12 px-7">
               Reservá tu mesa
             </PillLink>
