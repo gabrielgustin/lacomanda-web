@@ -41,6 +41,7 @@ export function Signature() {
   const track = useRef<HTMLUListElement>(null)
   const [active, setActive] = useState(0)
   const [slide, setSlide] = useState(0)
+  const slideRef = useRef(0)
 
   useGSAP(
     () => {
@@ -64,8 +65,11 @@ export function Signature() {
               anticipatePin: 1,
               scrub: true,
               invalidateOnRefresh: true,
-              onUpdate: (self) =>
-                setSlide(Math.round(Math.min(1, self.progress * (1 + STRIP_HOLD)) * (picks.length - 1))),
+              // Solo avisa a React cuando cambia la tarjeta, no en cada cuadro del scroll.
+              onUpdate: (self) => {
+                const next = Math.round(Math.min(1, self.progress * (1 + STRIP_HOLD)) * (picks.length - 1))
+                if (next !== slideRef.current) setSlide((slideRef.current = next))
+              },
             },
           })
           .to(ul, { x: () => -distance(), ease: 'none', duration: 1 })

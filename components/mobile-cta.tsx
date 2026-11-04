@@ -9,20 +9,30 @@ export function MobileCta() {
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
-    const onScroll = () => {
-      const reservas = document.getElementById('reservas')
+    const reservas = document.getElementById('reservas')
+    const scenes = ['nosotros', 'platos', 'eventos', 'promos'].map((id) => document.getElementById(id))
+    // Un cálculo por cuadro como máximo: leer posiciones en cada evento de scroll traba el celular.
+    let frame = 0
+    const update = () => {
+      frame = 0
       const pastHero = window.scrollY > window.innerHeight * 0.9
       const atReservas = reservas ? reservas.getBoundingClientRect().top < window.innerHeight : false
       // Mientras una escena fija ocupa la pantalla, la píldora taparía su regla de avance.
-      const onStage = ['nosotros', 'platos', 'eventos', 'promos'].some((id) => {
-        const scene = document.getElementById(id)?.getBoundingClientRect()
-        return scene ? scene.top < window.innerHeight * 0.5 && scene.bottom > window.innerHeight * 0.5 : false
+      const onStage = scenes.some((scene) => {
+        const box = scene?.getBoundingClientRect()
+        return box ? box.top < window.innerHeight * 0.5 && box.bottom > window.innerHeight * 0.5 : false
       })
       setVisible(pastHero && !atReservas && !onStage)
     }
-    onScroll()
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update)
+    }
+    update()
     window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      cancelAnimationFrame(frame)
+    }
   }, [])
 
   return (

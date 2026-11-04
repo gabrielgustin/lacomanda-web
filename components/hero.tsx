@@ -43,8 +43,8 @@ export function Hero() {
           sizes="100vw"
           className="object-cover object-center"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/55 to-ink/20" />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-transparent to-ink/50" />
+        <div className="absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/55 to-ink/20 max-md:hidden" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-transparent to-ink/50 max-md:from-ink/70 max-md:via-transparent max-md:via-50% max-md:to-ink/15" />
       </div>
 
       <div

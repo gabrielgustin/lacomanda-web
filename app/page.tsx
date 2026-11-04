@@ -66,7 +66,7 @@ export default async function Home() {
         <Events />
         <Promos />
         <Reviews place={place} />
-        <Story />
+        <Story rating={place?.rating} />
         <Reservations />
       </main>
       <SiteFooter />

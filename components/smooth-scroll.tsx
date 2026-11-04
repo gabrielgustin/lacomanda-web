@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'
 import Lenis from 'lenis'
-import { gsap, ScrollTrigger, touchScroll } from '@/lib/gsap'
+import { gsap, ScrollTrigger } from '@/lib/gsap'
 
 // Scroll suave con Lenis, sincronizado con ScrollTrigger. Con movimiento reducido no se activa.
 export function SmoothScroll() {
@@ -20,10 +20,9 @@ export function SmoothScroll() {
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
-    // En celulares y tablets no va Lenis: el scroll lo normaliza GSAP (ver touchScroll).
-    // Los links internos (#seccion) se desplazan con el scroll suave del navegador.
-    if (touchScroll()) {
-      ScrollTrigger.normalizeScroll(true)
+    // En celulares y tablets va el scroll nativo, que es el más fluido (normalizeScroll lo emulaba en el hilo
+    // principal y se sentía trabado). Los links internos (#seccion) se desplazan con el scroll suave del navegador.
+    if (window.matchMedia('(pointer: coarse)').matches) {
       const onTouchLink = (event: MouseEvent) => {
         const link = (event.target as HTMLElement).closest<HTMLAnchorElement>('a[href^="#"]')
         const target = link && document.querySelector(link.getAttribute('href')!)
@@ -33,10 +32,7 @@ export function SmoothScroll() {
         history.replaceState(null, '', link.getAttribute('href'))
       }
       document.addEventListener('click', onTouchLink)
-      return () => {
-        document.removeEventListener('click', onTouchLink)
-        ScrollTrigger.normalizeScroll(false)
-      }
+      return () => document.removeEventListener('click', onTouchLink)
     }
 
     // Valores por defecto de Lenis (lerp 0.1): sigue a la rueda sin la cola larga que se sentía como retraso.
