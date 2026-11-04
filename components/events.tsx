@@ -80,8 +80,8 @@ export function Events() {
   )
 
   return (
-    // Anclada con sticky; el contenedor de 260svh da 1,6 pantallas de recorrido para los planes.
-    <div ref={scene} className="relative z-10 motion-safe:h-[260svh]">
+    // Anclada con sticky; el contenedor de 380svh da 2,8 pantallas de recorrido para los planes.
+    <div ref={scene} className="relative z-10 motion-safe:h-[380svh]">
     <section
       id="eventos"
       data-tone="dark"

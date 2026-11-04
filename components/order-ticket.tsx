@@ -15,7 +15,7 @@ const orderTotal = order.reduce((sum, line) => sum + line.item.price * line.qty,
 // (cada renglón), `data-total` (el total, que se va sumando) y `data-stamp` (el sello).
 export function OrderTicket() {
   return (
-    <div aria-hidden="true" data-feed className="ticket-shadow w-full max-w-[20rem]">
+    <div aria-hidden="true" data-feed className="w-full max-w-[20rem]">
       <div data-ticket className="ticket px-5 pt-6 text-[13px] leading-snug">
         <p className="font-display text-center text-2xl">La Comanda</p>
         <p data-line className="mt-1 flex justify-between font-bold">

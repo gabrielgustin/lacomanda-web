@@ -212,12 +212,15 @@ export function Signature() {
           <Buttons className="mt-6" />
         </div>
 
-        {/* Cada foto ocupa toda la columna y todo el alto de la pantalla, sin marco, sin zoom ni parallax
-            (así no se recorta ni se agranda más de lo necesario). */}
+        {/* Cada foto ocupa una pantalla de alto, como una lámina apoyada sobre el papel: margen alrededor, esquinas
+            redondeadas, un filete claro y sombra. Sin zoom ni parallax. */}
         <div className="order-1">
           {picks.map((pick) => (
-            <figure key={pick.id} id={`plato-${pick.id}`} data-dish data-clip className="relative h-svh overflow-hidden bg-ink">
-              <Image src={pick.image} alt={pick.alt} fill sizes="50vw" className={cn('photo-tone object-cover', pick.focus)} />
+            <figure key={pick.id} id={`plato-${pick.id}`} data-dish data-clip className="relative h-svh px-8 pb-6 pt-24 lg:pl-[max(2rem,calc((100vw-90rem)/2+2rem))] lg:pr-10">
+              <div className="relative size-full overflow-hidden rounded-[1.75rem] bg-ink shadow-[0_30px_60px_-30px_rgb(36_21_14/0.6)] ring-1 ring-ink/10">
+                <Image src={pick.image} alt={pick.alt} fill sizes="50vw" className={cn('photo-tone object-cover', pick.focus)} />
+                <div className="pointer-events-none absolute inset-2 rounded-[1.35rem] border border-paper/25" aria-hidden="true" />
+              </div>
             </figure>
           ))}
         </div>

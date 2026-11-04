@@ -109,9 +109,9 @@ export function About() {
                 <span className="absolute inset-x-4 bottom-2 h-1 rounded-full bg-black" aria-hidden="true" />
                 <span className="absolute right-3.5 top-2 size-1.5 rounded-full bg-[#8fdc8f] shadow-[0_0_6px_#8fdc8f]" aria-hidden="true" />
               </div>
-              {/* El papel sale por la ranura: el recorte esconde lo que todavía no salió y deja aire a los costados
-                  y abajo para la sombra. */}
-              <div className="-mt-3 flex justify-center px-3 [clip-path:inset(0.75rem_-3rem_-5rem_-3rem)]">
+              {/* El papel sale por la ranura: el recorte esconde lo que todavía no salió. El ticket va sin sombra: con el
+                  recorte se veía como un rectángulo gris detrás. */}
+              <div className="-mt-3 flex justify-center px-3 [clip-path:inset(0.75rem_0_0_0)]">
                 <OrderTicket />
               </div>
             </div>
