@@ -104,10 +104,9 @@ export function About() {
           <div className="absolute inset-0 px-4 pb-8 pt-4 md:pb-12 md:pt-28">
           <div data-stage className="flex size-full justify-center">
             <div data-printer className="relative h-fit w-[21.5rem] origin-top">
-              {/* Boca de la impresora: cuerpo oscuro, ranura y la luz de encendido. */}
+              {/* Boca de la impresora: cuerpo oscuro y ranura. */}
               <div className="relative z-10 h-8 rounded-xl bg-[#1d120c] shadow-[inset_0_1px_0_rgb(255_255_255/0.1),0_14px_28px_-10px_rgb(0_0_0/0.7)]">
                 <span className="absolute inset-x-4 bottom-2 h-1 rounded-full bg-black" aria-hidden="true" />
-                <span className="absolute right-3.5 top-2 size-1.5 rounded-full bg-[#8fdc8f] shadow-[0_0_6px_#8fdc8f]" aria-hidden="true" />
               </div>
               {/* El papel sale por la ranura: el recorte esconde lo que todavía no salió. El ticket va sin sombra: con el
                   recorte se veía como un rectángulo gris detrás. */}

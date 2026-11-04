@@ -44,8 +44,10 @@ export function Hero() {
           <source media="(max-width: 1023px)" srcSet={mobilePhoto} />
           <img {...desktopPhoto} alt="" className="object-cover object-center" />
         </picture>
-        <div className="absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/55 to-ink/20 max-lg:hidden" />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-transparent to-ink/50 max-lg:from-ink/70 max-lg:via-transparent max-lg:via-50% max-lg:to-ink/15" />
+        {/* La foto queda con su luz: solo se oscurece la esquina del título (abajo a la izquierda) y una franja fina
+            arriba para el header. */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_130%_55%_at_0%_100%,rgb(36_21_14/0.8),rgb(36_21_14/0.4)_45%,transparent_80%)] lg:bg-[radial-gradient(ellipse_65%_65%_at_0%_100%,rgb(36_21_14/0.8),rgb(36_21_14/0.4)_45%,transparent_80%)]" />
+        <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-ink/45 to-transparent" />
       </div>
 
       <div
@@ -55,7 +57,7 @@ export function Hero() {
         <div>
           <h1
             id="hero-title"
-            className="font-display text-[clamp(2.8rem,7vw,6.5rem)] leading-[0.9]"
+            className="font-display text-[clamp(2.8rem,5vw,4.75rem)] leading-[0.9] [text-shadow:0_2px_28px_rgb(0_0_0/0.55),0_1px_3px_rgb(0_0_0/0.35)]"
             aria-label="Lo bueno se comparte"
           >
             <span className="-mb-[0.1em] -mt-[0.18em] block overflow-hidden pb-[0.2em] pt-[0.18em]" aria-hidden="true">
@@ -70,7 +72,7 @@ export function Hero() {
             </span>
           </h1>
           <div className="mt-8 flex flex-wrap gap-3">
-            <PillLink href="#reservas" variant="cream" className="h-12 px-7">
+            <PillLink href="#reservas" variant="cream" className="h-12 px-7 shadow-[0_10px_30px_-8px_rgb(0_0_0/0.6)]">
               Reservá tu mesa
             </PillLink>
           </div>
