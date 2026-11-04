@@ -19,6 +19,10 @@ export const STRIP_HOLD = 0.12
 export const prefersReducedMotion = () =>
   typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
+// Animaciones de CSS atadas al scroll (`animation-timeline`): las mueve el navegador en el mismo hilo que el scroll,
+// así en el iPhone no quedan un paso atrás. Las escenas fijas las usan si están; si no, las anima GSAP.
+export const scrollTimelines = () => typeof CSS !== 'undefined' && CSS.supports('animation-timeline: view()')
+
 // Menú y carta abiertos: la página de atrás queda quieta.
 export function lockPageScroll(locked: boolean) {
   document.documentElement.classList.toggle('lenis-stopped', locked)

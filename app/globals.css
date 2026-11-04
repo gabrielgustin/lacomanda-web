@@ -216,6 +216,179 @@ html.lenis body {
   }
 }
 
+/* Escenas fijas con animaciones de CSS atadas al scroll: la línea de tiempo es el contenedor alto de cada escena
+   (`contain`: mientras la sección está anclada). Los porcentajes salen de la versión en GSAP de cada componente,
+   que queda de respaldo: si se cambia un tiempo allá, se cambia acá. */
+
+/* Nosotros (about.tsx, 3,9 unidades): el papel sale de 0 a 3, cada renglón `--i` entra a 0,5 + 0,4·i y dura 0,35,
+   el sello cae de 3,05 a 3,4. */
+.print-scene {
+  view-timeline: --nosotros block;
+}
+.print-scene [data-feed] {
+  animation: print-feed linear both;
+  animation-timeline: --nosotros;
+  animation-range: contain 0% contain 76.9%;
+}
+.print-scene [data-line] {
+  animation: print-line linear both;
+  animation-timeline: --nosotros;
+  animation-range: contain calc(12.82% + var(--i) * 10.26%) contain calc(21.79% + var(--i) * 10.26%);
+}
+.print-scene [data-stamp] {
+  animation: print-stamp cubic-bezier(0.34, 1.8, 0.64, 1) both;
+  animation-timeline: --nosotros;
+  animation-range: contain 78.2% contain 87.2%;
+}
+@keyframes print-feed {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes print-line {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+/* El giro final (-6°) lo pone la clase del sello. */
+@keyframes print-stamp {
+  from {
+    opacity: 0;
+    transform: scale(2.4) rotate(-18deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Mesas largas (events.tsx, 5,1 unidades): cada plan nuevo sube a i·1,6 − 0,5 durante 0,8; su texto entra a i·1,6;
+   el del anterior se va con la subida; cada regla se llena durante 1,6. */
+.plans-scene {
+  view-timeline: --eventos block;
+}
+/* El panel sube y su contenido baja lo mismo: la foto queda quieta y solo se corre la "ventana". */
+.plans-scene article:nth-of-type(n + 2) {
+  animation: plan-up cubic-bezier(0.65, 0, 0.35, 1) both;
+  animation-timeline: --eventos;
+}
+.plans-scene article:nth-of-type(n + 2) [data-plan-inner] {
+  animation: plan-down cubic-bezier(0.65, 0, 0.35, 1) both;
+  animation-timeline: --eventos;
+}
+.plans-scene article:nth-of-type(2),
+.plans-scene article:nth-of-type(2) [data-plan-inner] {
+  animation-range: contain 21.6% contain 37.3%;
+}
+.plans-scene article:nth-of-type(3),
+.plans-scene article:nth-of-type(3) [data-plan-inner] {
+  animation-range: contain 52.9% contain 68.6%;
+}
+.plans-scene article:nth-of-type(1) [data-plan-copy] {
+  animation: copy-out linear forwards;
+  animation-timeline: --eventos;
+  animation-range: contain 21.6% contain 27.5%;
+}
+/* Entra con su plan y se va con el siguiente: la salida solo rellena hacia adelante, así antes no pisa la entrada. */
+.plans-scene article:nth-of-type(2) [data-plan-copy] {
+  animation:
+    copy-in cubic-bezier(0.33, 1, 0.68, 1) both,
+    copy-out linear forwards;
+  animation-timeline: --eventos, --eventos;
+  animation-range:
+    contain 31.4% contain 41.2%,
+    contain 52.9% contain 58.8%;
+}
+.plans-scene article:nth-of-type(3) [data-plan-copy] {
+  animation: copy-in cubic-bezier(0.33, 1, 0.68, 1) both;
+  animation-timeline: --eventos;
+  animation-range: contain 62.7% contain 72.5%;
+}
+.plans-scene [data-plan-fill] {
+  animation: plan-fill linear both;
+  animation-timeline: --eventos;
+}
+.plans-scene li:nth-child(1) [data-plan-fill] {
+  animation-range: contain 0% contain 31.4%;
+}
+.plans-scene li:nth-child(2) [data-plan-fill] {
+  animation-range: contain 31.4% contain 62.7%;
+}
+.plans-scene li:nth-child(3) [data-plan-fill] {
+  animation-range: contain 62.7% contain 94.1%;
+}
+@keyframes plan-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes plan-down {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes copy-in {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes copy-out {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+}
+/* La regla usa la propiedad `scale` (la misma de la clase scale-x-0). */
+@keyframes plan-fill {
+  from {
+    scale: 0 1;
+  }
+  to {
+    scale: 1 1;
+  }
+}
+
+/* Promos (promos.tsx, 5,1 unidades): el ticket `--k` sube a k·0,9 durante 1 y cae girando hasta `--r` grados. */
+.stack-scene {
+  view-timeline: --promos block;
+}
+.stack-scene [data-promo] ~ [data-promo] {
+  animation: promo-drop cubic-bezier(0.33, 1, 0.68, 1) both;
+  animation-timeline: --promos;
+  animation-range: contain calc(var(--k) * 17.65%) contain calc(var(--k) * 17.65% + 19.61%);
+}
+@keyframes promo-drop {
+  from {
+    transform: translateY(120vh) rotate(calc(var(--r) * 6deg));
+  }
+  to {
+    transform: rotate(calc(var(--r) * 1deg));
+  }
+}
+
 /* Elementos que GSAP revela: visibles por defecto si no hay JS o hay movimiento reducido. */
 @media (prefers-reduced-motion: no-preference) {
   .js [data-reveal] {

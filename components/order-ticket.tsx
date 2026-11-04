@@ -20,7 +20,7 @@ export function OrderTicket() {
         <p className="font-display text-center text-2xl">La Comanda</p>
         <p data-line className="mt-1 flex justify-between font-bold">
           <span>Mesa 12</span>
-          <span>6 personas</span>
+          <span>2 personas</span>
         </p>
         <div className="ticket-rule my-3" />
         <ul className="space-y-1.5">

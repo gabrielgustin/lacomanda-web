@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef } from 'react'
-import { gsap, useGSAP, prefersReducedMotion } from '@/lib/gsap'
+import { gsap, ScrollTrigger, useGSAP, prefersReducedMotion, scrollTimelines } from '@/lib/gsap'
 import { SplitTitle } from '@/components/ui'
 import { OrderTicket } from '@/components/order-ticket'
 import { formatPrice } from '@/lib/format'
@@ -31,11 +31,31 @@ export function About() {
       const showSum = () => (total.textContent = formatPrice(Math.round(sum.value / 100) * 100))
       showSum()
 
+      // Con animaciones de CSS atadas al scroll (`.print-scene` en globals.css) el papel, los renglones y el sello los
+      // mueve el navegador; acá solo se va sumando el total (entre el 54 % y el 74 % del recorrido, frenando al final).
+      if (scrollTimelines()) {
+        const el = scene.current!
+        q('[data-line]').forEach((line, i) => line.style.setProperty('--i', String(i)))
+        el.classList.add('print-scene')
+        const target = Number(total.dataset.total)
+        ScrollTrigger.create({
+          trigger: el,
+          start: 'top top',
+          end: 'bottom bottom',
+          onUpdate: (self) => {
+            const p = gsap.utils.clamp(0, 1, (self.progress - 0.538) / 0.206)
+            sum.value = target * (1 - (1 - p) ** 2)
+            showSum()
+          },
+        })
+        return () => el.classList.remove('print-scene')
+      }
+
       gsap
         .timeline({
           defaults: { ease: 'none' },
-          // Arranca un poco antes de que la sección se ancle, así el papel ya asoma al llegar.
-          scrollTrigger: { trigger: scene.current, start: 'top 60%', end: 'bottom bottom', scrub: true, invalidateOnRefresh: true, onRefresh: fit },
+          // Mismo tramo que la versión en CSS: mientras la sección está anclada.
+          scrollTrigger: { trigger: scene.current, start: 'top top', end: 'bottom bottom', scrub: true, invalidateOnRefresh: true, onRefresh: fit },
         })
         // El papel sale por la ranura (se mueve la capa entera, con su sombra: no se redibuja en cada cuadro).
         // `y: 0` anula el corrimiento inicial del CSS (GSAP lo leería como `y` y lo sumaría al yPercent).

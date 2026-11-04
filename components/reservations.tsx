@@ -56,7 +56,7 @@ export function Reservations() {
   }
 
   return (
-    <section id="reservas" aria-labelledby="reservas-title" className="relative z-10 bg-muted py-20 md:py-28">
+    <section id="reservas" aria-labelledby="reservas-title" className="relative z-10 bg-dots py-20 md:py-28">
       <div className="mx-auto grid max-w-6xl gap-14 px-5 lg:grid-cols-2 lg:items-center">
         <div>
           <SplitTitle
@@ -91,7 +91,6 @@ export function Reservations() {
             aria-describedby={error ? 'reserva-error' : undefined}
           >
             <p className="font-display text-center text-2xl sm:text-3xl">Comanda de reserva</p>
-            <p className="mt-1 text-center text-xs">Mesa a confirmar por WhatsApp</p>
             <div className="ticket-rule my-5" />
             <div className="space-y-5">
               <label className="block">

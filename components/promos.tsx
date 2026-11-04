@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef } from 'react'
-import { gsap, useGSAP, prefersReducedMotion } from '@/lib/gsap'
+import { gsap, useGSAP, prefersReducedMotion, scrollTimelines } from '@/lib/gsap'
 import { PillLink, SplitTitle } from '@/components/ui'
 import { cn } from '@/lib/utils'
 
@@ -69,7 +69,15 @@ export function Promos() {
       const cards = gsap.utils.toArray<HTMLElement>('[data-promo]')
       cards.forEach((card, i) => gsap.set(card, { rotate: looks[i].rotate }))
 
-      if (!prefersReducedMotion()) {
+      // Con animaciones de CSS atadas al scroll, la pila la arma el navegador (`.stack-scene` en globals.css):
+      // cada ticket recibe su turno (`--k`) y su giro final (`--r`).
+      if (!prefersReducedMotion() && scrollTimelines()) {
+        cards.forEach((card, i) => {
+          card.style.setProperty('--k', String(i - 1))
+          card.style.setProperty('--r', String(looks[i].rotate))
+        })
+        scene.current!.classList.add('stack-scene')
+      } else if (!prefersReducedMotion()) {
         const tl = gsap.timeline({
           scrollTrigger: { trigger: scene.current, start: 'top top', end: 'bottom bottom', scrub: true },
         })
@@ -86,7 +94,10 @@ export function Promos() {
         tl.to({}, { duration: 0.5 })
       }
 
-      return () => window.removeEventListener('resize', fit)
+      return () => {
+        window.removeEventListener('resize', fit)
+        scene.current?.classList.remove('stack-scene')
+      }
     },
     { scope: root },
   )

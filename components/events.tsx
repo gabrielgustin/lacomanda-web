@@ -3,7 +3,7 @@
 import { useRef } from 'react'
 import Image from 'next/image'
 import { MessageCircle } from 'lucide-react'
-import { gsap, useGSAP, prefersReducedMotion } from '@/lib/gsap'
+import { gsap, useGSAP, prefersReducedMotion, scrollTimelines } from '@/lib/gsap'
 import { PillLink } from '@/components/ui'
 import { whatsappLink } from '@/lib/site'
 import { cn } from '@/lib/utils'
@@ -43,6 +43,12 @@ export function Events() {
   useGSAP(
     () => {
       if (prefersReducedMotion()) return
+      // Con animaciones de CSS atadas al scroll, la escena la mueve el navegador (`.plans-scene` en globals.css).
+      if (scrollTimelines()) {
+        const el = scene.current!
+        el.classList.add('plans-scene')
+        return () => el.classList.remove('plans-scene')
+      }
       const q = gsap.utils.selector(root)
       const panels = q('[data-plan]')
       const inners = q('[data-plan-inner]')

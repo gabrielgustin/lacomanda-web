@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { ArrowUpRight } from 'lucide-react'
-import { gsap, ScrollTrigger, useGSAP, prefersReducedMotion, STRIP_PACE, STRIP_HOLD } from '@/lib/gsap'
+import { gsap, ScrollTrigger, useGSAP, prefersReducedMotion, scrollTimelines, STRIP_PACE, STRIP_HOLD } from '@/lib/gsap'
 import { PillLink, SplitTitle } from '@/components/ui'
 import { itemsById } from '@/lib/menu-data'
 import { formatPrice } from '@/lib/format'
@@ -70,7 +70,7 @@ export function Signature() {
         }
         // La tira la mueve el navegador con una animación de CSS atada al scroll (`.strip-scroll`): corre en el mismo
         // hilo que el scroll y en el iPhone no queda un paso atrás. Si el navegador no la soporta, la mueve GSAP.
-        if (CSS.supports('animation-timeline: view()')) {
+        if (scrollTimelines()) {
           scene.classList.add('strip-scene')
           ScrollTrigger.create({ trigger: scene, start: 'top top', end: 'bottom bottom', onUpdate })
         } else {
