@@ -34,7 +34,7 @@ export function About() {
           scrollTrigger: {
             trigger: root.current,
             start: 'top top',
-            end: '+=200%',
+            end: '+=100%',
             scrub: true,
             pin: true,
             anticipatePin: 1,
@@ -91,12 +91,6 @@ export function About() {
           Cocinamos lo que nos gusta comer: porciones generosas, salsas caseras y masa que leva sin apuro. Burgers
           altas, de las que se agarran con las dos manos.
         </p>
-        <a
-          href="#historia"
-          className="w-fit rounded-full text-sm font-semibold underline decoration-accent decoration-2 underline-offset-8 hover:decoration-paper md:text-base"
-        >
-          Conocé nuestra historia
-        </a>
       </div>
 
       {/* El borde de arriba y de abajo se difumina con degradados (más baratos que una máscara en cada frame). */}

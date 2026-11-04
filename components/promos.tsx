@@ -70,7 +70,7 @@ export function Promos() {
 
       if (!prefersReducedMotion()) {
         const tl = gsap.timeline({
-          scrollTrigger: { trigger: root.current, start: 'top top', end: '+=300%', scrub: true, pin: true, anticipatePin: 1 },
+          scrollTrigger: { trigger: root.current, start: 'top top', end: '+=150%', scrub: true, pin: true, anticipatePin: 1 },
         })
         // El primero ya está apoyado; los demás suben desde abajo y caen encima, girando hasta su lugar.
         cards.slice(1).forEach((card, i) => {

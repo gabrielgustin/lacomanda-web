@@ -51,7 +51,7 @@ export function Events() {
 
       const tl = gsap.timeline({
         defaults: { ease: 'none' },
-        scrollTrigger: { trigger: root.current, start: 'top top', end: '+=320%', scrub: true, pin: true, anticipatePin: 1, invalidateOnRefresh: true },
+        scrollTrigger: { trigger: root.current, start: 'top top', end: '+=160%', scrub: true, pin: true, anticipatePin: 1, invalidateOnRefresh: true },
       })
 
       // Arranca directo en el primer plan: su regla se llena mientras dura.

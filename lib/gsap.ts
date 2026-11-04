@@ -13,7 +13,7 @@ export { gsap, ScrollTrigger, useGSAP }
 
 // Tiras horizontales movidas por el scroll (celular): px de scroll que cuesta cada px que avanza la tira, y la pausa
 // final (como fracción del tramo) con la última tarjeta ya a la vista. Un tramo corto se pasa de largo con un deslizón.
-export const STRIP_PACE = 2.2
+export const STRIP_PACE = 1.1
 export const STRIP_HOLD = 0.12
 
 export const prefersReducedMotion = () =>
