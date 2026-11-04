@@ -270,8 +270,9 @@ html.lenis body {
   }
 }
 
-/* Mesas largas (events.tsx, 5,1 unidades): cada plan nuevo sube a i·1,6 − 0,5 durante 0,8; su texto entra a i·1,6;
-   el del anterior se va con la subida; cada regla se llena durante 1,6. */
+/* Mesas largas (events.tsx, 6 unidades): cada plan queda quieto un rato y el siguiente barre durante 1,4
+   (subidas a 1 y a 3,6); el texto del anterior se va al empezar la subida y el nuevo entra 1,2 después.
+   Reglas: 0 → 1,7, 1,7 → 4,3 y 4,3 → 6. */
 .plans-scene {
   view-timeline: --eventos block;
 }
@@ -286,16 +287,16 @@ html.lenis body {
 }
 .plans-scene article:nth-of-type(2),
 .plans-scene article:nth-of-type(2) [data-plan-inner] {
-  animation-range: contain 21.6% contain 37.3%;
+  animation-range: contain 16.7% contain 40%;
 }
 .plans-scene article:nth-of-type(3),
 .plans-scene article:nth-of-type(3) [data-plan-inner] {
-  animation-range: contain 52.9% contain 68.6%;
+  animation-range: contain 60% contain 83.3%;
 }
 .plans-scene article:nth-of-type(1) [data-plan-copy] {
   animation: copy-out linear forwards;
   animation-timeline: --eventos;
-  animation-range: contain 21.6% contain 27.5%;
+  animation-range: contain 16.7% contain 23.3%;
 }
 /* Entra con su plan y se va con el siguiente: la salida solo rellena hacia adelante, así antes no pisa la entrada. */
 .plans-scene article:nth-of-type(2) [data-plan-copy] {
@@ -304,26 +305,26 @@ html.lenis body {
     copy-out linear forwards;
   animation-timeline: --eventos, --eventos;
   animation-range:
-    contain 31.4% contain 41.2%,
-    contain 52.9% contain 58.8%;
+    contain 36.7% contain 45%,
+    contain 60% contain 66.7%;
 }
 .plans-scene article:nth-of-type(3) [data-plan-copy] {
   animation: copy-in cubic-bezier(0.33, 1, 0.68, 1) both;
   animation-timeline: --eventos;
-  animation-range: contain 62.7% contain 72.5%;
+  animation-range: contain 80% contain 88.3%;
 }
 .plans-scene [data-plan-fill] {
   animation: plan-fill linear both;
   animation-timeline: --eventos;
 }
 .plans-scene li:nth-child(1) [data-plan-fill] {
-  animation-range: contain 0% contain 31.4%;
+  animation-range: contain 0% contain 28.3%;
 }
 .plans-scene li:nth-child(2) [data-plan-fill] {
-  animation-range: contain 31.4% contain 62.7%;
+  animation-range: contain 28.3% contain 71.7%;
 }
 .plans-scene li:nth-child(3) [data-plan-fill] {
-  animation-range: contain 62.7% contain 94.1%;
+  animation-range: contain 71.7% contain 100%;
 }
 @keyframes plan-up {
   from {

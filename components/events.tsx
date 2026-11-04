@@ -54,27 +54,27 @@ export function Events() {
       const inners = q('[data-plan-inner]')
       const copies = q('[data-plan-copy]')
       const fills = q('[data-plan-fill]')
-      const step = 1.6
+      // Mismos tiempos que la versión en CSS (`.plans-scene` en globals.css): 6 unidades en total.
+      const sweeps = [1, 3.6]
+      const fillAt = [0, 1.7, 4.3, 6]
 
       const tl = gsap.timeline({
         defaults: { ease: 'none' },
         scrollTrigger: { trigger: scene.current, start: 'top top', end: 'bottom bottom', scrub: true, invalidateOnRefresh: true },
       })
 
-      // Arranca directo en el primer plan: su regla se llena mientras dura.
-      tl.fromTo(fills[0], { scaleX: 0 }, { scaleX: 1, duration: step }, 0)
-
-      // Los planes siguientes tapan al anterior de abajo hacia arriba.
+      fills.forEach((fill, i) =>
+        tl.fromTo(fill, { scaleX: 0 }, { scaleX: 1, duration: fillAt[i + 1] - fillAt[i] }, fillAt[i]),
+      )
+      // Los planes siguientes tapan al anterior de abajo hacia arriba, con un barrido lento.
       for (let i = 1; i < panels.length; i++) {
-        const at = i * step
+        const at = sweeps[i - 1]
         // El panel sube tapando al anterior y su contenido baja lo mismo: la foto queda quieta y solo se corre la "ventana".
-        tl.fromTo(panels[i], { y: () => window.innerHeight }, { y: 0, duration: 0.8, ease: 'power3.inOut' }, at - 0.5)
-          .fromTo(inners[i], { y: () => -window.innerHeight }, { y: 0, duration: 0.8, ease: 'power3.inOut' }, at - 0.5)
-          .to(copies[i - 1], { opacity: 0, y: -30, duration: 0.3 }, at - 0.5)
-          .fromTo(copies[i], { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, at)
-          .fromTo(fills[i], { scaleX: 0 }, { scaleX: 1, duration: step }, at)
+        tl.fromTo(panels[i], { y: () => window.innerHeight }, { y: 0, duration: 1.4, ease: 'power3.inOut' }, at)
+          .fromTo(inners[i], { y: () => -window.innerHeight }, { y: 0, duration: 1.4, ease: 'power3.inOut' }, at)
+          .to(copies[i - 1], { opacity: 0, y: -30, duration: 0.4 }, at)
+          .fromTo(copies[i], { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, at + 1.2)
       }
-      tl.to({}, { duration: 0.3 })
     },
     { scope: root },
   )
