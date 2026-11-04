@@ -216,18 +216,6 @@ html.lenis body {
   }
 }
 
-/* Mesas largas en pantallas táctiles: frenado nativo. En After office (`always`) el impulso del dedo no puede pasar
-   de largo; en Cowork solo atrae si soltás cerca. `proximity` deja libre el resto del recorrido. */
-.touch-snap {
-  scroll-snap-type: y proximity;
-}
-.touch-snap [data-snap] {
-  scroll-snap-align: start;
-}
-.touch-snap [data-snap='always'] {
-  scroll-snap-stop: always;
-}
-
 /* Escenas fijas con animaciones de CSS atadas al scroll: la línea de tiempo es el contenedor alto de cada escena
    (`contain`: mientras la sección está anclada). Los porcentajes salen de la versión en GSAP de cada componente,
    que queda de respaldo: si se cambia un tiempo allá, se cambia acá. */

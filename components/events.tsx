@@ -3,7 +3,7 @@
 import { useRef } from 'react'
 import Image from 'next/image'
 import { MessageCircle } from 'lucide-react'
-import { gsap, ScrollTrigger, useGSAP, prefersReducedMotion, scrollTimelines } from '@/lib/gsap'
+import { gsap, useGSAP, prefersReducedMotion, scrollTimelines } from '@/lib/gsap'
 import { PillLink } from '@/components/ui'
 import { whatsappLink } from '@/lib/site'
 import { cn } from '@/lib/utils'
@@ -43,35 +43,11 @@ export function Events() {
   useGSAP(
     () => {
       if (prefersReducedMotion()) return
-      // Frenado en cada plan (Festejos, After office, Cowork), así un deslizón rápido no pasa de largo el barrido.
-      // En pantallas táctiles lo hace el navegador (CSS scroll snap, `.touch-snap` en globals.css): corta el impulso
-      // del dedo en cada plan. Con mouse o trackpad (Lenis) la escena se acomoda sola al soltar el scroll.
-      const html = document.documentElement
-      const touch = window.matchMedia('(pointer: coarse)').matches
-      // El frenado se enciende solo mientras la escena está anclada: el resto de la página sigue con scroll libre.
-      if (touch)
-        ScrollTrigger.create({
-          trigger: scene.current,
-          start: 'top top',
-          end: 'bottom bottom',
-          onToggle: (self) => html.classList.toggle('touch-snap', self.isActive),
-        })
-      else
-        ScrollTrigger.create({
-          trigger: scene.current,
-          start: 'top top',
-          end: 'bottom bottom',
-          snap: { snapTo: [0, 0.5, 1], duration: { min: 1.6, max: 2.4 }, delay: 0.08, ease: 'sine.inOut' },
-        })
-      const cleanup = () => html.classList.remove('touch-snap')
       // Con animaciones de CSS atadas al scroll, la escena la mueve el navegador (`.plans-scene` en globals.css).
       if (scrollTimelines()) {
         const el = scene.current!
         el.classList.add('plans-scene')
-        return () => {
-          el.classList.remove('plans-scene')
-          cleanup()
-        }
+        return () => el.classList.remove('plans-scene')
       }
       const q = gsap.utils.selector(root)
       const panels = q('[data-plan]')
@@ -99,7 +75,6 @@ export function Events() {
           .to(copies[i - 1], { opacity: 0, y: -30, duration: 0.4 }, at)
           .fromTo(copies[i], { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, at + 1.2)
       }
-      return cleanup
     },
     { scope: root },
   )
@@ -107,10 +82,6 @@ export function Events() {
   return (
     // Anclada con sticky; el contenedor de 500svh da 4 pantallas de recorrido para los planes.
     <div ref={scene} className="relative z-10 motion-safe:h-[500svh]">
-      {/* Puntos de frenado en celular: After office (mitad del recorrido, frena siempre) y Cowork (final, solo atrae
-          si soltás cerca). 500svh − una pantalla = 400svh. Al entrar no frena, así la escena arranca fluida. */}
-      <span aria-hidden="true" data-snap="always" style={{ top: '200svh' }} className="pointer-events-none absolute inset-x-0 h-px" />
-      <span aria-hidden="true" data-snap style={{ top: '400svh' }} className="pointer-events-none absolute inset-x-0 h-px" />
     <section
       id="eventos"
       data-tone="dark"
