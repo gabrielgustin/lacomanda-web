@@ -1,10 +1,13 @@
 'use client'
 
 import { useRef } from 'react'
-import Image from 'next/image'
+import { getImageProps } from 'next/image'
 import { gsap, useGSAP, prefersReducedMotion } from '@/lib/gsap'
 import { PillLink } from '@/components/ui'
-import { site } from '@/lib/site'
+
+const photo = { alt: '', fill: true, priority: true, sizes: '100vw' }
+const mobilePhoto = getImageProps({ ...photo, src: '/fotos/fachada-noche-movil.webp' }).props.srcSet
+const desktopPhoto = getImageProps({ ...photo, src: '/fotos/fachada-noche-ancha.webp' }).props
 
 export function Hero() {
   const root = useRef<HTMLElement>(null)
@@ -35,16 +38,14 @@ export function Hero() {
     >
       {/* El cartel de la foto está al tercio de la altura: el texto va abajo (justify-end) para no pisarlo. */}
       <div className="absolute inset-0" aria-hidden="true">
-        <Image
-          src="/fotos/fachada-noche.webp"
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-center"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/55 to-ink/20 max-md:hidden" />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-transparent to-ink/50 max-md:from-ink/70 max-md:via-transparent max-md:via-50% max-md:to-ink/15" />
+        {/* Una foto por formato, sin recortar una para la otra: vertical (9:16) hasta 1023 px, apaisada (16:9) desde 1024.
+            Con <picture> el navegador baja solo la que usa; next/image la sirve en AVIF o WebP. */}
+        <picture>
+          <source media="(max-width: 1023px)" srcSet={mobilePhoto} />
+          <img {...desktopPhoto} alt="" className="object-cover object-center" />
+        </picture>
+        <div className="absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/55 to-ink/20 max-lg:hidden" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-transparent to-ink/50 max-lg:from-ink/70 max-lg:via-transparent max-lg:via-50% max-lg:to-ink/15" />
       </div>
 
       <div
@@ -52,10 +53,6 @@ export function Hero() {
         className="relative mx-auto flex w-full max-w-[90rem] flex-1 flex-col justify-end px-5 pb-10 pt-28 md:px-8 md:pb-14"
       >
         <div>
-          {/* Dónde queda: lo primero que se pregunta quien llega. */}
-          <p className="mb-6 text-sm text-primary-foreground/85">
-            {site.address} · Cerro de las Rosas
-          </p>
           <h1
             id="hero-title"
             className="font-display text-[clamp(2.8rem,7vw,6.5rem)] leading-[0.9]"

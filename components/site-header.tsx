@@ -124,22 +124,22 @@ export function SiteHeader() {
       )}
     >
       <div className="mx-auto flex h-16 max-w-[90rem] items-center gap-6 px-5 md:h-20 md:px-8">
-        {/* Sobre fondo oscuro va el sello blanco; con el header crema, solo las letras, sin fondo. */}
-        <a href="#inicio" className="relative block size-10 shrink-0 rounded-full md:size-11" aria-label="La Comanda, ir al inicio">
+        {/* Logo «La Comanda · Sucursal Tejeda»: crema sobre fondo oscuro, marrón sobre el header crema. */}
+        <a href="#inicio" className="relative block aspect-[906/511] h-10 shrink-0 rounded-sm md:h-12" aria-label="La Comanda, ir al inicio">
           <Image
-            src="/logo-la-comanda.svg"
+            src="/logo-la-comanda-claro.png"
             alt=""
-            width={44}
-            height={44}
-            className={cn('absolute inset-0 size-full transition-opacity duration-300', !light && 'opacity-0')}
+            fill
+            sizes="96px"
+            className={cn('object-contain transition-opacity duration-300', !light && 'opacity-0')}
             priority
           />
           <Image
-            src="/logo-la-comanda-sin-fondo.svg"
+            src="/logo-la-comanda-oscuro.png"
             alt=""
-            width={44}
-            height={44}
-            className={cn('absolute inset-0 size-full transition-opacity duration-300', light && 'opacity-0')}
+            fill
+            sizes="96px"
+            className={cn('object-contain transition-opacity duration-300', light && 'opacity-0')}
           />
         </a>
 
@@ -205,7 +205,7 @@ export function SiteHeader() {
           <div data-menu-bg aria-hidden="true" className="absolute inset-0 bg-primary will-change-transform" />
           <div className="relative flex h-full flex-col">
             <div data-menu-top className="flex h-16 items-center justify-between px-5">
-              <Image src="/logo-la-comanda.svg" alt="" width={40} height={40} className="size-10" />
+              <Image src="/logo-la-comanda-claro.png" alt="" width={906} height={511} className="h-10 w-auto" />
               <button
                 type="button"
                 onClick={closeMenu}
