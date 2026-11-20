@@ -71,7 +71,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <p className="border-t border-primary-foreground/10 py-6 text-xs text-primary-foreground/45">
+        <p className="border-t border-primary-foreground/10 py-6 text-xs text-primary-foreground/60">
           © {new Date().getFullYear()} {site.name} · {site.addressDetail}
         </p>
       </div>

@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils'
 
 const labelClass = 'block text-xs font-bold'
 const nameClass =
-  'mt-1 h-11 w-full border-0 border-b-2 border-dashed border-ink/50 bg-transparent px-0 text-base text-ink outline-none transition-colors placeholder:text-ink/45 hover:bg-ink/5 focus:bg-ink/5 focus-visible:rounded-none'
+  'mt-1 h-11 w-full border-0 border-b-2 border-dashed border-ink/50 bg-transparent px-0 text-base text-ink outline-none transition-colors placeholder:text-ink/65 hover:bg-ink/5 focus:bg-ink/5 focus-visible:rounded-none'
 
 // Turnos cada media hora: mediodía y noche (hasta las 0:30, la última mesa de viernes y sábado). Se confirma por WhatsApp.
 const slots = (from: number, to: number, group: string): FieldOption[] =>

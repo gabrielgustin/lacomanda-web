@@ -16,6 +16,7 @@ const image = { url: '/og-fachada.jpg', width: 1200, height: 630, alt: 'Fachada 
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
+  alternates: { canonical: '/' },
   title,
   description,
   icons: {

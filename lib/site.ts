@@ -2,7 +2,7 @@
 // Los horarios viven en lib/hours.ts.
 export const site = {
   name: 'La Comanda',
-  url: 'https://web-lacomanda.vercel.app',
+  url: 'https://lacomandaa.com.ar',
   cartaUrl: 'https://lacomandaa.com.ar/carta', // la carta digital es otro proyecto de Vercel, servido bajo /carta (ver rewrites en next.config.mjs)
   whatsapp: '5493512681910', // formato internacional sin "+" (54 9 + código de área + número)
   whatsappLabel: '351 268-1910',

@@ -13,6 +13,13 @@ const nextConfig = {
       { source: '/carta/:path*', destination: `${carta}/:path*` },
     ]
   },
+  // www y el dominio de Vercel van al dominio principal (una sola dirección para Google y los links).
+  async redirects() {
+    return [
+      { source: '/:path*', has: [{ type: 'host', value: 'www.lacomandaa.com.ar' }], destination: 'https://lacomandaa.com.ar/:path*', permanent: true },
+      { source: '/:path*', has: [{ type: 'host', value: 'web-lacomanda.vercel.app' }], destination: 'https://lacomandaa.com.ar/:path*', permanent: true },
+    ]
+  },
   experimental: {
     agentUpgrade: 'security',
   },

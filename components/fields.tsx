@@ -262,12 +262,12 @@ export function DateField({
         type="button"
         aria-haspopup="dialog"
         aria-expanded={open}
-        aria-labelledby={labelId}
+        aria-labelledby={`${labelId} ${labelId}-v`}
         data-open={open}
         onClick={() => setOpen((o) => !o)}
         className={triggerClass}
       >
-        <span className={cn('first-letter:uppercase', !picked && 'text-ink/45')}>
+        <span id={`${labelId}-v`} className={cn('first-letter:uppercase', !picked && 'text-ink/65')}>
           {picked ? shortFmt.format(new Date(picked.y, picked.m, picked.d)) : placeholder}
         </span>
         <CalendarDays className="size-4 shrink-0 text-ink/60" aria-hidden="true" />
@@ -404,7 +404,7 @@ export function ListField({
         type="button"
         aria-haspopup="listbox"
         aria-expanded={open}
-        aria-labelledby={labelId}
+        aria-labelledby={`${labelId} ${labelId}-v`}
         data-open={open}
         onClick={() => setOpen((o) => !o)}
         onKeyDown={(event) => {
@@ -415,7 +415,7 @@ export function ListField({
         }}
         className={triggerClass}
       >
-        <span className={cn(!selected && 'text-ink/45')}>{selected ? selected.label : placeholder}</span>
+        <span id={`${labelId}-v`} className={cn(!selected && 'text-ink/65')}>{selected ? selected.label : placeholder}</span>
         <Icon className={cn('size-4 shrink-0 text-ink/60 transition-transform', open && icon === 'chevron' && 'rotate-180')} aria-hidden="true" />
       </button>
       <Popover open={open} anchor={trigger} onClose={close} label={label} role="presentation">
