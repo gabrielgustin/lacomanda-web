@@ -72,8 +72,10 @@ export function Signature() {
             const item = itemsById[pick.id]
             return (
               <li key={pick.id}>
-                <figure className="relative aspect-[4/3] overflow-hidden bg-ink">
+                {/* Misma lámina que en escritorio: esquinas redondeadas, aro fino y un filete claro adentro. */}
+                <figure className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-ink ring-1 ring-ink/10">
                   <Image src={pick.image} alt={pick.alt} fill sizes="100vw" className={cn('photo-tone object-cover', pick.focus)} />
+                  <div className="pointer-events-none absolute inset-1.5 rounded-xl border border-paper/30" aria-hidden="true" />
                 </figure>
                 <div className="mt-3 flex items-baseline gap-3">
                   <h3 className="font-display min-w-0 text-xl leading-tight text-primary">{item.name}</h3>

@@ -28,7 +28,7 @@ const plans = [
     image: '/fotos/eventos/grupos-oficina-hd.webp',
     alt: 'Tres compañeras charlando con una notebook, un cuaderno y un café sobre la mesa de madera, frente a la pared de ladrillo',
     focus: 'object-[45%_50%] md:object-[50%_45%]',
-    title: 'Cowork',
+    title: 'Salón privado',
     text: 'Armamos menú cerrado para grupos grandes, con opciones para todos y precio fijo por persona.',
   },
 ]
