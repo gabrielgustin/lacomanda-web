@@ -21,8 +21,8 @@ const looks = [
   { tone: 'bg-paper text-ink', rotate: 2 },
 ]
 
-// Cada promo es un ticket apoyado sobre el papel, uno debajo del otro (sin superponerse ni efectos de scroll).
-// El giro leve de cada ticket es solo decoración.
+// Cada promo es un ticket apoyado sobre el papel, uno debajo del otro (sin superponerse). Al llegar a la pantalla,
+// cada ticket cae y se acomoda (`.promo-in` en globals.css); el giro leve es decoración.
 export function Promos() {
   return (
     <section id="promos" aria-labelledby="promos-title" className="relative z-10 bg-dots px-5 py-16 md:grid md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:gap-10 md:px-8 md:py-28 lg:px-[max(2rem,calc((100vw-90rem)/2+2rem))]">
@@ -42,7 +42,7 @@ export function Promos() {
 
       <ul className="mx-auto mt-10 w-full max-w-[26rem] space-y-6 md:mt-0 md:max-w-md">
         {promos.map((promo, i) => (
-          <li key={promo.day + promo.highlight} style={{ rotate: `${looks[i].rotate}deg` }}>
+          <li key={promo.day + promo.highlight} className="promo-in" style={{ rotate: `${looks[i].rotate}deg` }}>
             <div className="ticket-shadow">
               <div className={cn('ticket flex flex-col gap-3 px-5 pb-6 pt-4 md:px-6', looks[i].tone)}>
                 <p className="font-display text-xl leading-none md:text-2xl">{promo.day}</p>
