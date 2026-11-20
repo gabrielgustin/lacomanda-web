@@ -15,13 +15,6 @@ const promos = [
   },
   { day: 'Jueves', highlight: '2x1', text: '2x1 en hamburguesas.' },
   { day: 'Domingos', highlight: '2ª al 50%', text: 'Consumiendo dos pizzas, la más económica al 50%.' },
-  {
-    day: 'Martes a jueves',
-    tag: 'Happy hour 17 a 20 hs',
-    highlight: '2x1',
-    text: '2x1 en tragos: Aperol, Campari y Fernet.',
-  },
-  { day: 'Viernes', tag: 'Happy hour 17 a 20 hs', highlight: '2x1', text: '2x1 en chopp Stella.' },
 ]
 
 // Papel de cada ticket y su giro al quedar apoyado en la pila.
@@ -30,8 +23,6 @@ const looks = [
   { tone: 'bg-[#ecd9bd] text-ink', rotate: 1.5 },
   { tone: 'bg-primary text-primary-foreground', rotate: -1 },
   { tone: 'bg-paper text-ink', rotate: 2 },
-  { tone: 'bg-ink text-primary-foreground', rotate: -1.5 },
-  { tone: 'bg-[#ecd9bd] text-ink', rotate: 1 },
 ]
 
 // Alto del ticket (máximo y mínimo) y separación mínima entre tickets, para que la pila entre en cualquier pantalla.
@@ -103,8 +94,8 @@ export function Promos() {
   )
 
   return (
-    // Anclada con sticky; el contenedor de 350svh da 2,5 pantallas de recorrido para apilar los tickets.
-    <div ref={scene} className="relative z-10 motion-safe:h-[350svh]">
+    // Anclada con sticky; el contenedor de 262svh da 1,6 pantallas de recorrido para apilar los tickets.
+    <div ref={scene} className="relative z-10 motion-safe:h-[262svh]">
     <section
       id="promos"
       ref={root}
@@ -145,7 +136,6 @@ export function Promos() {
                     <p className="font-display truncate text-[15px] leading-none md:text-2xl">{promo.day}</p>
                     <div className="mt-auto flex items-end justify-between gap-3">
                       <p className="font-display text-4xl leading-none md:text-5xl">{promo.highlight}</p>
-                      {promo.tag && <span className="stamp mb-1 shrink-0 -rotate-3 text-[11px]">{promo.tag}</span>}
                     </div>
                     <p className="mt-2 text-sm leading-snug opacity-85 max-md:[@media(max-height:599px)]:hidden">{promo.text}</p>
                   </div>

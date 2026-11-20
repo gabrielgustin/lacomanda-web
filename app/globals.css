@@ -306,14 +306,14 @@ html.lenis body {
   }
 }
 
-/* Promos (promos.tsx, 5,1 unidades): el ticket `--k` sube a k·0,9 durante 1 y cae girando hasta `--r` grados. */
+/* Promos (promos.tsx, 3,3 unidades): el ticket `--k` sube a k·0,9 durante 1 y cae girando hasta `--r` grados. */
 .stack-scene {
   view-timeline: --promos block;
 }
 .stack-scene [data-promo] ~ [data-promo] {
   animation: promo-drop cubic-bezier(0.33, 1, 0.68, 1) both;
   animation-timeline: --promos;
-  animation-range: contain calc(var(--k) * 17.65%) contain calc(var(--k) * 17.65% + 19.61%);
+  animation-range: contain calc(var(--k) * 27.27%) contain calc(var(--k) * 27.27% + 30.3%);
 }
 @keyframes promo-drop {
   from {
