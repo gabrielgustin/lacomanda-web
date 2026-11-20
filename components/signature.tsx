@@ -1,9 +1,9 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import Image from 'next/image'
 import { ArrowUpRight } from 'lucide-react'
-import { gsap, ScrollTrigger, useGSAP, prefersReducedMotion, scrollTimelines, STRIP_PACE, STRIP_HOLD } from '@/lib/gsap'
+import { gsap, ScrollTrigger, useGSAP } from '@/lib/gsap'
 import { PillLink, SplitTitle } from '@/components/ui'
 import { itemsById } from '@/lib/menu-data'
 import { formatPrice } from '@/lib/format'
@@ -31,63 +31,15 @@ const Buttons = ({ className, compact }: { className?: string; compact?: boolean
   </div>
 )
 
-// Celular: la sección se queda fija y el scroll vertical desplaza el carrusel de tarjetas hacia la izquierda
-// (foto arriba; nombre, precio y descripción debajo); al llegar a la última, la página sigue hacia abajo.
+// Celular: los platos uno debajo del otro, sin efectos.
 // Tablet y escritorio: fotos a sangre que pasan con el scroll y, a la derecha, la pizarra fija con el plato en pantalla resaltado.
 export function Signature() {
   const root = useRef<HTMLElement>(null)
-  const mobile = useRef<HTMLDivElement>(null)
-  const mobileScene = useRef<HTMLDivElement>(null)
-  const strip = useRef<HTMLDivElement>(null)
-  const track = useRef<HTMLUListElement>(null)
   const [active, setActive] = useState(0)
-  const [slide, setSlide] = useState(0)
-  const slideRef = useRef(0)
 
   useGSAP(
     () => {
       const mm = gsap.matchMedia()
-      mm.add('(max-width: 767px) and (min-height: 520px)', () => {
-        // Con movimiento reducido queda el carrusel con scroll propio.
-        if (prefersReducedMotion()) return
-        const wrap = strip.current!
-        const ul = track.current!
-        gsap.set(wrap, { overflowX: 'hidden' })
-        const distance = () => Math.max(0, ul.scrollWidth - wrap.clientWidth)
-        // El bloque se ancla con sticky (sin saltos en el celular): el contenedor mide su alto más el recorrido
-        // de la tira, y se recalcula antes de cada refresh de ScrollTrigger.
-        const scene = mobileScene.current!
-        const setHeight = () => {
-          scene.style.height = `${mobile.current!.offsetHeight + Math.round(distance() * STRIP_PACE * (1 + STRIP_HOLD))}px`
-          scene.style.setProperty('--strip', `${-distance()}px`)
-        }
-        setHeight()
-        ScrollTrigger.addEventListener('refreshInit', setHeight)
-        // Solo avisa a React cuando cambia la tarjeta, no en cada cuadro del scroll.
-        const onUpdate = (self: ScrollTrigger) => {
-          const next = Math.round(Math.min(1, self.progress * (1 + STRIP_HOLD)) * (picks.length - 1))
-          if (next !== slideRef.current) setSlide((slideRef.current = next))
-        }
-        // La tira la mueve el navegador con una animación de CSS atada al scroll (`.strip-scroll`): corre en el mismo
-        // hilo que el scroll y en el iPhone no queda un paso atrás. Si el navegador no la soporta, la mueve GSAP.
-        if (scrollTimelines()) {
-          scene.classList.add('strip-scene')
-          ScrollTrigger.create({ trigger: scene, start: 'top top', end: 'bottom bottom', onUpdate })
-        } else {
-          // El tramo fijo es más largo que lo que recorre la tira y termina con una pausa en la última tarjeta.
-          gsap
-            .timeline({
-              scrollTrigger: { trigger: scene, start: 'top top', end: 'bottom bottom', scrub: true, invalidateOnRefresh: true, onUpdate },
-            })
-            .to(ul, { x: () => -distance(), ease: 'none', duration: 1 })
-            .to({}, { duration: STRIP_HOLD })
-        }
-        return () => {
-          ScrollTrigger.removeEventListener('refreshInit', setHeight)
-          scene.classList.remove('strip-scene')
-          scene.style.height = ''
-        }
-      })
       mm.add('(min-width: 768px)', () => {
         gsap.utils.toArray<HTMLElement>('[data-dish]').forEach((dish, index) => {
           ScrollTrigger.create({
@@ -102,76 +54,39 @@ export function Signature() {
     { scope: root },
   )
 
-  const measure = useCallback(() => {
-    const el = strip.current
-    if (!el) return
-    const first = el.querySelector('li')
-    const step = (first?.getBoundingClientRect().width ?? 1) + 16
-    const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4
-    setSlide(atEnd ? picks.length - 1 : Math.min(picks.length - 1, Math.round(el.scrollLeft / step)))
-  }, [])
-
-  useEffect(() => {
-    const el = strip.current
-    if (!el) return
-    el.addEventListener('scroll', measure, { passive: true })
-    return () => el.removeEventListener('scroll', measure)
-  }, [measure])
-
   return (
     <section ref={root} id="platos" aria-label="Platos de la casa" className="relative z-10 bg-dots">
-      {/* Celular: bloque a pantalla completa que se ancla mientras la tira avanza. La tira toma el alto que sobra
-          (con tope) y, en cada tarjeta, la foto se queda con lo que deja el texto: así nada se corta en ninguna
-          altura de pantalla. En pantallas bajas se omite el texto de introducción. */}
-      <div ref={mobileScene} className="md:hidden">
-      <div ref={mobile} className="sticky top-0 flex h-svh flex-col justify-center overflow-hidden bg-dots pb-6 pt-20 [@media(max-height:519px)]:h-auto">
-        <div className="px-5">
-          <SplitTitle
-            id="platos-title-movil"
-            lines={['Recetas de siempre.', 'Hambre de ahora.']}
-            className="text-[clamp(1.6rem,7.2vw,2.6rem)] text-primary"
-          />
-          <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground text-pretty [@media(max-height:620px)]:hidden">
-            Pizzas con masa propia, burgers de 200 gramos, bifes de 350 y salsas de todos los días.
-          </p>
-        </div>
+      {/* Celular: sin efectos; título y, debajo, un plato tras otro (foto arriba; nombre, precio y descripción debajo). */}
+      <div className="px-5 pb-12 pt-20 md:hidden">
+        <SplitTitle
+          id="platos-title-movil"
+          lines={['Recetas de siempre.', 'Hambre de ahora.']}
+          className="text-[clamp(1.6rem,7.2vw,2.6rem)] text-primary"
+        />
+        <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground text-pretty">
+          Pizzas con masa propia, burgers de 200 gramos, bifes de 350 y salsas de todos los días.
+        </p>
 
-        <div
-          ref={strip}
-          className="scrollbar-hide mt-5 flex max-h-[31rem] min-h-0 flex-1 snap-x snap-mandatory overflow-x-auto overscroll-x-contain"
-        >
-          <ul ref={track} className="flex w-max gap-4 px-5">
-            {picks.map((pick) => {
-              const item = itemsById[pick.id]
-              return (
-                <li key={pick.id} className="flex w-[72vw] max-w-[19rem] shrink-0 snap-start flex-col">
-                  <figure className="relative min-h-[9rem] flex-1 overflow-hidden bg-ink">
-                    <Image src={pick.image} alt={pick.alt} fill sizes="75vw" loading="eager" className={cn('photo-tone object-cover', pick.focus)} />
-                  </figure>
-                  {/* Alto fijo para el texto: todas las fotos de la tira quedan del mismo alto. */}
-                  <div className="mt-3 min-h-[7.25rem]">
-                    <div className="flex items-baseline gap-3">
-                      <h3 className="font-display min-w-0 text-xl leading-tight text-primary">{item.name}</h3>
-                      <span className="mb-1 min-w-3 flex-1 border-b-2 border-dotted border-primary/35" aria-hidden="true" />
-                      <p className="font-display shrink-0 text-base text-primary">{formatPrice(item.price)}</p>
-                    </div>
-                    {item.description && <p className="mt-1.5 text-[13px] leading-snug text-muted-foreground">{item.description}</p>}
-                  </div>
-                </li>
-              )
-            })}
-          </ul>
-        </div>
+        <ul className="mt-8 space-y-8">
+          {picks.map((pick) => {
+            const item = itemsById[pick.id]
+            return (
+              <li key={pick.id}>
+                <figure className="relative aspect-[4/3] overflow-hidden bg-ink">
+                  <Image src={pick.image} alt={pick.alt} fill sizes="100vw" className={cn('photo-tone object-cover', pick.focus)} />
+                </figure>
+                <div className="mt-3 flex items-baseline gap-3">
+                  <h3 className="font-display min-w-0 text-xl leading-tight text-primary">{item.name}</h3>
+                  <span className="mb-1 min-w-3 flex-1 border-b-2 border-dotted border-primary/35" aria-hidden="true" />
+                  <p className="font-display shrink-0 text-base text-primary">{formatPrice(item.price)}</p>
+                </div>
+                {item.description && <p className="mt-1.5 text-[13px] leading-snug text-muted-foreground">{item.description}</p>}
+              </li>
+            )
+          })}
+        </ul>
 
-        {/* Qué plato de la tira estás viendo. */}
-        <div className="mt-4 flex gap-1.5 px-5" aria-hidden="true">
-          {picks.map((pick, i) => (
-            <span key={pick.id} className={cn('h-0.5 flex-1 transition-colors duration-300', i === slide ? 'bg-primary' : 'bg-primary/20')} />
-          ))}
-        </div>
-
-        <Buttons compact className="mt-5 px-5" />
-      </div>
+        <Buttons compact className="mt-8" />
       </div>
 
       {/* Tablet y escritorio */}

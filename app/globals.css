@@ -198,23 +198,6 @@ html.lenis body {
   }
 }
 
-/* Platos en celular: la tira avanza con el scroll del bloque anclado (sticky). La línea de tiempo es el contenedor
-   alto (`contain`: mientras cubre toda la pantalla); al 89 % ya llegó a la última tarjeta y el resto es la pausa
-   final (1 / (1 + STRIP_HOLD) de lib/gsap.ts). `--strip` es la distancia a recorrer, la calcula signature.tsx. */
-.strip-scene {
-  view-timeline: --platos block;
-}
-.strip-scene ul {
-  animation: strip-x linear both;
-  animation-timeline: --platos;
-  animation-range: contain 0% contain 100%;
-}
-@keyframes strip-x {
-  89%,
-  to {
-    transform: translateX(var(--strip));
-  }
-}
 
 /* Escenas fijas con animaciones de CSS atadas al scroll: la línea de tiempo es el contenedor alto de cada escena
    (`contain`: mientras la sección está anclada). Los porcentajes salen de la versión en GSAP de cada componente,
