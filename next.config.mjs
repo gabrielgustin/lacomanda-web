@@ -5,6 +5,9 @@ const nextConfig = {
     // Next 16 solo permite la calidad 75 (se nota en degradés oscuros y caras): todas las fotos salen a 90.
     qualities: [90],
   },
+  experimental: {
+    agentUpgrade: 'security',
+  },
 }
 
 // PREVIEW_EXPORT=1 genera un sitio estático en out/ (sin optimizador de imágenes) para previsualizarlo.
