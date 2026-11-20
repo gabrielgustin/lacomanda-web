@@ -6,6 +6,7 @@ import { Events } from '@/components/events'
 import { Promos } from '@/components/promos'
 import { Reviews } from '@/components/reviews'
 import { getGooglePlace } from '@/lib/google-reviews'
+import { getCartaResenas } from '@/lib/carta-resenas'
 import { Story } from '@/components/story'
 import { Reservations } from '@/components/reservations'
 import { SiteFooter } from '@/components/site-footer'
@@ -47,7 +48,9 @@ const jsonLd = {
 }
 
 export default async function Home() {
-  const place = await getGooglePlace()
+  const [google, resenas] = await Promise.all([getGooglePlace(), getCartaResenas()])
+  // Las reseñas que carga el local en su backoffice mandan sobre las de Google y sobre las de respaldo.
+  const place = resenas ? { ...google, reviews: resenas } : google
 
   return (
     <>

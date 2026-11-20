@@ -53,8 +53,8 @@ const arrow =
 
 // Tira horizontal con scroll propio (dedo, trackpad o flechas): no depende del scroll vertical de la página.
 export function Reviews({ place }: { place: GooglePlace | null }) {
-  const real = place?.reviews ?? []
-  const reviews = real.length ? real : curated
+  // Si el local administra sus reseñas (aunque no tenga ninguna visible) se respeta; sin conexión, las de respaldo.
+  const reviews = place?.reviews ?? curated
   const mapsUrl = place?.mapsUrl ?? site.mapsUrl
 
   const track = useRef<HTMLUListElement>(null)
@@ -85,6 +85,8 @@ export function Reviews({ place }: { place: GooglePlace | null }) {
     const card = el.querySelector('li')?.getBoundingClientRect().width ?? 360
     el.scrollBy({ left: direction * (card + 24), behavior: 'smooth' })
   }
+
+  if (!reviews.length) return null
 
   return (
     <section aria-labelledby="resenas-title" className="relative z-10 overflow-x-clip bg-dots py-20 md:py-28">
@@ -135,7 +137,7 @@ export function Reviews({ place }: { place: GooglePlace | null }) {
                   <blockquote
                     className={cn(
                       'font-display whitespace-pre-line leading-snug text-primary',
-                      real.length > 0 && 'line-clamp-[8]',
+                      place?.reviews && 'line-clamp-[8]',
                       review.text.length > 180 ? 'text-base md:text-lg' : 'text-lg md:text-xl',
                     )}
                   >

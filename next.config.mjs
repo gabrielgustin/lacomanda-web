@@ -7,7 +7,7 @@ const nextConfig = {
   },
   // La carta digital (proyecto aparte) se sirve bajo /carta en este mismo dominio.
   async rewrites() {
-    const carta = 'https://lacomanda-xi.vercel.app/carta'
+    const carta = `${process.env.CARTA_ORIGIN ?? 'https://lacomanda-xi.vercel.app'}/carta`
     return [
       { source: '/carta', destination: carta },
       { source: '/carta/:path*', destination: `${carta}/:path*` },

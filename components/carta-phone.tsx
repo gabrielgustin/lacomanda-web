@@ -43,6 +43,8 @@ export function CartaPhone() {
     const onClick = (event: MouseEvent) => {
       const link = (event.target as HTMLElement).closest('a[data-carta]')
       if (!link || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+      // En celular no hay mockup: el link va directo a la carta.
+      if (window.matchMedia('(max-width: 767px)').matches) return
       event.preventDefault()
       setSize(fit())
       setOpen(true)

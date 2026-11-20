@@ -26,7 +26,7 @@ const peopleOptions: FieldOption[] = [...Array.from({ length: 10 }, (_, i) => St
   label: n,
 }))
 
-// La reserva se arma como mensaje de WhatsApp: sin backend y el local confirma por chat.
+// La reserva se guarda en el backoffice del local y además se arma como mensaje de WhatsApp para confirmarla por chat.
 export function Reservations() {
   const [error, setError] = useState('')
   const [date, setDate] = useState('')
@@ -52,6 +52,13 @@ export function Reservations() {
     }
     setError('')
     const text = `¡Hola La Comanda! Quiero reservar una mesa.\n\nNombre: ${name}\nDía: ${d}/${m}/${y}\nHora: ${time}\nPersonas: ${people}`
+    // Queda registrada en el backoffice del local; si falla, igual sigue el WhatsApp (no se pierde la reserva).
+    fetch('/carta/api/reservas', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nombre: name, fecha: date, hora: time, personas: Number(people) }),
+      keepalive: true,
+    }).catch(() => {})
     window.open(whatsappLink(text), '_blank', 'noopener')
   }
 
