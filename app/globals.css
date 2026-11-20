@@ -306,24 +306,6 @@ html.lenis body {
   }
 }
 
-/* Promos (promos.tsx, 3,3 unidades): el ticket `--k` sube a k·0,9 durante 1 y cae girando hasta `--r` grados. */
-.stack-scene {
-  view-timeline: --promos block;
-}
-.stack-scene [data-promo] ~ [data-promo] {
-  animation: promo-drop cubic-bezier(0.33, 1, 0.68, 1) both;
-  animation-timeline: --promos;
-  animation-range: contain calc(var(--k) * 27.27%) contain calc(var(--k) * 27.27% + 30.3%);
-}
-@keyframes promo-drop {
-  from {
-    transform: translateY(120vh) rotate(calc(var(--r) * 6deg));
-  }
-  to {
-    transform: rotate(calc(var(--r) * 1deg));
-  }
-}
-
 /* Elementos que GSAP revela: visibles por defecto si no hay JS o hay movimiento reducido. */
 @media (prefers-reduced-motion: no-preference) {
   .js [data-reveal] {
@@ -338,10 +320,6 @@ html.lenis body {
   }
   .js [data-plan] ~ [data-plan] [data-plan-inner] {
     transform: translateY(-100vh);
-  }
-  /* Promos: antes de que arranque la escena, solo el primer ticket está en la pila. */
-  .js [data-promo] ~ [data-promo] {
-    transform: translateY(120vh);
   }
 }
 @media (prefers-reduced-motion: reduce) {

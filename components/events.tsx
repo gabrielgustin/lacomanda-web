@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import Image from 'next/image'
 import { MessageCircle } from 'lucide-react'
 import { gsap, useGSAP, prefersReducedMotion, scrollTimelines } from '@/lib/gsap'
@@ -39,55 +39,60 @@ const plans = [
 export function Events() {
   const root = useRef<HTMLElement>(null)
   const scene = useRef<HTMLDivElement>(null)
+  const [current, setCurrent] = useState(0)
 
   useGSAP(
     () => {
-      if (prefersReducedMotion()) return
-      // Con animaciones de CSS atadas al scroll, la escena la mueve el navegador (`.plans-scene` en globals.css).
-      if (scrollTimelines()) {
-        const el = scene.current!
-        el.classList.add('plans-scene')
-        return () => el.classList.remove('plans-scene')
-      }
-      const q = gsap.utils.selector(root)
-      const panels = q('[data-plan]')
-      const inners = q('[data-plan-inner]')
-      const copies = q('[data-plan-copy]')
-      const fills = q('[data-plan-fill]')
-      // Mismos tiempos que la versión en CSS (`.plans-scene` en globals.css): 6 unidades en total.
-      const sweeps = [1, 3.6]
-      const fillAt = [0, 1.7, 4.3, 6]
+      // La escena fija con barridos es solo para pantallas grandes; en tablet y celular hay un selector (abajo).
+      const mm = gsap.matchMedia()
+      mm.add('(min-width: 1024px)', () => {
+        if (prefersReducedMotion()) return
+        // Con animaciones de CSS atadas al scroll, la escena la mueve el navegador (`.plans-scene` en globals.css).
+        if (scrollTimelines()) {
+          const el = scene.current!
+          el.classList.add('plans-scene')
+          return () => el.classList.remove('plans-scene')
+        }
+        const q = gsap.utils.selector(root)
+        const panels = q('[data-plan]')
+        const inners = q('[data-plan-inner]')
+        const copies = q('[data-plan-copy]')
+        const fills = q('[data-plan-fill]')
+        // Mismos tiempos que la versión en CSS (`.plans-scene` en globals.css): 6 unidades en total.
+        const sweeps = [1, 3.6]
+        const fillAt = [0, 1.7, 4.3, 6]
 
-      const tl = gsap.timeline({
-        defaults: { ease: 'none' },
-        scrollTrigger: { trigger: scene.current, start: 'top top', end: 'bottom bottom', scrub: true, invalidateOnRefresh: true },
+        const tl = gsap.timeline({
+          defaults: { ease: 'none' },
+          scrollTrigger: { trigger: scene.current, start: 'top top', end: 'bottom bottom', scrub: true, invalidateOnRefresh: true },
+        })
+
+        fills.forEach((fill, i) =>
+          tl.fromTo(fill, { scaleX: 0 }, { scaleX: 1, duration: fillAt[i + 1] - fillAt[i] }, fillAt[i]),
+        )
+        // Los planes siguientes tapan al anterior de abajo hacia arriba, con un barrido lento.
+        for (let i = 1; i < panels.length; i++) {
+          const at = sweeps[i - 1]
+          // El panel sube tapando al anterior y su contenido baja lo mismo: la foto queda quieta y solo se corre la "ventana".
+          tl.fromTo(panels[i], { y: () => window.innerHeight }, { y: 0, duration: 1.4, ease: 'sine.inOut' }, at)
+            .fromTo(inners[i], { y: () => -window.innerHeight }, { y: 0, duration: 1.4, ease: 'sine.inOut' }, at)
+            .to(copies[i - 1], { opacity: 0, y: -30, duration: 0.4 }, at)
+            .fromTo(copies[i], { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, at + 1.2)
+        }
       })
-
-      fills.forEach((fill, i) =>
-        tl.fromTo(fill, { scaleX: 0 }, { scaleX: 1, duration: fillAt[i + 1] - fillAt[i] }, fillAt[i]),
-      )
-      // Los planes siguientes tapan al anterior de abajo hacia arriba, con un barrido lento.
-      for (let i = 1; i < panels.length; i++) {
-        const at = sweeps[i - 1]
-        // El panel sube tapando al anterior y su contenido baja lo mismo: la foto queda quieta y solo se corre la "ventana".
-        tl.fromTo(panels[i], { y: () => window.innerHeight }, { y: 0, duration: 1.4, ease: 'sine.inOut' }, at)
-          .fromTo(inners[i], { y: () => -window.innerHeight }, { y: 0, duration: 1.4, ease: 'sine.inOut' }, at)
-          .to(copies[i - 1], { opacity: 0, y: -30, duration: 0.4 }, at)
-          .fromTo(copies[i], { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, at + 1.2)
-      }
     },
     { scope: root },
   )
 
   return (
-    // Anclada con sticky; el contenedor de 500svh da 4 pantallas de recorrido para los planes.
-    <div ref={scene} className="relative z-10 motion-safe:h-[500svh]">
+    // Escritorio: anclada con sticky; el contenedor de 500svh da 4 pantallas de recorrido para los planes.
+    // Tablet y celular: un selector con los tres planes y una tarjeta que cambia con un fundido (`lg:hidden`).
+    <div id="eventos" ref={scene} className="relative z-10 lg:motion-safe:h-[500svh]">
     <section
-      id="eventos"
       data-tone="dark"
       ref={root}
       aria-labelledby="eventos-title"
-      className="relative overflow-hidden bg-ink text-paper motion-safe:sticky motion-safe:top-0 motion-safe:h-svh"
+      className="relative hidden overflow-hidden bg-ink text-paper lg:block lg:motion-safe:sticky lg:motion-safe:top-0 lg:motion-safe:h-svh"
     >
       <h2 id="eventos-title" className="sr-only">
         Mesas largas para planes cortos
@@ -98,7 +103,7 @@ export function Events() {
           key={plan.title}
           data-plan
           aria-labelledby={`plan-${i}`}
-          className="relative h-[85svh] overflow-hidden will-change-transform motion-safe:absolute motion-safe:inset-0 motion-safe:h-auto"
+          className="relative h-[85svh] overflow-hidden will-change-transform lg:motion-safe:absolute lg:motion-safe:inset-0 lg:motion-safe:h-auto"
         >
           <div data-plan-inner className="absolute inset-0 will-change-transform">
             <Image src={plan.image} alt={plan.alt} fill sizes="100vw" className={cn('photo-tone object-cover', plan.focus)} />
@@ -128,7 +133,7 @@ export function Events() {
       {/* Regla de avance: los tres planes, el que está en pantalla se va llenando. */}
       <ol
         aria-hidden="true"
-        className="absolute inset-x-5 bottom-6 z-20 hidden grid-cols-3 gap-3 md:inset-x-8 md:bottom-8 md:gap-6 motion-safe:grid lg:inset-x-[max(2rem,calc((100vw-90rem)/2+2rem))]"
+        className="absolute inset-x-5 bottom-6 z-20 hidden grid-cols-3 gap-3 md:inset-x-8 md:bottom-8 md:gap-6 lg:motion-safe:grid lg:inset-x-[max(2rem,calc((100vw-90rem)/2+2rem))]"
       >
         {plans.map((plan) => (
           <li key={plan.title} className="text-xs font-semibold text-paper/80 md:text-sm">
@@ -139,6 +144,66 @@ export function Events() {
           </li>
         ))}
       </ol>
+    </section>
+    <section data-tone="dark" aria-label="Eventos y planes" className="bg-ink px-5 py-16 text-paper md:px-8 md:py-20 lg:hidden">
+      <div className="mx-auto max-w-3xl">
+        <h2 className="sr-only">Mesas largas para planes cortos</h2>
+
+        <div role="tablist" aria-label="Planes" className="grid grid-cols-3 gap-2">
+          {plans.map((plan, i) => (
+            <button
+              key={plan.title}
+              type="button"
+              role="tab"
+              id={`plan-tab-${i}`}
+              aria-selected={i === current}
+              aria-controls={`plan-panel-${i}`}
+              onClick={() => setCurrent(i)}
+              className={cn(
+                'rounded-full border px-2 py-3 text-sm font-semibold leading-tight outline-none transition-colors focus-visible:ring-2 focus-visible:ring-accent md:text-base',
+                i === current ? 'border-paper bg-paper text-ink' : 'border-paper/30 text-paper/80 hover:border-paper/60',
+              )}
+            >
+              {plan.title}
+            </button>
+          ))}
+        </div>
+
+        {/* Los tres planes comparten la misma celda: se cruzan con un fundido y el alto no salta al cambiar. */}
+        <div className="mt-6 grid">
+          {plans.map((plan, i) => (
+            <div
+              key={plan.title}
+              role="tabpanel"
+              id={`plan-panel-${i}`}
+              aria-labelledby={`plan-tab-${i}`}
+              inert={i !== current}
+              className={cn(
+                'col-start-1 row-start-1 transition-opacity duration-500 motion-reduce:transition-none md:grid md:grid-cols-2 md:items-center md:gap-8',
+                i === current ? 'opacity-100' : 'pointer-events-none opacity-0',
+              )}
+            >
+              <div className="relative aspect-[5/4] overflow-hidden rounded-2xl bg-black ring-1 ring-paper/10">
+                <Image src={plan.image} alt={plan.alt} fill sizes="(min-width: 768px) 45vw, 100vw" className={cn('photo-tone object-cover', plan.focus)} />
+                <div className="pointer-events-none absolute inset-1.5 rounded-xl border border-paper/30" aria-hidden="true" />
+              </div>
+              <div className="mt-5 md:mt-0">
+                <h3 className="font-display text-[clamp(2.2rem,8vw,3.2rem)] leading-[0.95]">{plan.title}</h3>
+                <p className="mt-3 text-base leading-relaxed text-paper/85">{plan.text}</p>
+                <PillLink
+                  href={whatsappLink(`¡Hola La Comanda! Quiero consultar por ${plan.title}. ¿Me pasan información y disponibilidad?`)}
+                  target="_blank"
+                  rel="noreferrer"
+                  variant="cream"
+                  className="mt-6"
+                >
+                  <MessageCircle className="size-4" aria-hidden="true" /> Consultá por WhatsApp
+                </PillLink>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </section>
     </div>
   )

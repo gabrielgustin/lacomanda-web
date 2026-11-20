@@ -1,7 +1,3 @@
-'use client'
-
-import { useRef } from 'react'
-import { gsap, useGSAP, prefersReducedMotion, scrollTimelines } from '@/lib/gsap'
 import { PillLink, SplitTitle } from '@/components/ui'
 import { cn } from '@/lib/utils'
 
@@ -25,90 +21,18 @@ const looks = [
   { tone: 'bg-paper text-ink', rotate: 2 },
 ]
 
-// Alto del ticket (máximo y mínimo) y separación mínima entre tickets, para que la pila entre en cualquier pantalla.
-const MAX_CARD = 216
-const MIN_CARD = 170
-const MIN_STEP = 32
-
-// Escena fija: los tickets de promo se apilan uno sobre otro a medida que bajás, cada uno un poco más abajo,
-// así siempre se lee el día de los de abajo y el último queda entero. Con movimiento reducido, la pila ya está armada.
+// Cada promo es un ticket apoyado sobre el papel, uno debajo del otro (sin superponerse ni efectos de scroll).
+// El giro leve de cada ticket es solo decoración.
 export function Promos() {
-  const root = useRef<HTMLElement>(null)
-  const stack = useRef<HTMLDivElement>(null)
-  const scene = useRef<HTMLDivElement>(null)
-
-  useGSAP(
-    () => {
-      // La pila se ajusta al alto disponible: primero se reparte el paso entre tickets y, si aun así no entra,
-      // se achica el alto de cada ticket. Así el último nunca se pasa del borde de la sección.
-      const fit = () => {
-        const el = stack.current
-        if (!el) return
-        const gaps = promos.length - 1
-        const step = Math.min(64, Math.max(MIN_STEP, (el.clientHeight - MIN_CARD) / gaps))
-        const card = Math.min(MAX_CARD, Math.max(110, el.clientHeight - step * gaps))
-        const pile = card + step * gaps
-        el.style.setProperty('--step', `${step}px`)
-        el.style.setProperty('--card', `${card}px`)
-        // Si sobra alto, la pila se centra en vez de quedar pegada arriba.
-        el.style.setProperty('--offset', `${Math.max(0, (el.clientHeight - pile) / 2)}px`)
-      }
-      fit()
-      window.addEventListener('resize', fit)
-
-      // El giro de cada ticket lo pone GSAP (no CSS): si lo lee de CSS, lo compensa corriéndolo de costado.
-      const cards = gsap.utils.toArray<HTMLElement>('[data-promo]')
-      cards.forEach((card, i) => gsap.set(card, { rotate: looks[i].rotate }))
-
-      // Con animaciones de CSS atadas al scroll, la pila la arma el navegador (`.stack-scene` en globals.css):
-      // cada ticket recibe su turno (`--k`) y su giro final (`--r`).
-      if (!prefersReducedMotion() && scrollTimelines()) {
-        cards.forEach((card, i) => {
-          card.style.setProperty('--k', String(i - 1))
-          card.style.setProperty('--r', String(looks[i].rotate))
-        })
-        scene.current!.classList.add('stack-scene')
-      } else if (!prefersReducedMotion()) {
-        const tl = gsap.timeline({
-          scrollTrigger: { trigger: scene.current, start: 'top top', end: 'bottom bottom', scrub: true },
-        })
-        // El primero ya está apoyado; los demás suben desde abajo y caen encima, girando hasta su lugar.
-        cards.slice(1).forEach((card, i) => {
-          const look = looks[i + 1]
-          tl.fromTo(
-            card,
-            { y: () => window.innerHeight, rotate: look.rotate * 6 },
-            { y: 0, rotate: look.rotate, duration: 1, ease: 'power3.out' },
-            i * 0.9,
-          )
-        })
-        tl.to({}, { duration: 0.5 })
-      }
-
-      return () => {
-        window.removeEventListener('resize', fit)
-        scene.current?.classList.remove('stack-scene')
-      }
-    },
-    { scope: root },
-  )
-
   return (
-    // Anclada con sticky; el contenedor de 262svh da 1,6 pantallas de recorrido para apilar los tickets.
-    <div ref={scene} className="relative z-10 motion-safe:h-[262svh]">
-    <section
-      id="promos"
-      ref={root}
-      aria-labelledby="promos-title"
-      className="sticky top-0 flex h-svh flex-col overflow-hidden bg-dots md:grid md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:items-center"
-    >
-      <div className="px-5 pb-6 pt-20 md:py-24 md:pl-8 md:pr-10 lg:pl-[max(2rem,calc((100vw-90rem)/2+2rem))] lg:pr-14">
+    <section id="promos" aria-labelledby="promos-title" className="relative z-10 bg-dots px-5 py-16 md:grid md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:gap-10 md:px-8 md:py-28 lg:px-[max(2rem,calc((100vw-90rem)/2+2rem))]">
+      <div className="md:sticky md:top-28 md:self-start">
         <SplitTitle
           id="promos-title"
           lines={['Todos los días', 'hay algo']}
           className="text-[clamp(2.4rem,5.4vw,5rem)] text-primary"
         />
-        <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground text-pretty max-md:[@media(max-height:679px)]:hidden md:mt-6 md:text-base">
+        <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground text-pretty md:mt-6 md:text-base">
           Las promos de la semana en La Comanda. Elegí el día y venite con hambre.
         </p>
         <div className="mt-6 md:mt-8">
@@ -116,36 +40,19 @@ export function Promos() {
         </div>
       </div>
 
-      {/* La pila de tickets: cada uno se ubica un paso más abajo que el anterior. */}
-      <div className="relative min-h-0 flex-1 px-5 pb-8 md:h-full md:flex-none md:py-28 md:pr-8 lg:pr-[max(2rem,calc((100vw-90rem)/2+2rem))]">
-        <div ref={stack} className="relative mx-auto h-full w-full max-w-[26rem]">
-          <ul className="contents">
-            {promos.map((promo, i) => (
-              <li
-                key={promo.day + promo.highlight}
-                data-promo
-                className="absolute inset-x-0 will-change-transform"
-                style={{ top: `calc(var(--offset, 0px) + var(--step, 56px) * ${i})`, zIndex: i }}
-              >
-                <div className="ticket-shadow">
-                  <div
-                    className={cn('ticket flex flex-col px-5 pt-2.5 md:px-6 md:pt-4', looks[i].tone)}
-                    style={{ height: 'var(--card, 216px)' }}
-                  >
-                    {/* El día va solo en la primera línea: es lo que queda a la vista cuando otro ticket lo tapa. */}
-                    <p className="font-display truncate text-[15px] leading-none md:text-2xl">{promo.day}</p>
-                    <div className="mt-auto flex items-end justify-between gap-3">
-                      <p className="font-display text-4xl leading-none md:text-5xl">{promo.highlight}</p>
-                    </div>
-                    <p className="mt-2 text-sm leading-snug opacity-85 max-md:[@media(max-height:599px)]:hidden">{promo.text}</p>
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
+      <ul className="mx-auto mt-10 w-full max-w-[26rem] space-y-6 md:mt-0 md:max-w-md">
+        {promos.map((promo, i) => (
+          <li key={promo.day + promo.highlight} style={{ rotate: `${looks[i].rotate}deg` }}>
+            <div className="ticket-shadow">
+              <div className={cn('ticket flex flex-col gap-3 px-5 pb-6 pt-4 md:px-6', looks[i].tone)}>
+                <p className="font-display text-xl leading-none md:text-2xl">{promo.day}</p>
+                <p className="font-display text-4xl leading-none md:text-5xl">{promo.highlight}</p>
+                <p className="text-sm leading-snug opacity-85">{promo.text}</p>
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
     </section>
-    </div>
   )
 }
