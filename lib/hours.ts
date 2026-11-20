@@ -2,7 +2,7 @@
 // Índice 0 = domingo, como Date#getDay. Un cierre menor que la apertura cae pasada la medianoche.
 export const weeklyHours: [open: string, close: string][] = [
   ['09:00', '01:00'], // domingo
-  ['08:00', '16:00'], // lunes
+  ['08:00', '12:00'], // lunes
   ['08:00', '01:00'], // martes
   ['08:00', '01:00'], // miércoles
   ['08:00', '01:00'], // jueves
