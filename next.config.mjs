@@ -5,6 +5,14 @@ const nextConfig = {
     // Next 16 solo permite la calidad 75 (se nota en degradés oscuros y caras): todas las fotos salen a 90.
     qualities: [90],
   },
+  // La carta digital (proyecto aparte) se sirve bajo /carta en este mismo dominio.
+  async rewrites() {
+    const carta = 'https://lacomanda-xi.vercel.app/carta'
+    return [
+      { source: '/carta', destination: carta },
+      { source: '/carta/:path*', destination: `${carta}/:path*` },
+    ]
+  },
   experimental: {
     agentUpgrade: 'security',
   },

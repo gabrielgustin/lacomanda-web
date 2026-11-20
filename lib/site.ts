@@ -3,7 +3,7 @@
 export const site = {
   name: 'La Comanda',
   url: 'https://web-lacomanda.vercel.app',
-  cartaUrl: 'https://lacomanda-xi.vercel.app',
+  cartaUrl: 'https://lacomandaa.com.ar/carta', // la carta digital es otro proyecto de Vercel, servido bajo /carta (ver rewrites en next.config.mjs)
   whatsapp: '5493512681910', // formato internacional sin "+" (54 9 + código de área + número)
   whatsappLabel: '351 268-1910',
   phone: '+5493512540808', // el "15" de la ficha es celular: +54 9 351 254-0808

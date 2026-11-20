@@ -220,56 +220,6 @@ html.lenis body {
    (`contain`: mientras la sección está anclada). Los porcentajes salen de la versión en GSAP de cada componente,
    que queda de respaldo: si se cambia un tiempo allá, se cambia acá. */
 
-/* Nosotros (about.tsx, 3,9 unidades): el papel sale de 0 a 3, cada renglón `--i` entra a 0,5 + 0,4·i y dura 0,35,
-   el sello cae de 3,05 a 3,4. */
-.print-scene {
-  view-timeline: --nosotros block;
-}
-.print-scene [data-feed] {
-  animation: print-feed linear both;
-  animation-timeline: --nosotros;
-  animation-range: contain 0% contain 76.9%;
-}
-.print-scene [data-line] {
-  animation: print-line linear both;
-  animation-timeline: --nosotros;
-  animation-range: contain calc(12.82% + var(--i) * 10.26%) contain calc(21.79% + var(--i) * 10.26%);
-}
-.print-scene [data-stamp] {
-  animation: print-stamp cubic-bezier(0.34, 1.8, 0.64, 1) both;
-  animation-timeline: --nosotros;
-  animation-range: contain 78.2% contain 87.2%;
-}
-@keyframes print-feed {
-  from {
-    transform: translateY(-100%);
-  }
-  to {
-    transform: none;
-  }
-}
-@keyframes print-line {
-  from {
-    opacity: 0;
-    transform: translateX(-8px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-/* El giro final (-6°) lo pone la clase del sello. */
-@keyframes print-stamp {
-  from {
-    opacity: 0;
-    transform: scale(2.4) rotate(-18deg);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
 /* Mesas largas (events.tsx, 6 unidades): cada plan queda quieto un rato y el siguiente barre durante 1,4
    (subidas a 1 y a 3,6); el texto del anterior se va al empezar la subida y el nuevo entra 1,2 después.
    Reglas: 0 → 1,7, 1,7 → 4,3 y 4,3 → 6. */
@@ -409,14 +359,6 @@ html.lenis body {
   /* Promos: antes de que arranque la escena, solo el primer ticket está en la pila. */
   .js [data-promo] ~ [data-promo] {
     transform: translateY(120vh);
-  }
-  /* El ticket de Nosotros arranca adentro de la impresora, sin renglones ni sello; la animación lo imprime. */
-  .js [data-feed] {
-    transform: translateY(-100%);
-  }
-  .js [data-feed] [data-line],
-  .js [data-feed] [data-stamp] {
-    opacity: 0;
   }
 }
 @media (prefers-reduced-motion: reduce) {
