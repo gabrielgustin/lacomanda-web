@@ -221,6 +221,41 @@ html.lenis body {
   }
 }
 
+/* Platos: cada foto aparece con un fundido suave mientras entra en pantalla, y la imagen se asienta (de un zoom leve
+   a su tamaño). Animación de CSS atada al scroll; sin soporte o con movimiento reducido, las fotos se ven quietas. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .photo-in {
+      animation: photo-in cubic-bezier(0.33, 1, 0.68, 1) both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 70%;
+    }
+    .photo-in img {
+      animation: photo-settle cubic-bezier(0.33, 1, 0.68, 1) both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 100%;
+    }
+    @keyframes photo-in {
+      from {
+        opacity: 0;
+        transform: translateY(2.5rem);
+      }
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+    @keyframes photo-settle {
+      from {
+        scale: 1.12;
+      }
+      to {
+        scale: 1;
+      }
+    }
+  }
+}
+
 /* Elementos que GSAP revela: visibles por defecto si no hay JS o hay movimiento reducido. */
 @media (prefers-reduced-motion: no-preference) {
   .js [data-reveal] {

@@ -73,7 +73,7 @@ export function Signature() {
             return (
               <li key={pick.id}>
                 {/* Misma lámina que en escritorio: esquinas redondeadas, aro fino y un filete claro adentro. */}
-                <figure className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-ink ring-1 ring-ink/10">
+                <figure className="photo-in relative aspect-[4/3] overflow-hidden rounded-2xl bg-ink ring-1 ring-ink/10">
                   <Image src={pick.image} alt={pick.alt} fill sizes="100vw" className={cn('photo-tone object-cover', pick.focus)} />
                   <div className="pointer-events-none absolute inset-1.5 rounded-xl border border-paper/30" aria-hidden="true" />
                 </figure>
@@ -134,7 +134,7 @@ export function Signature() {
         <div className="order-1">
           {picks.map((pick) => (
             <figure key={pick.id} id={`plato-${pick.id}`} data-dish data-clip className="relative h-svh px-8 pb-6 pt-24 lg:pl-[max(2rem,calc((100vw-90rem)/2+2rem))] lg:pr-10">
-              <div className="relative size-full overflow-hidden rounded-[1.75rem] bg-ink ring-1 ring-ink/10">
+              <div className="photo-in relative size-full overflow-hidden rounded-[1.75rem] bg-ink ring-1 ring-ink/10">
                 <Image src={pick.image} alt={pick.alt} fill sizes="50vw" className={cn('photo-tone object-cover', pick.focus)} />
                 <div className="pointer-events-none absolute inset-2 rounded-[1.35rem] border border-paper/25" aria-hidden="true" />
               </div>
