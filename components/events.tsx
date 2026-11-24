@@ -28,7 +28,7 @@ const plans = [
     alt: 'Tres compañeras charlando con una notebook, un cuaderno y un café sobre la mesa de madera, frente a la pared de ladrillo',
     focus: 'object-[45%_50%] md:object-[50%_45%]',
     title: 'Salón privado',
-    text: 'Armamos menú cerrado para grupos grandes, con opciones para todos y precio fijo por persona.',
+    text: 'Un salón privado para tu grupo, con un valor extra de $25.000. Armamos menú cerrado con opciones para todos y precio fijo por persona.',
   },
 ]
 
@@ -72,12 +72,13 @@ export function Events() {
               aria-labelledby={`plan-tab-${i}`}
               inert={i !== current}
               className={cn(
-                'col-start-1 row-start-1 transition-opacity duration-500 motion-reduce:transition-none md:grid md:grid-cols-[1.15fr_1fr] md:items-center md:gap-10 lg:gap-14',
-                i === current ? 'opacity-100' : 'pointer-events-none opacity-0',
+                'col-start-1 row-start-1 transition-opacity motion-reduce:transition-none md:grid md:grid-cols-[1.15fr_1fr] md:items-center md:gap-10 lg:gap-14',
+                // Primero se va el plan anterior y después entra el nuevo: así los dos textos nunca se pisan.
+                i === current ? 'opacity-100 duration-500 delay-200' : 'pointer-events-none opacity-0 duration-200',
               )}
             >
               <div className="relative aspect-[5/4] overflow-hidden rounded-2xl bg-black ring-1 ring-paper/10">
-                <Image src={plan.image} alt={plan.alt} fill sizes="(min-width: 1024px) 560px, (min-width: 768px) 50vw, 100vw" className={cn('photo-tone object-cover', plan.focus)} />
+                <Image src={plan.image} alt={plan.alt} fill sizes="(min-width: 1024px) 560px, (min-width: 768px) 50vw, 100vw" loading="eager" className={cn('photo-tone object-cover', plan.focus)} />
                 <div className="pointer-events-none absolute inset-1.5 rounded-xl border border-paper/30" aria-hidden="true" />
               </div>
               <div className="mt-5 md:mt-0">
